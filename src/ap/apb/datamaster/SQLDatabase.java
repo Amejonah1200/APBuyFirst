@@ -110,7 +110,7 @@ public abstract class SQLDatabase implements Database {
 		try {
 			connection
 					.prepareStatement("REPLACE INTO APBuy_Markets (owner, open, name, devise, sales, solditems) VALUES "
-							+ "('" + owner + "', " + (open ? 1 : 0) + ", '" + name + "', '" + devise + "', " + sales
+							+ "('" + owner + "', '" + (open ? 1 : 0) + "', '" + name + "', '" + devise + "', " + sales
 							+ ", " + solditems + ");")
 					.execute();
 		} catch (SQLException e) {
@@ -175,7 +175,7 @@ public abstract class SQLDatabase implements Database {
 	public List<UUID> loadAllOnlineMarkets() throws MarketException {
 		List<UUID> uuids = new ArrayList<>();
 		try {
-			ResultSet set = connection.prepareStatement("").executeQuery();
+			ResultSet set = connection.prepareStatement("SELECT owner FROM APBuy_Markets WHERE open = '1'").executeQuery();
 			while (set.next()) {
 				if (set.getString("owner") != "AdminShop") {
 					uuids.add(UUID.fromString(set.getString("owner")));

@@ -24,7 +24,7 @@ public class SQLiteDatabase extends SQLDatabase {
 					.prepareStatement(
 							"CREATE TABLE IF NOT EXISTS APBuy_Markets ("
 							+ "owner VARCHAR(36) NOT NULL, "
-							+ "open TINYINT, "
+							+ "open CHAR(1), "
 							+ "name VARCHAR(32), "
 							+ "devise varchar(64), "
 							+ "sales BIGINT, "

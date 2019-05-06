@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import ap.apb.APBuy;
 import ap.apb.Translator;
 import ap.apb.Utils;
+import ap.apb.apbuy.markets.Market;
 import ap.apb.apbuy.markets.MarketException;
 import ap.apb.apbuy.markets.MarketException.ErrorCause;
 import ap.apb.apbuy.markets.MarketHandler;
@@ -321,8 +322,9 @@ public class APBCmd implements CommandExecutor {
 							// }
 							// }
 							if (args.length >= 2) {
-								APBuy.getMarketHandler().getMarketByPlayer(p)
-										.setName(String.join(" ", args).substring(8));
+								new Market(p.getUniqueId().toString(), true)
+										.setName(String.join(" ", args).substring(8)).saveMarketInfos();
+								;
 								p.sendMessage("§a[APBuy] Gesetzter Name: §b" + ChatColor.ITALIC + ChatColor
 										.translateAlternateColorCodes('&', String.join(" ", args).substring(8)));
 								return true;
@@ -345,8 +347,9 @@ public class APBCmd implements CommandExecutor {
 							// }
 							// }
 							if (args.length >= 2) {
-								APBuy.getMarketHandler().getMarketByPlayer(p)
-										.setDevise(String.join(" ", args).substring(10));
+								new Market(p.getUniqueId().toString(), true)
+										.setDevise(String.join(" ", args).substring(10)).saveMarketInfos();
+								;
 								p.sendMessage("§a[APBuy] Gesetze Devise: §b" + ChatColor
 										.translateAlternateColorCodes('&', String.join(" ", args).substring(10)));
 								return true;
@@ -369,7 +372,8 @@ public class APBCmd implements CommandExecutor {
 							// }
 							// }
 							if (args.length == 1) {
-								APBuy.getMarketHandler().getMarketByPlayer(p).setName(null);
+								new Market(p.getUniqueId().toString(), true).setName(null).saveMarketInfos();
+								;
 								p.sendMessage("§a[APBuy] Name zurückgesetzt.");
 								return true;
 							} else {
@@ -391,7 +395,7 @@ public class APBCmd implements CommandExecutor {
 							// }
 							// }
 							if (args.length == 1) {
-								APBuy.getMarketHandler().getMarketByPlayer(p).setDevise(null);
+								new Market(p.getUniqueId().toString(), true).setDevise(null).saveMarketInfos();
 								p.sendMessage("§a[APBuy] Devise zurückgesetzt.");
 								return true;
 							} else {
