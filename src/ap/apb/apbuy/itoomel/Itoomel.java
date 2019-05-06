@@ -111,11 +111,11 @@ public class Itoomel implements Listener {
 								APBuy.tagger.getNBTTagInt("ToPage", e.getCurrentItem()));
 						if (type == Material.AIR) {
 							int i = (int) Itoomel.onItoomel.get(p)[2];
-							Itoomel.openItoomel("Main", p, type, APBuy.tagger.getNBTTagInt("ToPage", e.getCurrentItem()),
-									i);
+							Itoomel.openItoomel("Main", p, type,
+									APBuy.tagger.getNBTTagInt("ToPage", e.getCurrentItem()), i);
 						} else {
-							Itoomel.openItoomel("Main", p, type, APBuy.tagger.getNBTTagInt("ToPage", e.getCurrentItem()),
-									0);
+							Itoomel.openItoomel("Main", p, type,
+									APBuy.tagger.getNBTTagInt("ToPage", e.getCurrentItem()), 0);
 						}
 
 					}
@@ -138,33 +138,19 @@ public class Itoomel implements Listener {
 						}
 
 					} else if (APBuy.tagger.hasTag("ToBuy", e.getCurrentItem())) {
-						try {
-							if (BuyManager.openBuyManager(
-									APBuy.getMarketHandler().getMarketByUUID(menu.startsWith("Market:")
-											? menu.replaceFirst("Market:", "") : menu.replaceFirst("SubMarket:", ""))
-											.getMISByIS(new AIS(e.getCurrentItem().clone()).removeLatestLore(4).toIS()),
-									menu.startsWith("Market:") ? menu.replaceFirst("Market:", "")
-											: menu.replaceFirst("SubMarket:", ""),
-									1, (Player) e.getWhoClicked(),
-									APBuy.getMarketHandler().getMarketByUUID(menu.startsWith("Market:")
-											? menu.replaceFirst("Market:", "") : menu.replaceFirst("SubMarket:", ""))
-											.getCategoryByIS(
-													new AIS(e.getCurrentItem().clone()).removeLatestLore(4).toIS()),
-									true, null)) {
-								APBuy.getMarketHandler().PMLocPage.remove(p);
-								Itoomel.onItoomel.remove(p);
-								return;
-							}
-						} catch (MarketException e1) {
-							if (e1.getErrorCause() == ErrorCause.NOTFOUND) {
-								p.sendMessage("§cDieser Market wurde nicht gefunden! (Error)");
-								APBuy.getMarketHandler().removeFromAll(p);
-								p.closeInventory();
-							} else if ((e1.getErrorCause() == ErrorCause.MIS)
-									|| (e1.getErrorCause() == ErrorCause.CATNOTFOUND)) {
-								p.sendMessage(
-										"§cItem wurde nicht gefunden, er ist vllt nicht mehr da, warte bitte einen neuen Itoomel-update. Die Listen werden dann geupdatet. :/");
-							}
+						if (BuyManager
+								.openBuyManager(
+										new Market(
+												menu.startsWith("Market:") ? menu.replaceFirst("Market:", "")
+														: menu.replaceFirst("SubMarket:", ""),
+												false).getMarketItemByIS(
+														new AIS(e.getCurrentItem().clone()).removeLatestLore(4).toIS()),
+										menu.startsWith("Market:") ? menu.replaceFirst("Market:", "")
+												: menu.replaceFirst("SubMarket:", ""),
+										1, (Player) e.getWhoClicked(), true, null)) {
+							APBuy.getMarketHandler().PMLocPage.remove(p);
+							Itoomel.onItoomel.remove(p);
+							return;
 						}
 					}
 
@@ -214,8 +200,8 @@ public class Itoomel implements Listener {
 						}
 					} else if (APBuy.tagger.hasTag("Market", e.getCurrentItem())) {
 						APBuy.getMarketHandler().PMLocPage.put(p, 0);
-						Itoomel.openItoomel("SubMarket:" + APBuy.tagger.getNBTTagString("Market", e.getCurrentItem()), p,
-								type, 0, Integer.valueOf(menu.replaceFirst("searchSubID:", "")));
+						Itoomel.openItoomel("SubMarket:" + APBuy.tagger.getNBTTagString("Market", e.getCurrentItem()),
+								p, type, 0, Integer.valueOf(menu.replaceFirst("searchSubID:", "")));
 					}
 				}
 			}
@@ -417,22 +403,19 @@ public class Itoomel implements Listener {
 						int size = allMarket.size();
 						int pages = ((size - (size % 28)) / 28);
 						int count = 28 * page;
+						Market m;
 						if (size != 0) {
 							for (int i1 = 0; i1 < 4; i1++) {
 								for (int i2 = 0; i2 < 7; i2++) {
 									if (count >= size) {
 										break;
 									}
-									MainInv.setItem(10 + i1 * 9 + i2, APBuy.tagger.setNBTTag("Market",
-											allMarket.get(count),
-											new AIS(new ItemStack(APBuy.getMarketHandler()
-													.getMarketByUUID(allMarket.get(count)).getMarketItemStack())
-															.clone())
-																	.addLineToLore("")
-																	.addLineToLore("§7Items: " + APBuy.getMarketHandler()
-																			.getMarketByUUID(allMarket.get(count))
-																			.getAmmountOfMaterial(type))
-																	.toIS()));
+									m = new Market(allMarket.get(count), true);
+									MainInv.setItem(10 + i1 * 9 + i2,
+											APBuy.tagger.setNBTTag("Market", allMarket.get(count),
+													m.getMarkeAIS().addLineToLore("")
+															.addLineToLore("§7Items: " + m.getAmmountOfMaterial(type))
+															.toIS()));
 									count++;
 								}
 								if (count >= size) {
@@ -720,22 +703,19 @@ public class Itoomel implements Listener {
 						int size = allMarket.size();
 						int pages = ((size - (size % 28)) / 28);
 						int count = 28 * page;
+						Market m;
 						if (size != 0) {
 							for (int i1 = 0; i1 < 4; i1++) {
 								for (int i2 = 0; i2 < 7; i2++) {
 									if (count >= size) {
 										break;
 									}
-									MainInv.setItem(10 + i1 * 9 + i2, APBuy.tagger.setNBTTag("Market",
-											allMarket.get(count),
-											new AIS(new ItemStack(APBuy.getMarketHandler()
-													.getMarketByUUID(allMarket.get(count)).getMarketItemStack())
-															.clone())
-																	.addLineToLore("")
-																	.addLineToLore("§7Items: " + APBuy.getMarketHandler()
-																			.getMarketByUUID(allMarket.get(count))
-																			.getAmmountOfMaterial(type))
-																	.toIS()));
+									m = new Market(allMarket.get(count), true);
+									MainInv.setItem(10 + i1 * 9 + i2,
+											APBuy.tagger.setNBTTag("Market", allMarket.get(count),
+													m.getMarkeAIS().addLineToLore("")
+															.addLineToLore("§7Items: " + m.getAmmountOfMaterial(type))
+															.toIS()));
 									count++;
 								}
 								if (count >= size) {
@@ -973,14 +953,13 @@ public class Itoomel implements Listener {
 									}
 									MainInv.setItem(10 + i1 * 9 + i2, APBuy.tagger.setNBTTag("Market",
 											allMarket.get(count),
-											new AIS(new ItemStack(APBuy.getMarketHandler()
-													.getMarketByUUID(allMarket.get(count)).getMarketItemStack())
-															.clone())
-																	.addLineToLore("")
-																	.addLineToLore("§7Items: " + APBuy.getMarketHandler()
-																			.getMarketByUUID(allMarket.get(count))
-																			.getAmmountOfMaterialSubID(type, s))
-																	.toIS()));
+											new AIS(new ItemStack(APBuy.database.getMarketInfos(allMarket.get(count))
+													.getMarketAIS().toIS()).clone())
+															.addLineToLore("")
+															.addLineToLore("§7Items: "
+																	+ (new Market(allMarket.get(count), false)
+																			.getAmmountOfMaterialSubID(type, s)))
+															.toIS()));
 									count++;
 								}
 								if (count >= size) {
@@ -1119,7 +1098,7 @@ public class Itoomel implements Listener {
 
 	public static void addMarketToItoomel(Market m) {
 		if (!isMarketInItoomel(m.getMarketOwner())) {
-			for (MarketItem mis : m.getAllMIS()) {
+			for (MarketItem mis : m.getMarketItems()) {
 				if (mis.isBuyable()) {
 					addMISToItoomel(mis);
 				}

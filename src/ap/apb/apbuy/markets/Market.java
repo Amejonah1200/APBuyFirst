@@ -197,4 +197,26 @@ public class Market {
 		return APBuy.database.getMarketItemByIS(this.getMarketOwner(), is).getAmmount();
 	}
 
+	public long getAmmountOfMaterialSubID(Material type, Short s) {
+		List<MarketItem> miss = new ArrayList<>();
+		miss.addAll(this.getMarketItemsByMat(type));
+		long i = 0;
+		for (MarketItem mis : miss) {
+			if (mis.getIs().getDurability() == s) {
+				i = i + mis.getAmmount();
+			}
+		}
+		return i;
+	}
+
+	public long getAmmountOfMaterial(Material type) {
+		List<MarketItem> miss = new ArrayList<>();
+		miss.addAll(this.getMarketItemsByMat(type));
+		long i = 0;
+		for (MarketItem mis : miss) {
+			i = i + mis.getAmmount();
+		}
+		return i;
+	}
+
 }
