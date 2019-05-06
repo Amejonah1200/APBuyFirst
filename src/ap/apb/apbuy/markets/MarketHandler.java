@@ -110,11 +110,11 @@ public class MarketHandler implements Listener {
 							.toIS());
 			inv.setItem(21, new AIS(
 					adminshop != null
-							? adminshop.isMarketOpen()
+							? adminshop.isOpen()
 									? "§6AdminShop (§a" + Translator.translate("menu.inv.mainmenu.open") + "§6)"
 									: "§6AdminShop (§c" + Translator.translate("menu.inv.mainmenu.close") + "§6)"
 							: "§6AdminShop (§c" + Translator.translate("menu.inv.mainmenu.close") + "§6)",
-					1, Material.INK_SACK).setDamage((short) (adminshop != null ? adminshop.isMarketOpen() ? 2 : 1 : 1))
+					1, Material.INK_SACK).setDamage((short) (adminshop != null ? adminshop.isOpen() ? 2 : 1 : 1))
 							.addLineToLore("").addLineToLore(Translator.translate("menu.inv.mainmenu.hereisadminshop"))
 							.toIS());
 			// if(settedAdminShop) {
@@ -681,9 +681,11 @@ public class MarketHandler implements Listener {
 											break;
 										}
 										s = uuids.get(count).toString() + ".yml";
-										inv2.setItem(10 + i1 * 9 + i2, APBuy.tagger.setNBTTag("Market", s,
-												Market.justGetMarketItem(YamlConfiguration
-														.loadConfiguration(new File("plugins/APBuy/Markets/" + s)))));
+										inv2.setItem(10 + i1 * 9 + i2,
+												APBuy.tagger.setNBTTag("Market", s,
+														APBuy.database
+																.getMarketInfos(s.replaceAll(Pattern.quote(".yml"), ""))
+																.getMarketAIS().toIS()));
 										count++;
 									}
 									if (count >= size) {
@@ -798,8 +800,14 @@ public class MarketHandler implements Listener {
 										.addLineToLore(Translator.translate("menu.inv.iteminput.info.right"))
 										.addLineToLore(Translator.translate("menu.inv.iteminput.info.drop")).toIS());
 						// - Getting all Markets to display
-						List<MarketItem> miss = APBuy.database.getMarketItemsFromCategory(p.getUniqueId().toString(),
-								Cat);
+						List<MarketItem> miss = APBuy.database.getMarketItemsFromMarket(p.getUniqueId().toString());
+						Iterator<MarketItem> iterator = miss.iterator();
+						while (iterator.hasNext()) {
+							if (iterator.next().getCatName() != Cat) {
+								iterator.remove();
+							}
+						}
+
 						int size = miss.size();
 						int pages = ((size - (size % 28)) / 28);
 						int count = 28 * PMLocPage.get(p);
@@ -999,8 +1007,10 @@ public class MarketHandler implements Listener {
 	// }
 	// }
 
-	public Market createNewMarketForP(OfflinePlayer offlinePlayer) throws MarketException {
-		return APBuy.database.createNewMarketForP(offlinePlayer);
+	public Market createNewMarketForP(String uuid) throws MarketException {
+		Market market = new Market(uuid, false);
+		market.saveMarketInfos();
+		return market;
 	}
 
 	@EventHandler
@@ -1100,7 +1110,7 @@ public class MarketHandler implements Listener {
 					openAdminShopInv("AddCat", p);
 				} else if (onMarketVisualiser.get(p)[0].contains("AddItem")) {
 					MarketItem mis = creatingIS.get(p);
-					if (adminshop.registeredIS(e.getCurrentItem())) {
+					if (adminshop.isItemStackRegistered(e.getCurrentItem())) {
 						p.sendMessage(Translator.translate("click.aregistered"));
 						return;
 					} else {
@@ -1273,7 +1283,7 @@ public class MarketHandler implements Listener {
 							|| (28 <= e.getSlot() && e.getSlot() <= 34) || (37 <= e.getSlot() && e.getSlot() <= 43)) {
 						if (e.getClick() == ClickType.CONTROL_DROP) {
 							if (APBuy.tagger.hasTag("Cat", e.getCurrentItem())) {
-								if (APBuy.database.getMarketItemsFromCategory(p.getUniqueId().toString(),
+								if (new Market(p.getUniqueId().toString(), false).getMarketItemsByCat(
 										APBuy.tagger.getNBTTagString("Cat", e.getCurrentItem())).isEmpty()) {
 									APBuy.database.removeCategory(p.getUniqueId().toString(),
 											APBuy.tagger.getNBTTagString("Cat", e.getCurrentItem()));
@@ -1404,8 +1414,10 @@ public class MarketHandler implements Listener {
 								if (e.getClickedInventory().getContents()[i] != null) {
 									if (APBuy.database.hasMarketItem(p.getUniqueId().toString(),
 											e.getClickedInventory().getContents()[i])) {
-										mis = APBuy.database.getMarketItemByIS(p.getUniqueId().toString(), e.getClickedInventory().getContents()[i]);
-										mis.setAmmount(mis.getAmmount() + e.getClickedInventory().getContents()[i].getAmount());
+										mis = APBuy.database.getMarketItemByIS(p.getUniqueId().toString(),
+												e.getClickedInventory().getContents()[i]);
+										mis.setAmmount(mis.getAmmount()
+												+ e.getClickedInventory().getContents()[i].getAmount());
 										mis.save();
 									} else {
 										notRegistered.add(e.getClickedInventory().getContents()[i]);
@@ -2619,15 +2631,8 @@ public class MarketHandler implements Listener {
 	// return null;
 	// }
 
-	public boolean hasMarket(String name) {
-		return APBuy.database.hasPlayerMarketByName(name);
-	}
-
 	public boolean hasMarketByUUID(String uuid) {
-		if (uuid.equalsIgnoreCase("Adminshop")) {
-			return APBuy.database.adminShopExist();
-		}
-		return APBuy.database.hasPlayerMarketByUUID(UUID.fromString(uuid));
+		return APBuy.database.hasPlayerMarketByUUID(uuid);
 	}
 
 	public List<UUID> getAllMarketsOnline() throws MarketException {

@@ -1,11 +1,9 @@
 package ap.apb.apbuy.markets;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -143,29 +141,27 @@ public class Market {
 	}
 
 	public AIS getMarkeAIS() {
-		AIS ais = new AIS(Material.CHEST);
-		String devise = this.getDevise();
-		String name = this.getName();
-		String shopname = (this.getMarketOwner().equalsIgnoreCase("AdminShop") ? "AdminShop"
-				: Bukkit.getOfflinePlayer(UUID.fromString(this.getMarketOwner())).getName());
-		if (devise == null) {
-			if (name != null) {
-				ais.setName(ChatColor.translateAlternateColorCodes('&', name));
-				ais.addLineToLore("").addLineToLore("§r§6" + shopname + "'s Market.");
-			} else {
-				ais.setName("§r§6" + shopname + "'s Market.");
-			}
-		} else {
-			devise = ChatColor.translateAlternateColorCodes('&', devise);
-			if (name != null) {
-				ais.setName(ChatColor.translateAlternateColorCodes('&', name));
-				ais.addLineToLore("§r§6" + shopname + "'s Market.").addLineToLore("").addLineToLore("§b" + devise);
-			} else {
-				ais.setName("§r§6" + shopname + "'s Market.");
-				ais.addLineToLore("").addLineToLore("§b" + devise);
+		return this.marketInfos.getMarketAIS();
+	}
+
+	public boolean isItemStackRegistered(ItemStack is) {
+		for (MarketItem mis : this.getMarketItems()) {
+			if (mis.getIs().isSimilar(is)) {
+				return true;
 			}
 		}
-		return ais;
+		return false;
 	}
- 
+
+	public List<MarketItem> getMarketItemsByCat(String catname) {
+		List<MarketItem> miss = this.getMarketItems();
+		Iterator<MarketItem> iterator = miss.iterator();
+		while (iterator.hasNext()) {
+			if (iterator.next().getCatName() != catname) {
+				iterator.remove();
+			}
+		}
+		return miss;
+	}
+
 }
