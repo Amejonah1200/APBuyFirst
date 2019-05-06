@@ -1,0 +1,229 @@
+apbcmd.genstop.nownbcu=§7[APBuy] Ab jetzt kann niemand APBuy und Itoomel benutzen!
+apbcmd.genstop.howtooff=§7[APBuy] Du kannst mit [/apb genstop] es auflösen.
+apbcmd.genstop.noweocu=§7[APBuy] Ab jetzt kann jeder (wenn er die Permissions dazu hat) APBuy und Itoomel benutzen!
+apbcmd.genstop.nbcu=§c[APBuy] Aktuell kann niemand die Markets benutzen. Bitte kontakiere die Mods, wenn Fragen offen sind!
+
+apbcmd.adminshop.open=§7[APBuy] Der AdminShop wurde geöffnet.
+apbcmd.adminshop.aopen=§7[APBuy] Der AdminShop ist schon geöffnet.
+apbcmd.adminshop.close=§7[APBuy] Der AdminShop wurde geschlossen.
+apbcmd.adminshop.aclose=§7[APBuy] Der AdminShop ist schon geschlossen.
+
+apbcmd.open.error=§c[APBuy] Es gab einen Fehler bei der suche, bitte benutze [/apb open uuid <UUID>] um nach der UUID zu suchen, ist schneller und effektiver.
+apbcmd.open.notfoundmdb=§c[APBuy] Dieser Spieler ist nicht in der Mojang Datenbank zu finden, ist er Premium? Ist der Name richtig geschrieben?
+apbcmd.open.marketclose=§c[APBuy] Sein Market ist geschlossen!
+apbcmd.open.nomarket=§c[APBuy] Dieser Spieler besitzt keinen Market!
+
+apbcmd.name.set=§a[APBuy] Gesetzter Name: §b
+apbcmd.name.reset=§a[APBuy] Name zurückgesetzt.
+apbcmd.devise.set=§a[APBuy] Gesetze Devise: §b
+apbcmd.devise.reset=§a[APBuy] Devise zurückgesetzt.
+
+aplayerchat.allok=§aAlles tiptop!
+aplayerchat.notfound=§cEcoHandler nicht gefunden, richtig geschrieben?
+aplayerchat.registercmd=§cDie Commands starten mit [#register].
+
+itoomelcmd.ncoi=§c[Itoomel] Aktuel kann niemand Itoomel öffnen. Bitte kontakiere die Mods, wenn Fragen offen sind!
+itoomelcmd.norights=§c[Itoomel] Dafür hast du keine Rechte!
+itoomelcmd.twocommands=§c[Itoomel] Es gibt nur 2 Itoomel-Commands:
+itoomelcmd.holditem=§c[Itoomel] Bitte halte einen Item in der Hand.
+
+
+menu.inv.mainmenu.norightsmymarket=§r§4Du haste keine Rechte um deinen Market zu erstellen/bearbeiten!
+menu.inv.mainmenu.hereismymarket=§r§fHier kannst du dein Market verwalten.
+menu.inv.mainmenu.norightsmarkets=§r§4Du hast keine Rechte um Markets zu durchsuchen!
+menu.inv.mainmenu.hereismarkets=§r§fHier kannst den MarketRegister öffnen, hier stehen alle registrierte Markets drin.
+menu.inv.mainmenu.hereistopmarket=§fHier kannst das Top Market sehen.
+menu.inv.mainmenu.norightstopmarket=§r§4Du haste keine Rechte um das Top-Market zu durchsuchen!
+menu.inv.mainmenu.hereiscommands=§7Hier kannst du sehen welche Commands du ausführen kannst.
+menu.inv.mainmenu.hereisadminshop=§7Das hier ist der AdminShop.
+menu.inv.mainmenu.open=geöffnet
+menu.inv.mainmenu.close=geschlossen
+
+menu.inv.cmds.mymarket.create=Du kannst einen Market erstellen und verwalten
+menu.inv.cmds.mymarket.name=Damit kannst du den Namen vom Market setzen und mit [/apb resetname] kannst du es wieder entfernen.
+menu.inv.cmds.mymarket.devise=Damit kannst du deine Devise setzen und mit [/apb resetdevise] kannst du sie wieder entfernen.
+menu.inv.cmds.mymarket.norights=§cDu hast keine MyMarket-Rechte
+menu.inv.cmds.markets.search.topic=§7Du kannst Markets suchen
+menu.inv.cmds.markets.search.name=Damit suchst du nach einen Market nach dem Spielernamen.
+menu.inv.cmds.markets.search.uuid=Damit suchst du nach einen Market nach der UUID des Spielers.
+menu.inv.cmds.markets.buy=§7Du kannst einkaufen.
+menu.inv.cmds.markets.norights=§cDu hast keine Markets-Rechte
+menu.inv.cmds.mod.delete=§7Du kannst Markets löschen.
+menu.inv.cmds.mod.reset=§7Du kannst Stats von Markets reseten.
+menu.inv.cmds.mod.status=§7Du kannst Markets on- und offline stellen.
+menu.inv.cmds.mod.genstop=Du kannst alle APBuy funktionen für alle (de-)aktivieren  dafür musst du [/apb genstop] ausführen.
+menu.inv.cmds.mod.invissee=§7Du kannst nicht zu verkaufende Items sehen.
+menu.inv.cmds.mod.adminshop.edit=§7Du kannst den Adminshop bearbeiten.
+menu.inv.cmds.mod.adminshop.open=Damit kannst du ihn öffnen.
+menu.inv.cmds.mod.adminshop.close=Damit kannst du ihn schließen.
+menu.inv.cmds.mod.norights=§cDu hast keine Mod-Rechte
+
+menu.inv.mymarket.main.status.on=§aDein Shop ist offen.
+menu.inv.mymarket.main.status.off=§cDein Shop ist geschlossen.
+menu.inv.mymarket.main.stats.solditems=redirect:menu.inv.marketv.main.stats.solditems
+menu.inv.mymarket.main.stats.solds=redirect:menu.inv.marketv.main.stats.solds
+menu.inv.mymarket.main.stats.topic=§7Stats
+menu.inv.mymarket.main.nnd.title=§7Der Name und die Devise.
+menu.inv.mymarket.main.nnd.name=§fName
+menu.inv.mymarket.main.nnd.devise=§fDevise
+menu.inv.mymarket.main.nnd.howto=§8Wenn du es ändern möchtest schreibe
+menu.inv.mymarket.main.nnd.notset=§cNicht gesetzt
+menu.inv.mymarket.main.mymarket=§8Hier kannst du deinen Market bearbeiten.
+menu.inv.mymarket.main.iteminput.title=§7Item Input
+menu.inv.mymarket.main.iteminput.desc=§7Hier kannst du deine Items in deinem Market einspeichern lassen, sie werden dann automatisch einsortiert.
+menu.inv.mymarket.editoradd.noitem=§cHast keinen Item im Inv.
+menu.inv.mymarket.editoradd.change.name=§7Name ändern
+menu.inv.mymarket.editoradd.change.desc=§7Description ändern
+menu.inv.mymarket.editoradd.finish=§aFertig
+menu.inv.mymarket.editoradd.cancel=redirect:menu.cancel
+menu.inv.mymarket.editoradd.setitem.title=§7Presentation-Item ändern
+menu.inv.mymarket.editoradd.setitem.desc=redirect:menu.inv.items.changesellitem.desc
+menu.inv.mymarket.editor.newcat=§6Neue Kategorie erstellen
+menu.inv.mymarket.editor.delete.title=§6Kategorie löschen
+menu.inv.mymarket.editor.delete.desc=§7Um eine Kategorie zu löschen muss du einfach mit [Strg + Drop-Taste] drauf drücken.
+menu.inv.mymarket.editor.catdesc=§7Hier klicken um die Items zu bearbeiten.
+menu.inv.mymarket.iteminput.info=redirect:menu.info
+menu.inv.mymarket.iteminput.infodesc=§7Füge hier deine Items rein die du in deinem Market einsortieren willst, es weerden nur Items einsortiert die registriert wurden. Nach dem hinzufügen klicke auf "Einsortieren" rechts neben dem Back-Knopf.
+menu.inv.mymarket.iteminput.sort=§aEinsortieren
+
+menu.inv.iteminput.additem=§6Item hinzufügen
+menu.inv.iteminput.info.title=§7Infos
+menu.inv.iteminput.info.right=§7Um 32 Items rauszuziehen: Rechtsclick
+menu.inv.iteminput.info.drop=§7Um das Item zu löschen: Strg + Drop
+menu.inv.iteminput.info.middle=§7Um alle Items rauszuziehen: Middleclick
+menu.inv.iteminput.maxsell=§7Maximal zu verkaufen
+menu.inv.iteminput.nomore=§cKeine auf lager.
+
+menu.inv.items.noitem.title=§cKein Item ausgewählt!
+menu.inv.items.noitem.desc=§cBitte wähle ein Item aus deinem Inventar.
+menu.inv.items.price=redirect:menu.price
+menu.inv.items.ppersell=§6Stücke pro Verkauf
+menu.inv.items.info.title=redirect:menu.info
+menu.inv.items.info.desc=§7Beim Erstellen wird dein Item als \"Nicht auf Lager\" angezeigt, um die Menge der Items zu erhöhen gibt es einen ItemInput im Mainmenu.
+menu.inv.items.changesellitem.title=§7Das zuverkaufende Item ändern
+menu.inv.items.changesellitem.desc=§7Einfach einen Item in deinem Inv klicken.
+menu.inv.items.add=§aHinzufügen
+menu.inv.items.cancel=redirect:menu.cancel
+
+menu.inv.adminshop.change.name=redirect:menu.inv.mymarket.editoradd.change.name
+menu.inv.adminshop.change.desc=redirect:menu.inv.mymarket.editoradd.change.desc
+menu.inv.adminshop.finish=redirect:menu.inv.mymarket.editoradd.finish
+menu.inv.adminshop.cancel=redirect:menu.inv.mymarket.editoradd.cancel
+menu.inv.adminshop.setitem.title=redirect:menu.inv.mymarket.editoradd.setitem.title
+menu.inv.adminshop.setitem.desc=redirect:menu.inv.mymarket.editoradd.setitem.desc
+
+menu.inv.marketv.main.marketsee=§bMarket durchsuchen
+menu.inv.marketv.main.stats.title=§7Market Stats
+menu.inv.marketv.main.stats.solds=§7Verkäufe
+menu.inv.marketv.main.stats.solditems=§7Verkaufte Items
+menu.inv.marketv.main.mod.status.open=§aMarket is geöffnet
+menu.inv.marketv.main.mod.status.close=§cMarket is geschlossen
+menu.inv.marketv.main.mod.status.whatdoes=§7Um die Verfügbarkeit zu ändern, klicke hier drauf.
+menu.inv.marketv.main.mod.status.norights=§4Du hast keine rechte um die Verfügbarkeit zu ändern.
+menu.inv.marketv.main.mod.reset.title=§7Market Stats reseten
+menu.inv.marketv.main.mod.reset.whatdoes=§7Um die Stats zu reseten, klicke hier drauf.
+menu.inv.marketv.main.mod.reset.norights=§4Du hast keine rechte um die Stats zu reseten.
+menu.inv.marketv.main.mod.delete.title=§7Market löschen
+menu.inv.marketv.main.mod.delete.whatdoes=§7Um den Market zu löschen, klicke hier drauf.
+menu.inv.marketv.main.mod.delete.norights=§4Du hast keine rechte um den Market zu löschen.
+menu.inv.marketv.main.mod.invissee.title=§7Verstecke Items sehen
+menu.inv.marketv.main.mod.invissee.whatdoes=§7Um verstecke Items zu sehen, klicke hier drauf.
+menu.inv.marketv.main.mod.invissee.norights=§4Du hast keine rechte um verstecke Items zu sehen.
+menu.inv.marketv.items.available=§7Auf Lager
+
+menu.title.buymanager=§0§lA§3§lP§r§8Buy - Buy
+menu.title.mainmenu=§0§lA§3§lP§r§8Buy
+
+
+menu.openerror1=§4Loading.. dont touch something.
+menu.openerror2=§cIf this takes more than 10 sec, close the window and report this to a Dev.
+menu.back=§7<-- Back
+menu.page.previous=<-- Vorherige Seite
+menu.page.next=Nächste Seite -->
+menu.cancel=§cAbbrechen
+menu.info=§7Info
+menu.price=§6Preis
+
+
+close.buycanceled=§cDein Kauf ist abgebrochen.
+close.itemcreate=§cDas hinzufügen eines Items wurde abgebrochen. (Reload oder Fenster zu).
+close.catcreate=§cDeine erstellung einer Kategorie wurde abgebrochen. (Reload oder Fenster zu).
+
+
+click.aregistered=§cDas Item wurde bereits registriert.
+click.selectitem=§cBitte Wähle ein Item aus!
+click.norights=§cDu hast keine Rechte dafür!
+click.adminsclose=§cDer AdminShop ist geschlossen.
+click.itemsininput=§cEs gibt noch Items drin!
+click.agivedname=§cDieser Name hast du schon bereits vergeben!
+click.forgetname=§cDen Namen nicht vergessen!
+click.herenewname=Hier neuen Namen.
+click.herenewdesc=Hier neue Lore.
+click.forgetitems=§cHey! Die Items nicht vergessen!
+click.catforgetitems=§cAchtung es sind noch Items gelagert, bitte entnehme sie bevor du es löschen kannst!
+click.noinvplace=§cDu hast keinen Platz im inventar!
+click.noitems=§cEs gibt keine Items mehr im Lager!
+click.noiteminvregister=§cDu hast kein Item im Inventar!
+click.noitemselected=§cDu hast keinen Item ausgewählt!
+click.notfoundmarket=§cDieser Market wurde nicht gefunden!
+click.notfoundcat=§cDiese Kategorie wurde nicht gefunden!
+
+
+buymanager.selfbuy=§cDu kannst nicht bei dir selbst einkaufen!
+buymanager.noavailable=§cDieses Item ist nicht mehr verfügbar.
+buymanager.sold=§cDieses Item ist ausverkauft.
+buymanager.buypackets=§7Du willst §6%s0%§7 Item-Packete kaufen.
+buymanager.summary=§7Zusammenfassung
+buymanager.tobuy=§r§7Zu kaufende Stückzahl
+buymanager.price=redirect:menu.price
+buymanager.cancel=redirect:menu.cancel
+buymanager.buy=§aKaufen
+buymanager.nomarket=§cDieses Market kann nicht gefunden werden! Suche dir einen anderen Verkäufer aus.
+buymanager.marketclose=§cDer Market wurde geschlossen! Suche dir einen anderen Verkäufer aus!
+buymanager.tomany=§cDu willst mehr Items kaufen als es im Lager gibt!
+buymanager.nbchanged=§7Die restliche Stückzahl wurde geändert, mal schauen ob du die Items weiterhin kaufen kannst...
+buymanager.nomore=§cNein, kannst du nicht mehr! Suche dir einen anderen Verkäufer aus!
+buymanager.nomonney=§cDu hast nicht genug Geld!
+buymanager.thxmarket=§aDer Verkäufer freut sich bestimmt über dein Einkauf. Komm mal wieder vorbei!
+buymanager.thxadminshop=§aDanke das du beim AdminShop was gekauft hast. Komm mal wieder vorbei!
+buymanager.notif=§6Hey! %s0% hat bei dir [%s1% x %s2%] x %s3% für %s4% gekauft!
+buymanager.error1=§4Es gab ein Fehler beim einkauf!
+buymanager.error2=§4Dein Einkauf wurde storniert. Bitte gebe diese Infos an einem Developer
+buymanager.buyer=Käufer
+buymanager.seller=Verkäufer
+buymanager.noplace=§cDu hast nicht genug Platz im Inventar!
+
+icats.building.title=§6Baublöcke
+icats.building.desc=Hier kannst du dir Baublöcke besorgen.
+icats.nether.title=§cNether Stuff
+icats.nether.desc=Hier kannst du dir Blöcke und Items aus dem Nether besorgen.
+icats.ores.title=§6Erze
+icats.ores.desc=Hier kannst du dir Erze besorgen.
+icats.dyes.title=§6Alle Farben (Dyes)
+icats.dyes.desc=Hier kannst du dir Farbstoffe besorgen.
+icats.tools.dia.title=§bDiamant Werkzeuge
+icats.tools.dia.desc=Hier kannst du dir Diamantwerkzeuge besorgen.
+icats.tools.iron.title=§7Eisen Werkzeuge
+icats.tools.iron.desc=Hier kannst du dir Eisenwerkzeuge besorgen.
+icats.tools.gold.title=§6Goldene Werkzeuge
+icats.tools.gold.desc=Hier kannst du dir Goldwerkzeuge besorgen.
+icats.tools.wood.title=§6Holz Werkzeuge
+icats.tools.wood.desc=Hier kannst du dir Holzwerkzeuge besorgen.
+icats.tools.stone.title=§7Stein Werkzeuge
+icats.tools.stone.desc=Hier kannst du dir Steinwerkzeuge besorgen.
+icats.tools.misc.title=§7Andere Werkzeuge
+icats.tools.misc.desc=Hier kannst du dir andere Werkzeuge besorgen.
+icats.battle.title=§6Kampf Werkzeuge
+icats.battle.desc=Hier kannst du dir Kampfsachen besorgen.
+icats.armor.title=§bRüsstungsteile
+icats.armor.desc=Hier kannst du dir die Rüsstungsteile besorgen.
+icats.food.title=§7Essen
+icats.food.desc=Hier kannst du dir Essen besorgen.
+icats.brewing.title=§6Brauzeug
+icats.brewing.desc=Hier kannst du dir zeug fürs Brauen besorgen.
+icats.redstone.title=§cRedstone
+icats.redstone.desc=Hier kannst du dir Redstone-stuff besorgen.
+
+
+misc.reload=§cSorry, es gab einfach ein reload... :/
+dev.error=§c[APBuy] Ein Fehler ist aufgetreten, bitte kontaktiere einen Dev.

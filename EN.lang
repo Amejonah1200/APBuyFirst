@@ -1,0 +1,75 @@
+apbcmd.setup.configapapi=§7[APBuy] APAPI is configuring...
+apbcmd.setup.configvault=§7[APBuy] Vault is configuring...
+apbcmd.setup.configsuccess=§a[APBuy] Configuration successful! :D
+apbcmd.setup.novault=§c[APBuy] Vault isn't installed.
+apbcmd.setup.noapapi=§c[APBuy] APAPI isn't installed.
+apbcmd.setup.manyapapis=§c[APBuy] There is more than one APEcoHandler, please give us the right one, just send it in the chat:
+
+apbcmd.genstop.nownbcu=§7So, now everyone can't use Itoomel and APBuy!
+apbcmd.genstop.howtooff=§7You can use [/apb genstop] to disable it.
+apbcmd.genstop.noweocu=§7So, now everyone can use Itoomel and APBuy (if he has the permission to)!
+apbcmd.genstop.nbcu=§cNow, nobody can use Itoomel and APBuy! Please contact the Moderators if you have questions!
+
+apbcmd.adminshop.open=§7[APBuy] The AdminShop is now opened.
+apbcmd.adminshop.aopen=§7[APBuy] The AdminShop is already opened.
+apbcmd.adminshop.close=§7[APBuy] The AdminShop is now closed.
+apbcmd.adminshop.aclose=§7[APBuy] The AdminShop is already closed.
+
+apbcmd.open.error=§c[APBuy] A error occurred while searching, please use [/apb open uuid <UUID>] to search by UUID, this is faster and more effective.
+apbcmd.open.notfoundmdb=§c[APBuy] This Player isn't in the Mojang database, is he a Premium user? Do you wrote his name correctly?
+apbcmd.open.marketclose=§c[APBuy] His Market is closed!
+apbcmd.open.nomarket=§c[APBuy] This Player not own a Market!
+
+apbcmd.name.set=§a[APBuy] Setted Name: §b
+apbcmd.name.reset=§a[APBuy] Name reseted.
+apbcmd.devise.set=§a[APBuy] Setted Devise: §b
+apbcmd.devise.reset=§a[APBuy] Devise reseted.
+
+aplayerchat.allok=§aConfiguration completed!
+aplayerchat.notfound=§cNot found EcoHandler, right spelled?
+aplayerchat.registercmd=§cThe commands starting with [#register].
+
+itoomelcmd.ncoi=§c[Itoomel] Now can nobody open Itoomel, please contact a moderator or a developer if you have questions!
+itoomelcmd.norights=§c[Itoomel] Not enough rights!
+itoomelcmd.twocommands=§c[Itoomel] There ist only 2 Itoomel-commands:
+itoomelcmd.holditem=§c[Itoomel] Please hold a Item in your hand.
+
+
+menu.inv.mainmenu.norightsmymarket=§r§4You haven't enough rights to create/edit your Market!
+menu.inv.mainmenu.hereismymarket=§r§fHere can you edit your Market.
+menu.inv.mainmenu.norightsmarkets=§r§4You haven't enough rights to see other Markets!
+menu.inv.mainmenu.hereismarkets=§r§fHere can you see all registered (and online) Markets.
+menu.inv.mainmenu.hereistopmarket=§fHere can you see the Top Market.
+menu.inv.mainmenu.norightstopmarket=§r§4You haven't enough rights to see the Top-Market!
+menu.inv.mainmenu.hereiscommands=§7Here can you see your rights and commands.
+menu.inv.mainmenu.hereisadminshop=§7Here can you see the AdminShop.
+menu.inv.mainmenu.open=opened
+menu.inv.mainmenu.close=closed
+
+
+buymanager.selfbuy=§cYou can't buy your own item!
+buymanager.noavailable=§cThis item is no more available.
+buymanager.sold=§cThis item is already sold out.
+buymanager.packets=§7You want to buy §6%s0%§7 Item-Packets.
+buymanager.summary=§7Summary
+buymanager.tobuy=§r§7Items to buy
+buymanager.price=§r§7Price
+buymanager.cancel=§cCancel
+buymanager.buy=§aBuy
+buymanager.nomarket=§cThis Market can't be found! Choose a different seller!
+buymanager.marketclose=§cThis Market closed! Choose a different seller!
+buymanager.tomany=§cYou want to buy more items than the market have!
+buymanager.nbchanged=§7The item quantity changed, let's see if you can continue to buy this items...
+buymanager.nomore=§cNo, you can not anymore! Choose a different seller!
+buymanager.nomonney=§cYou do not have enough money!
+buymanager.thxmarket=§aThe seller is looking forward to your purchase. Come back again!
+buymanager.thxadminshop=§aThanks for purchasing something at the admin shop. Come back again!
+buymanager.notif=§6Hey! % s0% has bought [% s1% x% s2%] x% s3% for% s4%!
+buymanager.error1=§4There was an error while shopping!
+buymanager.error2=§4Your purchase has been canceled. Please give this information to a developer
+buymanager.buyer=Buyer
+buymanager.seller=Seller
+buymanager.noplace=§cYou do not have enough space in the inventory!
+
+
+dev.error=§c[APBuy] A error occurred please contact a developer.

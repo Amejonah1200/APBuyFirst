@@ -1,0 +1,78 @@
+name: APBuy
+version: 0.1
+main: ap.apb.APBuy
+description: A APBuy-Plugin made by APlus1200.
+author: APlus1200
+prefix: APB
+commands:
+   apb:
+      description: The APB main command.
+   itoomel:
+      description: Item + Google = Itoomel!
+   rand:
+      description: Item + Google = Itoomel!
+depend: [Vault]
+permissions:
+   apb.*:
+      description: Allows all functions.
+      children:
+         apb.mod.*: true
+         apb.mymarket.*: true
+         apb.markets.*: true
+         apb.itoomel.*: true
+   apb.mod.*:
+      description: Allows Moderation, all functions.
+      children:
+         apb.mod.close: true
+         apb.mod.reset: true
+         apb.mod.delete: true
+         apb.mod.open: true
+         apb.mod.genstop: true
+         apb.mod.invissee: true
+         apb.mod.adminshop: true
+   apb.dev:
+      description: You can see the Stacktraces.
+   apb.mod.status:
+      description: Allows Moderation, change the status of a market.
+   apb.mod.open:
+      description: Allows Moderation, see Markets when they are closed.
+   apb.mod.genstop:
+      description: Allows Moderation, Generall stopping..
+   apb.mod.reset:
+      description: Allows Moderation, reseting Market's Stats.
+   apb.mod.delete:
+      description: Allows Moderation, deleting Markets.
+   apb.mod.invissee:
+      description: Allows Moderation, see invisible items.
+   apb.mod.adminshop:
+      description: Allows editing the Adminshop.
+   apb.mymarket.*:
+      description: All MyMarket functions.
+      children:
+         apb.mymarket.setname: true
+         apb.mymarket.setdevise: true
+         apb.mymarket.edit: true
+   apb.mymarket.setname:
+      description: Set his Market's name.
+   apb.mymarket.setdevise:
+      description: Set his Market's devise.
+   apb.mymarket.edit:
+      description: Editing/Open his Market.
+   apb.markets.*:
+      description: All Markets functions.
+      children:
+         apb.markets.buy: true
+         apb.markets.search: true
+   apb.markets.buy:
+      description: Allow buying.
+   apb.markets.search:
+      description: Allow searching a Market.
+   apb.itoomel.*:
+      description: All Markets functions.
+      children:
+         apb.itoomel.browse: true
+         apb.itoomel.edit: true
+   apb.itoomel.browse:
+      description: Allows opening Itoomel.
+   apb.itoomel.edit:
+      description: Allows editing Itoomel.
