@@ -16,7 +16,6 @@ import ap.apb.Translator;
 import ap.apb.Utils;
 import ap.apb.apbuy.itoomel.Itoomel;
 import ap.apb.apbuy.markets.Market;
-import ap.apb.apbuy.markets.MarketException;
 import ap.apb.apbuy.markets.MarketItem;
 
 public class BuyManager {
@@ -165,21 +164,21 @@ public class BuyManager {
 			long ammount = this.wantToBuy;
 			switch (slot) {
 			case 50:
+				if (!APBuy.database.hasPlayerMarketByUUID(this.getMarket())) {
+					this.getBuyer().sendMessage(Translator.translate("buymanager.nomarket"));
+					this.cancel();
+					if (this.thenInItoomel) {
+						Itoomel.openItoomel("Main", this.getBuyer(), this.getMarketItem().getIs().getType(), 0);
+					} else {
+						APBuy.getMarketHandler().removeFromAll(this.getBuyer());
+						APBuy.getMarketHandler().PMLocPage.put(this.getBuyer(), 0);
+						APBuy.getMarketHandler().openMarketVisualiserToPlayer(this.s[0], this.s[1], this.getBuyer());
+					}
+					return;
+				}
 				Market m = new Market(this.getMarket(), true);
 				if (APBuy.ecohandler.has(this.getBuyer(), this.deductPrice())) {
-					if (m == null) {
-						this.getBuyer().sendMessage(Translator.translate("buymanager.nomarket"));
-						this.cancel();
-						if (this.thenInItoomel) {
-							Itoomel.openItoomel("Main", this.getBuyer(), this.getMarketItem().getIs().getType(), 0);
-						} else {
-							APBuy.getMarketHandler().removeFromAll(this.getBuyer());
-							APBuy.getMarketHandler().PMLocPage.put(this.getBuyer(), 0);
-							APBuy.getMarketHandler().openMarketVisualiserToPlayer(this.s[0], this.s[1],
-									this.getBuyer());
-						}
-						return;
-					} else if (!m.isOpen()) {
+					if (!m.isOpen()) {
 						this.getBuyer().sendMessage(Translator.translate("buymanager.marketclose"));
 						this.cancel();
 						if (this.thenInItoomel) {
@@ -309,17 +308,15 @@ public class BuyManager {
 		try {
 			if (Utils.getPlaceForIS(this.getBuyer(), this.getWantToBuy() * this.getMarketItem().getSellAmmount(),
 					this.getMarketItem().getIs()) >= this.getWantToBuy() * this.getMarketItem().getSellAmmount()) {
-				Market m = APBuy.getMarketHandler().getMarketByUUID(this.getMarket());
+				Market m = new Market(this.getMarket(), true);
 				short sh = this.getMarket().equalsIgnoreCase("AdminShop")
 						? APBuy.ecohandler.withdrawPlayer(this.getBuyer(), this.deductPrice())
-						: APBuy.ecohandler.transPtoP(this.getBuyer(), this.deductPrice(), m.getMarketOwner());
+						: APBuy.ecohandler.transPtoP(this.getBuyer(), this.deductPrice(),
+								Bukkit.getOfflinePlayer(UUID.fromString(m.getMarketOwner())));
 				if (sh == 0) {
 					if ((this.getMarket() != "AdminShop") && (this.getMarket() != null)) {
 						this.getBuyer().sendMessage(Translator.translate("buymanager.thxmarket"));
-						APBuy.getMarketHandler()
-								.getMarketByPlayer(
-										APBuy.getMarketHandler().getMarketByUUID(this.getMarket()).getMarketOwner())
-								.removeItem(this.getMarketItem().getIs(), 1);
+						m.removeItem(this.getMarketItem().getIs(), this.getWantToBuy() * this.getMarketItem().getSellAmmount());
 						if (this.getMarketItem().getAmmount()
 								- (this.getWantToBuy() * this.getMarketItem().getSellAmmount()) == 0) {
 							Itoomel.removeMISFromItoomel(this.getMarketItem().getIs(), this.getMarket());
@@ -347,7 +344,7 @@ public class BuyManager {
 													this.deductPrice() }));
 						}
 					}
-					m.buyed(this.getWantToBuy() * this.getMarketItem().getSellAmmount(), this.getMarketItem());
+					m.buyed(this.getMarketItem().getIs(), this.getWantToBuy() * this.getMarketItem().getSellAmmount());
 					this.cancel();
 					if (!this.getMarket().equalsIgnoreCase("AdminShop")) {
 						APBuy.getMarketHandler().updateLists();
@@ -361,10 +358,9 @@ public class BuyManager {
 							+ this.getBuyer().getName().toString());
 					this.getBuyer().sendMessage("§4              " + this.getBuyer().getUniqueId().toString());
 					if ((this.getMarket() != "AdminShop") && (this.getMarket() != null)) {
-						this.getBuyer().sendMessage("§4   " + Translator.translate("buymanager.seller") + " : "
-								+ m.getMarketOwner().getName().toString());
-						this.getBuyer()
-								.sendMessage("§4                  " + m.getMarketOwner().getUniqueId().toString());
+						this.getBuyer().sendMessage(
+								"§4   " + Translator.translate("buymanager.seller") + " : " + m.getMarketOwner());
+						this.getBuyer().sendMessage("§4                  " + m.getMarketOwner());
 					}
 					this.cancel();
 				}
@@ -388,12 +384,8 @@ public class BuyManager {
 		try {
 			onBuying.remove(this);
 			if (APBuy.getMarketHandler().hasMarketByUUID(this.getMarket())) {
-				this.setMarketItem(APBuy.getMarketHandler().getMarketByUUID(this.getMarket())
-						.getMISByIS(this.marketItem.getIs().clone()));
-				if (this.getMarketItem() != null) {
-					this.setCategoryOfMarket(APBuy.getMarketHandler().getMarketByUUID(this.getMarket())
-							.getCategoryByIS(this.getMarketItem().getIs().clone()));
-				}
+				this.setMarketItem(
+						new Market(this.getMarket(), false).getMarketItemByIS(this.marketItem.getIs().clone()));
 			} else {
 				this.setMarketItem(null);
 			}

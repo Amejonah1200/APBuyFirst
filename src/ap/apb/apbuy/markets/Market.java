@@ -168,4 +168,32 @@ public class Market {
 		APBuy.database.removeCategory(this.getMarketOwner(), catname);
 	}
 
+	public boolean has(MarketItem mis2, long leng) {
+		MarketItem mis = this.getMarketItemByIS(mis2.getIs().clone());
+		if (mis.getIs().isSimilar(mis2.getIs().clone())) {
+			if (mis.isBuyable()) {
+				if (mis.getAmmount() - (leng * mis.getSellAmmount()) >= 0) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public boolean isMisChanged(MarketItem marketItem) {
+		MarketItem mis = this.getMarketItemByIS(marketItem.getIs().clone());
+		if (mis.getIs().isSimilar(marketItem.getIs().clone())) {
+			if (mis.isBuyable() == marketItem.isBuyable()) {
+				if (mis.getAmmount() == marketItem.getAmmount()) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	public void removeItem(ItemStack is, long l) throws MarketException {
+		APBuy.database.getMarketItemByIS(this.getMarketOwner(), is).grantAmount(-l).save();
+	}
+
 }

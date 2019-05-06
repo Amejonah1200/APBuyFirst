@@ -1118,7 +1118,7 @@ public class Itoomel implements Listener {
 	}
 
 	public static void addMarketToItoomel(Market m) {
-		if (!isMarketInItoomel(m.getMarketOwner().getUniqueId().toString())) {
+		if (!isMarketInItoomel(m.getMarketOwner())) {
 			for (MarketItem mis : m.getAllMIS()) {
 				if (mis.isBuyable()) {
 					addMISToItoomel(mis);
