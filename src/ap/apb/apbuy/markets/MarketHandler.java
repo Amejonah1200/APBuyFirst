@@ -1,6 +1,5 @@
 package ap.apb.apbuy.markets;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -11,7 +10,6 @@ import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -35,7 +33,6 @@ import ap.apb.anvilgui.AnvilGUI.AnvilSlot;
 import ap.apb.anvilgui.mc1_8.AnvilGUI_v1_8_R3;
 import ap.apb.apbuy.BuyManager;
 import ap.apb.apbuy.itoomel.Itoomel;
-import ap.apb.apbuy.markets.MarketException.ErrorCause;
 import ap.apb.datamaster.YAMLDatabase;
 
 public class MarketHandler implements Listener {
@@ -1469,12 +1466,16 @@ public class MarketHandler implements Listener {
 											p.sendMessage(Translator.translate("click.catforgetitems"));
 											return;
 										} else {
-											this.getMarketByPlayer(p).removeItemInCat(
-													menu.endsWith(":Opened")
-															? menu.substring(0, menu.length() - 7)
-																	.replaceFirst("MyMarket:ItemEditor:Main:", "")
-															: menu.replaceFirst("MyMarket:ItemEditor:Main:", ""),
-													is.getIs());
+											APBuy.database.removeItem(p.getUniqueId().toString(), is.getIs());
+											// this.getMarketByPlayer(p).removeItemInCat(
+											// menu.endsWith(":Opened")
+											// ? menu.substring(0, menu.length()
+											// - 7)
+											// .replaceFirst("MyMarket:ItemEditor:Main:",
+											// "")
+											// :
+											// menu.replaceFirst("MyMarket:ItemEditor:Main:",
+											// ""));
 											this.openItemEditor(
 													menu.endsWith(":Opened")
 															? menu.substring(0, menu.length() - 7)
@@ -1484,13 +1485,14 @@ public class MarketHandler implements Listener {
 										}
 									}
 								} else if (e.getClick() == ClickType.MIDDLE) {
-									MarketItem is = this.getMarketByPlayer(p).getMISByIS(APBuy.tagger.removeNBTTag(
-											"Item", new AIS(e.getCurrentItem().clone()).removeLatestLore(4).toIS()));
+									Market m = new Market(p.getUniqueId().toString(), true);
+									MarketItem is = m.getMarketItemByIS(APBuy.tagger.removeNBTTag("Item",
+											new AIS(e.getCurrentItem().clone()).removeLatestLore(4).toIS()));
 									if (is != null) {
 										if (Utils.getPlaceForIS(p, is.getAmmount(), is.getIs()) != 0) {
 											int count = Utils.getPlaceForIS(p, is.getAmmount(), is.getIs());
 											Utils.addItemToPlayer(p, is.getIs().clone(), count);
-											this.getMarketByPlayer(p).removeItem(is.getIs().clone(), count);
+											m.removeItem(is.getIs().clone(), count);
 											Itoomel.removeMISFromItoomel(is.getIs(), is.getMarketuuid());
 											this.openItemEditor(
 													menu.endsWith(":Opened")
@@ -1507,19 +1509,22 @@ public class MarketHandler implements Listener {
 										}
 									}
 								} else if (e.getClick() == ClickType.RIGHT) {
-									MarketItem is = this.getMarketByPlayer(p).getMISByIS(APBuy.tagger.removeNBTTag(
-											"Item", new AIS(e.getCurrentItem().clone()).removeLatestLore(4).toIS()));
+									Market m = new Market(p.getUniqueId().toString(), true);
+									MarketItem is = m.getMarketItemByIS(APBuy.tagger.removeNBTTag("Item",
+											new AIS(e.getCurrentItem().clone()).removeLatestLore(4).toIS()));
 									if (is != null) {
 										int test = (int) (is.getAmmount() - 32 < 0 ? is.getAmmount() : 32);
 										if (Utils.getPlaceForIS(p, test, is.getIs()) != 0) {
 											int count = Utils.getPlaceForIS(p, test, is.getIs());
 											Utils.addItemToPlayer(p, is.getIs().clone(), count);
-											if (this.getMarketByPlayer(p).removeItem(is.getIs().clone(), count) == 0) {
+											if (m.removeItem(is.getIs().clone(), count) == 0) {
 												Itoomel.removeMISFromItoomel(is.getIs(), is.getMarketuuid());
-											} else {
-												is.setAmmount(is.getAmmount() - 32);
-												Itoomel.replaceMISInItoomel(is);
 											}
+											// else {
+											// is.setAmmount(is.getAmmount() -
+											// 32);
+											// Itoomel.replaceMISInItoomel(is);
+											// }
 											this.openItemEditor(
 													menu.endsWith(":Opened")
 															? menu.substring(0, menu.length() - 7)
@@ -1643,11 +1648,12 @@ public class MarketHandler implements Listener {
 							this.openItemEditor(null, menu, p);
 							break;
 						case 50:
-							this.getMarketByPlayer(p).addItemToCategory(creatingIS.get(p),
-									menu.endsWith(":Opened")
-											? menu.substring(0, menu.length() - 7)
-													.replaceFirst("MyMarket:ItemEditor:Add:", "")
-											: menu.replaceFirst("MyMarket:ItemEditor:Add:", ""));
+							creatingIS.get(p).save();
+							// ,menu.endsWith(":Opened")
+							// ? menu.substring(0, menu.length() - 7)
+							// .replaceFirst("MyMarket:ItemEditor:Add:", "")
+							// : menu.replaceFirst("MyMarket:ItemEditor:Add:",
+							// ""));
 							creatingIS.remove(p);
 							this.openItemEditor(menu.endsWith(":Opened")
 									? menu.substring(0, menu.length() - 7).replaceFirst("MyMarket:ItemEditor:Add:", "")
@@ -1866,8 +1872,10 @@ public class MarketHandler implements Listener {
 							openAdminShopInv(menu, p);
 							break;
 						case 50:
-							adminshop.addItemToCategory(creatingIS.get(p),
-									menu.replaceAll(":AddItem", "").replaceFirst("Cat:", ""));
+							// adminshop.addItemToCategory(
+							creatingIS.get(p).save();
+							// , menu.replaceAll(":AddItem",
+							// "").replaceFirst("Cat:", ""));
 							creatingIS.remove(p);
 							openMarketVisualiserToPlayer(menu.replaceAll(":AddItem", ""), "AdminShop", p);
 							break;
@@ -1908,21 +1916,18 @@ public class MarketHandler implements Listener {
 						if (onMarketVisualiser.get(p)[1] == "AdminShop") {
 							if (p.hasPermission("apb.mod.adminshop")) {
 								if (e.getClick() == ClickType.CONTROL_DROP) {
-									adminshop.removeItemInCat((onMarketVisualiser.get(p)[0]).replaceFirst("Cat:", ""),
-											APBuy.tagger.removeNBTTag("ToBuy",
-													new AIS(e.getCurrentItem()).removeLatestLore(2).toIS()));
+									APBuy.database.removeItem("AdminShop", APBuy.tagger.removeNBTTag("ToBuy",
+											new AIS(e.getCurrentItem()).removeLatestLore(2).toIS()));
 									openMarketVisualiserToPlayer(onMarketVisualiser.get(p)[0], "AdminShop", p);
 									return;
 								}
 							}
 						}
 						if (BuyManager.openBuyManager(
-								getMarketByUUID(onMarketVisualiser.get(p)[1])
-										.getMISByIS(new AIS(e.getCurrentItem()).removeLatestLore(3).toIS()),
-								onMarketVisualiser.get(p)[1], 1, (Player) e.getWhoClicked(),
-								getMarketByUUID(onMarketVisualiser.get(p)[1])
-										.getCategorieByName((onMarketVisualiser.get(p)[0]).replaceFirst("Cat:", "")),
-								false, onMarketVisualiser.get(p))) {
+								new Market(onMarketVisualiser.get(p)[1], false)
+										.getMarketItemByIS(new AIS(e.getCurrentItem()).removeLatestLore(3).toIS()),
+								onMarketVisualiser.get(p)[1], 1, (Player) e.getWhoClicked(), false,
+								onMarketVisualiser.get(p))) {
 							onMarketVisualiser.remove(p);
 						}
 						return;
@@ -1949,14 +1954,15 @@ public class MarketHandler implements Listener {
 								break;
 							case 28:
 								if (p.hasPermission("apb.mod.*") || p.hasPermission("apb.mod.status")) {
-									getMarketByUUID((String) onMarketVisualiser.get(p)[1]).setMarketOpen(
-											e.getCurrentItem().getItemMeta().getDisplayName().contains("geschlossen"));
+									APBuy.database.getMarketInfos((String) onMarketVisualiser.get(p)[1]).setOpen(
+											e.getCurrentItem().getItemMeta().getDisplayName().contains("geschlossen"))
+											.save();
 									openMarketVisualiserToPlayer("Main", ((String) onMarketVisualiser.get(p)[1]), p);
 								}
 								break;
 							case 30:
 								if (p.hasPermission("apb.mod.*") || p.hasPermission("apb.mod.reset")) {
-									getMarketByUUID((String) onMarketVisualiser.get(p)[1]).resetStats();
+									APBuy.database.getMarketInfos((String) onMarketVisualiser.get(p)[1]).resetStats();
 									openMarketVisualiserToPlayer("Main", ((String) onMarketVisualiser.get(p)[1]), p);
 									updateLists();
 								}
@@ -2149,7 +2155,7 @@ public class MarketHandler implements Listener {
 
 	public void openMarketVisualiserToPlayer(String s, String uuid, Player p) {
 		try {
-			Market m = uuid.equalsIgnoreCase("AdminShop") ? adminshop : getMarketByUUID(uuid);
+			Market m = new Market(uuid, true);
 			switch (s.split(":")[0]) {
 			case "Main":
 				if (APBuy.hasPlayerModPerms(p)) {
@@ -2168,7 +2174,7 @@ public class MarketHandler implements Listener {
 											+ m.getSoldItems())
 									.toIS());
 					MVMainInv.setItem(49, new AIS(Translator.translate("menu.back"), 1, Material.BARRIER).toIS());
-					MVMainInv.setItem(4, m.getMarketItemStack().clone());
+					MVMainInv.setItem(4, m.getMarkeAIS().toIS());
 					if (p.hasPermission("apb.mod.*") || p.hasPermission("apb.mod.status")) {
 						if (m.isOpen()) {
 							MVMainInv
@@ -2292,7 +2298,7 @@ public class MarketHandler implements Listener {
 											+ m.getSoldItems())
 									.toIS());
 					MVMainInv.setItem(22, new AIS(Translator.translate("menu.back"), 1, Material.BARRIER).toIS());
-					MVMainInv.setItem(4, m.getMarketItemStack().clone());
+					MVMainInv.setItem(4, m.getMarkeAIS().toIS());
 					onMarketVisualiser.remove(p);
 					p.openInventory(MVMainInv);
 					onMarketVisualiser.put(p,
@@ -2537,7 +2543,7 @@ public class MarketHandler implements Listener {
 					@Override
 					public void run() {
 						try {
-							List<MarketItem> miss = m.getAllMIS();
+							List<MarketItem> miss = m.getMarketItems();
 							Iterator<MarketItem> iterator = miss.iterator();
 							while (iterator.hasNext()) {
 								if (iterator.next().isBuyable()) {
@@ -2694,7 +2700,8 @@ public class MarketHandler implements Listener {
 	}
 
 	public Long[] getMarketByUUIDSalesnSoldItms(String s) throws MarketException {
-		return APBuy.database.getMarketByUUIDSalesnSoldItms(s);
+		MarketInfos m = APBuy.database.getMarketInfos(s);
+		return new Long[] { m.getSales(), m.getSoldItems() };
 	}
 
 	public void createAdminShopWhenNotExist() throws MarketException {

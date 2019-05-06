@@ -192,8 +192,9 @@ public class Market {
 		return true;
 	}
 
-	public void removeItem(ItemStack is, long l) throws MarketException {
+	public long removeItem(ItemStack is, long l) throws MarketException {
 		APBuy.database.getMarketItemByIS(this.getMarketOwner(), is).grantAmount(-l).save();
+		return APBuy.database.getMarketItemByIS(this.getMarketOwner(), is).getAmmount();
 	}
 
 }

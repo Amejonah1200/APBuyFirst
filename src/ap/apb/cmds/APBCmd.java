@@ -276,7 +276,7 @@ public class APBCmd implements CommandExecutor {
 									return true;
 								}
 								if (APBuy.getMarketHandler().hasMarketByUUID(uuid)) {
-									if (APBuy.getMarketHandler().getMarketByUUID(uuid).isMarketOpen()
+									if (APBuy.database.getMarketInfos(uuid).isOpen()
 											|| p.hasPermission("apb.mod.open")) {
 										APBuy.getMarketHandler().openMarketVisualiserToPlayer("Main", uuid, p);
 										return true;
@@ -290,7 +290,7 @@ public class APBCmd implements CommandExecutor {
 								}
 							} else if (args[1].equalsIgnoreCase("uuid")) {
 								if (APBuy.getMarketHandler().hasMarketByUUID(args[2])) {
-									if (APBuy.getMarketHandler().getMarketByUUID(args[2]).isMarketOpen()
+									if (APBuy.database.getMarketInfos(args[2]).isOpen()
 											|| p.hasPermission("apb.mod.open")) {
 										APBuy.getMarketHandler().openMarketVisualiserToPlayer("Main", args[2], p);
 										return true;

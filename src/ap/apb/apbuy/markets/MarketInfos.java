@@ -115,4 +115,10 @@ public class MarketInfos {
 		}
 		return ais;
 	}
+
+	public void resetStats() throws MarketException {
+		this.sales = 0;
+		this.soldItems = 0;
+		this.save();
+	}
 }
