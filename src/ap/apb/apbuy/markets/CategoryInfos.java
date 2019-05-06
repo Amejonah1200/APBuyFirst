@@ -1,8 +1,11 @@
 package ap.apb.apbuy.markets;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
+import ap.apb.AIS;
 import ap.apb.APBuy;
+import ap.apb.Utils;
 
 public class CategoryInfos {
 
@@ -17,6 +20,11 @@ public class CategoryInfos {
 		this.mat = mat;
 		this.subid = subid;
 		this.desc = desc;
+		this.owner = owner;
+	}
+	
+	public CategoryInfos(String owner) {
+		this.mat = Material.CHEST;
 		this.owner = owner;
 	}
 
@@ -52,8 +60,19 @@ public class CategoryInfos {
 		this.desc = desc;
 	}
 	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
 	public void save() throws MarketException {
 		APBuy.database.saveCategoryInfos(owner, name, desc, mat, subid);
+	}
+
+	public AIS getAIS() {
+		return new AIS(this.mat).setName(this.name == null ? "Preview" : this.name).addLineToLore("")
+				.addToLore(
+						Utils.createListFromStringToWidth(ChatColor.translateAlternateColorCodes('&', this.desc), 50))
+				.setDamage(this.subid);
 	}
 	
 }

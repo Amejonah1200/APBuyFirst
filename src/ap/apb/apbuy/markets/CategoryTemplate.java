@@ -12,7 +12,7 @@ import ap.apb.AIS;
 import ap.apb.Utils;
 import ap.apb.apbuy.itoomel.Itoomel;
 
-public class Category {
+public class CategoryTemplate {
 
 	private String name;
 	private Material mat;
@@ -20,21 +20,21 @@ public class Category {
 	private List<MarketItem> catItems = new ArrayList<>();
 	private String desc;
 
-	public Category(String name, String desc, Material mat, short subid) {
+	public CategoryTemplate(String name, String desc, Material mat, short subid) {
 		this.name = name;
 		this.desc = desc;
 		this.mat = mat;
 		this.subid = subid;
 	}
 
-	public Category() {
+	public CategoryTemplate() {
 		this.name = null;
 		this.desc = null;
 		this.mat = Material.CHEST;
 		this.subid = 0;
 	}
 
-	public Category(String name, ItemStack itemStack) {
+	public CategoryTemplate(String name, ItemStack itemStack) {
 		this.name = name;
 		this.desc = getDescFromIS(itemStack);
 	}

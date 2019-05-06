@@ -42,7 +42,7 @@ public class MarketHandler implements Listener {
 
 	public HashMap<Player, String> PMLoc = new HashMap<>();
 	public HashMap<Player, Integer> PMLocPage = new HashMap<>();
-	private HashMap<Player, Category> creatingCat = new HashMap<>();
+	private HashMap<Player, CategoryInfos> creatingCat = new HashMap<>();
 	private HashMap<Player, MarketItem> creatingIS = new HashMap<>();
 	public HashMap<Player, String[]> onMarketVisualiser = new HashMap<>();
 	public HashMap<Player, List<ItemStack>> onItemInput = new HashMap<>();
@@ -346,7 +346,7 @@ public class MarketHandler implements Listener {
 									(short) 5, Material.WOOL).toIS());
 
 							// - Cat Prewiev 31
-							inv1.setItem(31, creatingCat.get(p).buildToItem());
+							inv1.setItem(31, creatingCat.get(p).getAIS().toIS());
 
 							// - Cat Rename 10
 							inv1.setItem(10, new AIS(Translator.translate("menu.inv.mymarket.editoradd.change.name"), 1,
@@ -1101,7 +1101,7 @@ public class MarketHandler implements Listener {
 					return;
 				}
 				if (onMarketVisualiser.get(p)[0].equalsIgnoreCase("AddCat")) {
-					Category c = creatingCat.get(p);
+					CategoryInfos c = creatingCat.get(p);
 					c.setMat(e.getCurrentItem().getType());
 					if (e.getCurrentItem().getMaxStackSize() > 1) {
 						c.setSubid(e.getCurrentItem().getDurability());
@@ -1137,7 +1137,7 @@ public class MarketHandler implements Listener {
 						return;
 					}
 					if (menu.startsWith("MyMarket:Editor:Add")) {
-						Category c = creatingCat.get(p);
+						CategoryInfos c = creatingCat.get(p);
 						c.setMat(e.getCurrentItem().getType());
 						if (e.getCurrentItem().getMaxStackSize() > 1) {
 							c.setSubid(e.getCurrentItem().getDurability());
@@ -1168,7 +1168,7 @@ public class MarketHandler implements Listener {
 					}
 					if (onMarketVisualiser.containsKey(p)) {
 						if (onMarketVisualiser.get(p)[0].equalsIgnoreCase("AddCat")) {
-							Category c = creatingCat.get(p);
+							CategoryInfos c = creatingCat.get(p);
 							c.setMat(e.getCurrentItem().getType());
 							creatingCat.put(p, c);
 							openAdminShopInv("AddCat", p);
@@ -1275,7 +1275,7 @@ public class MarketHandler implements Listener {
 						this.openInvToP("MyMarket:Main", p);
 						break;
 					case 50:
-						creatingCat.put(p, new Category());
+						creatingCat.put(p, new CategoryInfos(p.getUniqueId().toString()));
 						this.openInvToP("MyMarket:Editor:Add", p);
 						break;
 					}
@@ -1283,8 +1283,9 @@ public class MarketHandler implements Listener {
 							|| (28 <= e.getSlot() && e.getSlot() <= 34) || (37 <= e.getSlot() && e.getSlot() <= 43)) {
 						if (e.getClick() == ClickType.CONTROL_DROP) {
 							if (APBuy.tagger.hasTag("Cat", e.getCurrentItem())) {
-								if (new Market(p.getUniqueId().toString(), false).getMarketItemsByCat(
-										APBuy.tagger.getNBTTagString("Cat", e.getCurrentItem())).isEmpty()) {
+								if (new Market(p.getUniqueId().toString(), false)
+										.getMarketItemsByCat(APBuy.tagger.getNBTTagString("Cat", e.getCurrentItem()))
+										.isEmpty()) {
 									APBuy.database.removeCategory(p.getUniqueId().toString(),
 											APBuy.tagger.getNBTTagString("Cat", e.getCurrentItem()));
 									this.openInvToP(PMLoc.get(p), p);
@@ -1310,7 +1311,7 @@ public class MarketHandler implements Listener {
 						this.openInvToP("MyMarket:Main", p);
 						break;
 					case 50:
-						Category c = creatingCat.get(p);
+						CategoryInfos c = creatingCat.get(p);
 						if (c.getName() != null) {
 							if (!APBuy.database.hasCategoryInfos(p.getUniqueId().toString(), c.getName())) {
 								new CategoryInfos(p.getUniqueId().toString(), c.getName(), c.getMat(), c.getSubid(),
@@ -1332,13 +1333,13 @@ public class MarketHandler implements Listener {
 								event.setWillClose(false);
 								if ((!event.getName().equalsIgnoreCase("")) && (!event.getName()
 										.equalsIgnoreCase(Translator.translate("click.herenewname")))) {
-									Category c = creatingCat.get(p);
+									CategoryInfos c = creatingCat.get(p);
 									c.setName(ChatColor.translateAlternateColorCodes('&', event.getName()));
 									creatingCat.put(p, c);
 									PMLoc.put(p, "MyMarket:Editor:Add:Opened");
 									APBuy.getMarketHandler().openInvToP("MyMarket:Editor:Add", p);
 								} else {
-									Category c = creatingCat.get(p);
+									CategoryInfos c = creatingCat.get(p);
 									c.setName(null);
 									creatingCat.put(p, c);
 									PMLoc.put(p, "MyMarket:Editor:Add:Opened");
@@ -1360,13 +1361,13 @@ public class MarketHandler implements Listener {
 								event.setWillDestroy(false);
 								if ((!event.getName().equalsIgnoreCase(Translator.translate("click.herenewdesc")))
 										&& (!event.getName().equalsIgnoreCase(""))) {
-									Category c = creatingCat.get(p);
+									CategoryInfos c = creatingCat.get(p);
 									c.setDesc(ChatColor.translateAlternateColorCodes('&', event.getName()));
 									creatingCat.put(p, c);
 									PMLoc.put(p, "MyMarket:Editor:Add:Opened");
 									APBuy.getMarketHandler().openInvToP("MyMarket:Editor:Add", p);
 								} else {
-									Category c = creatingCat.get(p);
+									CategoryInfos c = creatingCat.get(p);
 									c.setDesc(null);
 									creatingCat.put(p, c);
 									PMLoc.put(p, "MyMarket:Editor:Add:Opened");
@@ -1460,8 +1461,9 @@ public class MarketHandler implements Listener {
 								|| (37 <= e.getSlot() && e.getSlot() <= 43)) {
 							if (APBuy.tagger.hasTag("Item", e.getCurrentItem())) {
 								if (e.getClick() == ClickType.CONTROL_DROP) {
-									MarketItem is = this.getMarketByPlayer(p).getMISByIS(APBuy.tagger.removeNBTTag(
-											"Item", new AIS(e.getCurrentItem().clone()).removeLatestLore(4).toIS()));
+									MarketItem is = new Market(p.getUniqueId().toString(), false)
+											.getMarketItemByIS(APBuy.tagger.removeNBTTag("Item",
+													new AIS(e.getCurrentItem().clone()).removeLatestLore(4).toIS()));
 									if (is != null) {
 										if (is.getAmmount() != 0) {
 											p.sendMessage(Translator.translate("click.catforgetitems"));
@@ -1695,11 +1697,11 @@ public class MarketHandler implements Listener {
 							openMarketVisualiserToPlayer("Cats", "AdminShop", p);
 							break;
 						case 50:
-							Category c = creatingCat.get(p);
+							CategoryInfos c = creatingCat.get(p);
 							if (c.getName() != null) {
 								Market m = adminshop;
-								if (m.getCategorieByName(c.getName()) == null) {
-									m.addCategory(c);
+								if (m.getCatInfosByName(c.getName()) == null) {
+
 									creatingCat.remove(p);
 									openMarketVisualiserToPlayer("Cats", "AdminShop", p);
 								} else {
@@ -1717,12 +1719,12 @@ public class MarketHandler implements Listener {
 									event.setWillClose(false);
 									if ((!event.getName().equalsIgnoreCase("")) && (!event.getName()
 											.equalsIgnoreCase(Translator.translate("click.herenewname")))) {
-										Category c = creatingCat.get(p);
+										CategoryInfos c = creatingCat.get(p);
 										c.setName(ChatColor.translateAlternateColorCodes('&', event.getName()));
 										creatingCat.put(p, c);
 										openAdminShopInv("AddCat", p);
 									} else {
-										Category c = creatingCat.get(p);
+										CategoryInfos c = creatingCat.get(p);
 										c.setName(null);
 										creatingCat.put(p, c);
 										openAdminShopInv("AddCat", p);
@@ -1744,12 +1746,12 @@ public class MarketHandler implements Listener {
 									event.setWillDestroy(false);
 									if ((!event.getName().equalsIgnoreCase(Translator.translate("click.herenewdesc")))
 											&& (!event.getName().equalsIgnoreCase(""))) {
-										Category c = creatingCat.get(p);
+										CategoryInfos c = creatingCat.get(p);
 										c.setDesc(ChatColor.translateAlternateColorCodes('&', event.getName()));
 										creatingCat.put(p, c);
 										openAdminShopInv("AddCat", p);
 									} else {
-										Category c = creatingCat.get(p);
+										CategoryInfos c = creatingCat.get(p);
 										c.setDesc(null);
 										creatingCat.put(p, c);
 										openAdminShopInv("AddCat", p);
@@ -1925,7 +1927,7 @@ public class MarketHandler implements Listener {
 						}
 						return;
 					} else if (APBuy.tagger.hasTag("AddCat", e.getCurrentItem())) {
-						creatingCat.put(p, new Category());
+						creatingCat.put(p, new CategoryInfos("AdminShop"));
 						openAdminShopInv("AddCat", p);
 						return;
 					} else if (APBuy.tagger.hasTag("AddItem", e.getCurrentItem())) {
@@ -2037,7 +2039,7 @@ public class MarketHandler implements Listener {
 
 	private void openAdminShopInv(String menu, Player p) {
 		if (menu.equalsIgnoreCase("AddCat")) {
-			Category cat = creatingCat.get(p);
+			CategoryInfos cat = creatingCat.get(p);
 			Inventory inv1 = Bukkit.createInventory(null, 54, "§0§lA§3§lP§r§8Buy - AdminShop");
 			for (int i = 0; i < 54; i++) {
 				inv1.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
@@ -2064,7 +2066,7 @@ public class MarketHandler implements Listener {
 					new AIS(Translator.translate("menu.inv.adminshop.finish"), 1, (short) 5, Material.WOOL).toIS());
 
 			// - Cat Prewiev 31
-			inv1.setItem(31, cat.buildToItem());
+			inv1.setItem(31, cat.getAIS().toIS());
 
 			// - Cat Rename 10
 			inv1.setItem(10,
@@ -2405,7 +2407,7 @@ public class MarketHandler implements Listener {
 				break;
 			case "Cat":
 				int page1 = PMLocPage.get(p);
-				Category cat = m.getCategorieByName(s.replaceFirst("Cat:", ""));
+				CategoryInfos cat = m.getCatInfosByName(s.replaceFirst("Cat:", ""));
 				Inventory catInv = Bukkit.createInventory(null, 54,
 						m.getName() != null ? m.getName().equalsIgnoreCase("AdminShop")
 								? "§0§lA§3§lP§r§8Buy - AdminShop" : "§0§lA§3§lP§r§8Buy - Markets"
@@ -2438,7 +2440,7 @@ public class MarketHandler implements Listener {
 					@Override
 					public void run() {
 						try {
-							List<MarketItem> miss = cat.getCatItems();
+							List<MarketItem> miss = m.getMarketItemsByCat(cat.getName());
 							Iterator<MarketItem> iterator = miss.iterator();
 							while (iterator.hasNext()) {
 								if (!iterator.next().isBuyable()) {
@@ -2701,11 +2703,11 @@ public class MarketHandler implements Listener {
 			// adminshop = APBuy.getMarketHandler().getMarketByFile(new
 			// File("plugins/APBuy/Markets/Adminshop.yml"));
 			System.out.println("loading");
-			adminshop = APBuy.database.loadAdminShop();
+			adminshop = new Market("AdminShop", true);
 		} else {
-			adminshop = new Market(null, "AdminShop");
+			adminshop = new Market("AdminShop", false);
 			System.out.println("creating");
-			adminshop.saveTotal();
+			adminshop.saveMarketInfos();
 		}
 	}
 

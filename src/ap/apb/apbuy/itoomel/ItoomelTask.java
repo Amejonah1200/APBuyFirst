@@ -9,7 +9,6 @@ import org.bukkit.Material;
 
 import ap.apb.APBuy;
 import ap.apb.Utils;
-import ap.apb.apbuy.markets.Category;
 import ap.apb.apbuy.markets.Market;
 import ap.apb.apbuy.markets.MarketItem;
 
@@ -18,22 +17,20 @@ public class ItoomelTask implements Runnable {
 	@Override
 	public void run() {
 		try {
-			List<Market> l = loadAllarkets(APBuy.getMarketHandler().getAllMarketsOnline());
+			List<Market> l = loadAllMarkets(APBuy.getMarketHandler().getAllMarketsOnline());
 			HashMap<Material, List<MarketItem>> allMM = new HashMap<>();
 			List<MarketItem> miss = new ArrayList<>();
 			for (Market m : l) {
-				for (Category c : m.getMarketCategories()) {
-					for (MarketItem mis : c.getCatItems()) {
-						if (mis.isBuyable()) {
-							if (allMM.containsKey(mis.getIs().getType())) {
-								miss = allMM.get(mis.getIs().getType());
-								miss.add(mis);
-								allMM.replace(mis.getIs().getType(), miss);
-							} else {
-								miss = new ArrayList<>();
-								miss.add(mis);
-								allMM.put(mis.getIs().getType(), miss);
-							}
+				for (MarketItem mis : m.getMarketItems()) {
+					if (mis.isBuyable()) {
+						if (allMM.containsKey(mis.getIs().getType())) {
+							miss = allMM.get(mis.getIs().getType());
+							miss.add(mis);
+							allMM.replace(mis.getIs().getType(), miss);
+						} else {
+							miss = new ArrayList<>();
+							miss.add(mis);
+							allMM.put(mis.getIs().getType(), miss);
 						}
 					}
 				}
@@ -48,11 +45,11 @@ public class ItoomelTask implements Runnable {
 		}
 	}
 
-	private List<Market> loadAllarkets(List<UUID> uuids) {
+	private List<Market> loadAllMarkets(List<UUID> uuids) {
 		List<Market> markets = new ArrayList<>();
-		for(UUID uuid : uuids) {
+		for (UUID uuid : uuids) {
 			try {
-				markets.add(APBuy.database.loadByUUID(uuid.toString()));
+				markets.add(new Market(uuid.toString(), true));
 			} catch (Exception e) {
 			}
 		}

@@ -164,4 +164,8 @@ public class Market {
 		return miss;
 	}
 
+	public void removeCategory(String catname) throws MarketException {
+		APBuy.database.removeCategory(this.getMarketOwner(), catname);
+	}
+
 }

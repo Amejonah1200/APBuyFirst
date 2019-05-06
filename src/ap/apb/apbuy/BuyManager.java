@@ -15,7 +15,6 @@ import ap.apb.APBuy;
 import ap.apb.Translator;
 import ap.apb.Utils;
 import ap.apb.apbuy.itoomel.Itoomel;
-import ap.apb.apbuy.markets.Category;
 import ap.apb.apbuy.markets.Market;
 import ap.apb.apbuy.markets.MarketException;
 import ap.apb.apbuy.markets.MarketItem;
@@ -28,35 +27,30 @@ public class BuyManager {
 	private String marketsOwner;
 	private long wantToBuy;
 	private Player buyer;
-	private Category categoryOfMarket;
 
 	private boolean thenInItoomel;
 	private String[] s = null;
 
-	public BuyManager(MarketItem marketItem, String market, long wantToBuy, Player buyer, Category categoryOfMarket) {
+	public BuyManager(MarketItem marketItem, String market, long wantToBuy, Player buyer) {
 		this.marketItem = marketItem;
 		this.marketsOwner = market;
 		this.wantToBuy = 1;
 		this.buyer = buyer;
-		this.categoryOfMarket = categoryOfMarket;
 	}
 
-	public BuyManager(MarketItem marketItem, String market, long wantToBuy, Player buyer, Category categoryOfMarket,
-			String[] mv) {
+	public BuyManager(MarketItem marketItem, String market, long wantToBuy, Player buyer, String[] mv) {
 		this.marketItem = marketItem;
 		this.marketsOwner = market;
 		this.wantToBuy = 1;
 		this.buyer = buyer;
-		this.categoryOfMarket = categoryOfMarket;
 		this.s = mv;
 	}
 
-	public BuyManager(MarketItem marketItem, String market, Player buyer, Category categoryOfMarket) {
+	public BuyManager(MarketItem marketItem, String market, Player buyer) {
 		this.marketItem = marketItem;
 		this.marketsOwner = market;
 		this.wantToBuy = 0;
 		this.buyer = buyer;
-		this.categoryOfMarket = categoryOfMarket;
 	}
 
 	public long getWantToBuy() {
@@ -79,17 +73,14 @@ public class BuyManager {
 		return this.buyer;
 	}
 
-	public Category getCategoryOfMarket() {
-		return this.categoryOfMarket;
-	}
-
 	public static boolean openBuyManager(MarketItem marketItem, String market, long wantToBuy, Player buyer,
-			Category categoryOfMarket, boolean thenInItoomel, String[] mv) {
-		try {
-			if (!APBuy.getMarketHandler().getMarketByUUID(market).isMarketOpen()) {
+			boolean thenInItoomel, String[] mv) {
+		if (APBuy.database.hasPlayerMarketByUUID(market)) {
+			if (!APBuy.database.getMarketInfos(market).isOpen()) {
 				buyer.sendMessage(Translator.translate("buymanager.marketclose"));
+				return false;
 			}
-		} catch (MarketException me) {
+		} else {
 			buyer.sendMessage(Translator.translate("buymanager.nomarket"));
 			return false;
 		}
@@ -105,7 +96,7 @@ public class BuyManager {
 			buyer.sendMessage(Translator.translate("buymanager.sold"));
 			return false;
 		}
-		BuyManager bm = new BuyManager(marketItem, market, wantToBuy, buyer, categoryOfMarket, mv);
+		BuyManager bm = new BuyManager(marketItem, market, wantToBuy, buyer, mv);
 		bm.thenInItoomel = thenInItoomel;
 		if (isBuying(buyer)) {
 			BuyManager bm1 = getBMbyPlayer(buyer);
@@ -174,7 +165,7 @@ public class BuyManager {
 			long ammount = this.wantToBuy;
 			switch (slot) {
 			case 50:
-				Market m = APBuy.getMarketHandler().getMarketByUUID(this.getMarket());
+				Market m = new Market(this.getMarket(), true);
 				if (APBuy.ecohandler.has(this.getBuyer(), this.deductPrice())) {
 					if (m == null) {
 						this.getBuyer().sendMessage(Translator.translate("buymanager.nomarket"));
@@ -188,7 +179,7 @@ public class BuyManager {
 									this.getBuyer());
 						}
 						return;
-					} else if (!m.isMarketOpen()) {
+					} else if (!m.isOpen()) {
 						this.getBuyer().sendMessage(Translator.translate("buymanager.marketclose"));
 						this.cancel();
 						if (this.thenInItoomel) {
@@ -464,9 +455,5 @@ public class BuyManager {
 
 	public void setMarket(String market) {
 		this.marketsOwner = market;
-	}
-
-	public void setCategoryOfMarket(Category categoryOfMarket) {
-		this.categoryOfMarket = categoryOfMarket;
 	}
 }
