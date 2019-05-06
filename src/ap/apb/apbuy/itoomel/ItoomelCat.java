@@ -43,7 +43,6 @@ public abstract class ItoomelCat {
 	public void setCatMat(Material catItem) {
 		this.catMat = catItem;
 	}
-	
 
 	public HashMap<Material, Short[]> getCatMats() {
 		return this.catMats;
