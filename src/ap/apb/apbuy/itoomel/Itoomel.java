@@ -24,7 +24,6 @@ import ap.apb.apbuy.BuyManager;
 import ap.apb.apbuy.markets.Market;
 import ap.apb.apbuy.markets.MarketException;
 import ap.apb.apbuy.markets.MarketItem;
-import ap.apb.apbuy.markets.MarketException.ErrorCause;
 
 public class Itoomel implements Listener {
 
@@ -40,7 +39,6 @@ public class Itoomel implements Listener {
 			if (Itoomel.onItoomel.containsKey(p)) {
 				e.setCancelled(true);
 				String menu = String.valueOf(Itoomel.onItoomel.get(p)[0]);
-				System.out.println(menu);
 				Material type = (Material) Itoomel.onItoomel.get(p)[1];
 				if (menu.equalsIgnoreCase("Main")) {
 					if ((10 <= e.getSlot() && e.getSlot() <= 16) || (19 <= e.getSlot() && e.getSlot() <= 25)
@@ -482,16 +480,7 @@ public class Itoomel implements Listener {
 						// - Getting all Markets to display
 						MainInv.setItem(4, new ItemStack(type).clone());
 						List<MarketItem> allMarket = new ArrayList<>();
-						try {
-							allMarket = APBuy.getMarketHandler().getMarketByUUID(menu.replaceFirst("Market:", ""))
-									.getMISsByTypeRest(type);
-						} catch (MarketException e) {
-							if (e.getErrorCause() == ErrorCause.NOTFOUND) {
-								p.sendMessage("§cDieser Market wurde nicht gefunden! (Error)");
-								APBuy.getMarketHandler().removeFromAll(p);
-								p.closeInventory();
-							}
-						}
+						allMarket = new Market(menu.replaceFirst("Market:", ""), false).getMISsByTypeRest(type);
 						if (allMarket.size() == 0) {
 							p.closeInventory();
 							openItoomel("search", p, type, page);
@@ -582,16 +571,8 @@ public class Itoomel implements Listener {
 						// - Getting all Markets to display
 						MainInv.setItem(4, new AIS(new ItemStack(type).clone()).setDamage((short) mode).toIS());
 						List<MarketItem> allMarket = new ArrayList<>();
-						try {
-							allMarket = APBuy.getMarketHandler().getMarketByUUID(menu.replaceFirst("SubMarket:", ""))
-									.getMISsByTypeRestSubID(type, mode);
-						} catch (MarketException e) {
-							if (e.getErrorCause() == ErrorCause.NOTFOUND) {
-								p.sendMessage("§cDieser Market wurde nicht gefunden! (Error)");
-								APBuy.getMarketHandler().removeFromAll(p);
-								p.closeInventory();
-							}
-						}
+						allMarket = new Market(menu.replaceFirst("SubMarket:", ""), false).getMISsByTypeRestSubID(type,
+								mode);
 						if (allMarket.size() == 0) {
 							p.closeInventory();
 							openItoomel("search", p, type, page);

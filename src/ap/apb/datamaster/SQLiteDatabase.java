@@ -29,6 +29,8 @@ public class SQLiteDatabase extends SQLDatabase {
 							+ "devise varchar(64), "
 							+ "sales BIGINT, "
 							+ "solditems BIGINT, "
+							+ "material varchar(25) NOT NULL, "
+							+ "subid TINYINT, "
 							+ "PRIMARY KEY(owner)) ;")
 					.execute();
 			connection
@@ -36,9 +38,9 @@ public class SQLiteDatabase extends SQLDatabase {
 							"CREATE TABLE IF NOT EXISTS APBuy_Categories ("
 							+ "owner VARCHAR(36) NOT NULL, "
 							+ "name VARCHAR(40) NOT NULL, "
-							+ "desc VARCHAR(40), "
+							+ "descripstion VARCHAR(40), "
 							+ "material varchar(25) NOT NULL, "
-							+ "subid TINYINT,  "
+							+ "subid TINYINT, "
 							+ "PRIMARY KEY(owner, name));")
 					.execute();
 			connection

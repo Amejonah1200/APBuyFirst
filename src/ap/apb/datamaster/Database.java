@@ -46,8 +46,6 @@ public abstract interface Database {
 
 	public void updateList();
 
-	public List<UUID> getTopMarketsUUIDs(int top);
-
 	public boolean hasCategoryInfos(String owner, String catname);
 
 	public boolean hasMarketItem(String owner, ItemStack is);

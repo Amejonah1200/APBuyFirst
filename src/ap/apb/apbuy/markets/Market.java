@@ -219,4 +219,30 @@ public class Market {
 		return i;
 	}
 
+	public List<MarketItem> getMISsByTypeRest(Material type) {
+		List<MarketItem> miss = new ArrayList<>();
+		miss.addAll(this.getMarketItemsByMat(type));
+		Iterator<MarketItem> iterator = miss.iterator();
+		while (iterator.hasNext()) {
+			if (!iterator.next().isBuyable()) {
+				iterator.remove();
+			}
+		}
+		return miss;
+	}
+
+	public List<MarketItem> getMISsByTypeRestSubID(Material type, int subid) {
+		List<MarketItem> miss = new ArrayList<>();
+		miss.addAll(this.getMarketItemsByMat(type));
+		Iterator<MarketItem> iterator = miss.iterator();
+		MarketItem mis = null;
+		while (iterator.hasNext()) {
+			mis = iterator.next();
+			if ((!mis.isBuyable()) || (mis.getIs().getDurability() != subid)) {
+				iterator.remove();
+			}
+		}
+		return miss;
+	}
+
 }

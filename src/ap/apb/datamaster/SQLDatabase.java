@@ -10,7 +10,10 @@ import java.util.UUID;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
+import ap.apb.Utils;
 import ap.apb.apbuy.markets.CategoryInfos;
 import ap.apb.apbuy.markets.MarketException;
 import ap.apb.apbuy.markets.MarketInfos;
@@ -109,9 +112,10 @@ public abstract class SQLDatabase implements Database {
 			throws MarketException {
 		try {
 			connection
-					.prepareStatement("REPLACE INTO APBuy_Markets (owner, open, name, devise, sales, solditems) VALUES "
-							+ "('" + owner + "', '" + (open ? 1 : 0) + "', '" + name + "', '" + devise + "', " + sales
-							+ ", " + solditems + ");")
+					.prepareStatement(
+							"REPLACE INTO APBuy_Markets (owner, open, name, devise, sales, solditems, material , subid ) VALUES "
+									+ "('" + owner + "', '" + (open ? 1 : 0) + "', '" + name + "', '" + devise + "', "
+									+ sales + ", " + solditems + ", '" + Material.CHEST.toString() + "', " + 0 + ");")
 					.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -122,8 +126,9 @@ public abstract class SQLDatabase implements Database {
 	public void saveCategoryInfos(String owner, String name, String desc, Material material, short subid)
 			throws MarketException {
 		try {
-			connection.prepareStatement("REPLACE INTO APBuy_Categories (owner, name, desc, material, subid) VALUES ('"
-					+ owner + "', '" + name + "', '" + desc + "', '" + material.toString() + "', " + subid + ");")
+			connection.prepareStatement(
+					"REPLACE INTO APBuy_Categories (owner, name, descripstion, material, subid) VALUES ('" + owner
+							+ "', '" + name + "', '" + desc + "', '" + material.toString() + "', " + subid + ");")
 					.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -175,7 +180,8 @@ public abstract class SQLDatabase implements Database {
 	public List<UUID> loadAllOnlineMarkets() throws MarketException {
 		List<UUID> uuids = new ArrayList<>();
 		try {
-			ResultSet set = connection.prepareStatement("SELECT owner FROM APBuy_Markets WHERE open = '1'").executeQuery();
+			ResultSet set = connection.prepareStatement("SELECT owner FROM APBuy_Markets WHERE open = '1'")
+					.executeQuery();
 			while (set.next()) {
 				if (set.getString("owner") != "AdminShop") {
 					uuids.add(UUID.fromString(set.getString("owner")));
@@ -225,43 +231,87 @@ public abstract class SQLDatabase implements Database {
 		}
 		return false;
 	}
-	
-
 
 	@Override
-	public MarketItem getMarketItemByIS(String owner, ItemStack is) {
-		// TODO Auto-generated method stub
+	public MarketItem getMarketItemByIS(String owner, ItemStack itemstack) {
+		try {
+			ResultSet set = connection.prepareStatement("SELECT * FROM APBuy_MItems WHERE owner = '" + owner
+					+ "' AND itemstack = '" + new JSONObject(itemstack.serialize()).toJSONString() + "';")
+					.executeQuery();
+			return new MarketItem(itemstack, owner, set.getInt("price"), set.getLong("amount"),
+					set.getInt("sellamount"), set.getLong("solditems"), set.getString("category"));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 
 	@Override
 	public MarketInfos getMarketInfos(String owner) {
-		// TODO Auto-generated method stub
+		try {
+			ResultSet set = connection.prepareStatement("SELECT * FROM APBuy_Markets WHERE owner = '" + owner + "';")
+					.executeQuery();
+			// owner, open, name, devise, sales, solditems, material , subid
+			return new MarketInfos(owner, set.getString("name"), set.getString("devise"),
+					set.getString("open").equalsIgnoreCase("1"), set.getLong("solditems"), set.getLong("sales"));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 
 	@Override
 	public CategoryInfos getCategoryInfos(String owner, String catname) {
-		// TODO Auto-generated method stub
+		// owner, name, desc, material, subid
+		try {
+			ResultSet set = connection.prepareStatement(
+					"SELECT * FROM APBuy_Categories WHERE owner = '" + owner + "' AND name = '" + catname + "';;")
+					.executeQuery();
+			return new CategoryInfos(owner, catname, Material.valueOf(set.getString("material")), set.getShort("subid"),
+					set.getString("descripstion"));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 
 	@Override
 	public List<MarketItem> getMarketItemsFromMarket(String owner) {
-		// TODO Auto-generated method stub
-		return null;
+		List<MarketItem> miss = new ArrayList<>();
+		try {
+			ResultSet set = connection.prepareStatement("SELECT * FROM APBuy_MItems WHERE owner = '" + owner + "';")
+					.executeQuery();
+			while (set.next()) {
+				try {
+					miss.add(new MarketItem(
+							ItemStack.deserialize(
+									Utils.jsonToMap((JSONObject) new JSONParser().parse(set.getString("itemstack")))),
+							owner, set.getInt("price"), set.getLong("amount"), set.getInt("sellamount"),
+							set.getLong("solditems"), set.getString("category")));
+				} catch (ParseException e) {
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return miss;
 	}
 
 	@Override
 	public List<CategoryInfos> getAllCategoryInfosFromMarket(String owner) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<UUID> getTopMarketsUUIDs(int top) {
-		// TODO Auto-generated method stub
-		return null;
+		List<CategoryInfos> catinfoss = new ArrayList<>();
+		try {
+			ResultSet set = connection.prepareStatement("SELECT * FROM APBuy_MItems WHERE owner = '" + owner + "';")
+					.executeQuery();
+			while (set.next()) {
+				catinfoss.add(
+						new CategoryInfos(owner, set.getString("name"), Material.valueOf(set.getString("material")),
+								set.getShort("subid"), set.getString("descripstion")));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return catinfoss;
 	}
 
 }

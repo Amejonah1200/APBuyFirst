@@ -1,6 +1,7 @@
 package ap.apb.apbuy.markets;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -665,7 +666,7 @@ public class MarketHandler implements Listener {
 									updateLists();
 								}
 							}
-							List<UUID> uuids = APBuy.database.getTopMarketsUUIDs(-1);
+							List<UUID> uuids = getTopMarkets();
 							// - Getting all Markets to display
 							int size = uuids.size();
 							int pages = ((size - (size % 28)) / 28);
@@ -737,6 +738,21 @@ public class MarketHandler implements Listener {
 			p.sendMessage(Translator.translate("dev.error"));
 			p.sendMessage("§cError Code: " + Utils.addToFix(e));
 		}
+	}
+
+	public List<UUID> getTopMarkets() throws MarketException {
+		List<UUID> uuids = APBuy.database.loadAllOnlineMarkets();
+		uuids.sort(new Comparator<UUID>() {
+			@Override
+			public int compare(UUID o1, UUID o2) {
+				try {
+					return compareByUUID(o1.toString(), o2.toString());
+				} catch (MarketException e) {
+					return 0;
+				}
+			}
+		});
+		return null;
 	}
 
 	public void removeFromAll(Player p) {
@@ -1211,11 +1227,11 @@ public class MarketHandler implements Listener {
 						break;
 					case 16:
 						if (e.getCurrentItem().getType() != Material.BARRIER) {
-							if (APBuy.tagger.hasTag("Market", e.getCurrentItem())) {
-								PMLoc.remove(p);
-								openMarketVisualiserToPlayer("Main",
-										APBuy.database.getTopMarketsUUIDs(1).get(0).toString(), p);
-							}
+//							if (APBuy.tagger.hasTag("Market", e.getCurrentItem())) {
+//								PMLoc.remove(p);
+//								openMarketVisualiserToPlayer("Main",
+//										APBuy.database.getTopMarketsUUIDs(1).get(0).toString(), p);
+//							}
 						} else {
 							// if(BanManager.isNowBanned(p)) {
 							// BanManager.getBanByPlayer(p).sayMessage(p);

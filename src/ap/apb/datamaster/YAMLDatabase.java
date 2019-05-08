@@ -174,19 +174,19 @@ public class YAMLDatabase implements Database {
 		}
 	}
 
-	@Override
-	public List<UUID> getTopMarketsUUIDs(int top) {
-		List<UUID> uuids = new ArrayList<>();
-		int i = 0;
-		for (String s : YamlConfiguration.loadConfiguration(APBuy.plugin.getPlayerMarketStats())
-				.getStringList("TopMarkets")) {
-			if ((i < top) || (top == -1)) {
-				uuids.add(UUID.fromString(s.replaceFirst(Pattern.quote(".yml"), "")));
-				i++;
-			}
-		}
-		return uuids;
-	}
+//	@Override
+//	public List<UUID> getTopMarketsUUIDs(int top) {
+//		List<UUID> uuids = new ArrayList<>();
+//		int i = 0;
+//		for (String s : YamlConfiguration.loadConfiguration(APBuy.plugin.getPlayerMarketStats())
+//				.getStringList("TopMarkets")) {
+//			if ((i < top) || (top == -1)) {
+//				uuids.add(UUID.fromString(s.replaceFirst(Pattern.quote(".yml"), "")));
+//				i++;
+//			}
+//		}
+//		return uuids;
+//	}
 
 	// @Override
 	// public boolean adminShopExist() {
