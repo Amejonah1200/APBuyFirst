@@ -198,7 +198,7 @@ public abstract class SQLDatabase implements Database {
 		try {
 			return connection.prepareStatement(
 					"SELECT * FROM APBuy_Categories WHERE owner = '" + owner + "' AND name = '" + catname + "';")
-					.executeQuery().last();
+					.executeQuery().getRow() == 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -210,7 +210,7 @@ public abstract class SQLDatabase implements Database {
 		try {
 			return connection.prepareStatement("SELECT * FROM APBuy_MItems WHERE owner = '" + owner
 					+ "' AND itemstack = '" + new JSONObject(itemstack.serialize()).toJSONString() + "';")
-					.executeQuery().last();
+					.executeQuery().getRow() == 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -225,7 +225,7 @@ public abstract class SQLDatabase implements Database {
 	public boolean hasPlayerMarketByUUID(String uuid) {
 		try {
 			return connection.prepareStatement("SELECT * FROM APBuy_Markets WHERE owner = '" + uuid + "';")
-					.executeQuery().last();
+					.executeQuery().getRow() == 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
