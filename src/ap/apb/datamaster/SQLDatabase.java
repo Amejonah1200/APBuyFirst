@@ -15,6 +15,7 @@ import org.json.simple.parser.ParseException;
 
 import ap.apb.Utils;
 import ap.apb.apbuy.markets.CategoryInfos;
+import ap.apb.apbuy.markets.Market;
 import ap.apb.apbuy.markets.MarketException;
 import ap.apb.apbuy.markets.MarketInfos;
 import ap.apb.apbuy.markets.MarketItem;
@@ -251,6 +252,14 @@ public abstract class SQLDatabase implements Database {
 		try {
 			ResultSet set = connection.prepareStatement("SELECT * FROM APBuy_Markets WHERE owner = '" + owner + "';")
 					.executeQuery();
+			if (set.getRow() == 0) {
+				try {
+					new Market(owner, false).saveMarketInfos();
+				} catch (MarketException e) {
+				}
+				set = connection.prepareStatement("SELECT * FROM APBuy_Markets WHERE owner = '" + owner + "';")
+						.executeQuery();
+			}
 			// owner, open, name, devise, sales, solditems, material , subid
 			return new MarketInfos(owner, set.getString("name"), set.getString("devise"),
 					set.getString("open").equalsIgnoreCase("1"), set.getLong("solditems"), set.getLong("sales"));

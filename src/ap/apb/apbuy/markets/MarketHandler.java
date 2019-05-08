@@ -752,7 +752,7 @@ public class MarketHandler implements Listener {
 				}
 			}
 		});
-		return null;
+		return uuids;
 	}
 
 	public void removeFromAll(Player p) {
@@ -1263,6 +1263,7 @@ public class MarketHandler implements Listener {
 					case 10:
 						MarketInfos m = APBuy.database.getMarketInfos(p.getUniqueId().toString());
 						m.setOpen(!m.isOpen());
+						m.save();
 						this.openInvToP("MyMarket:Main", p);
 						reopenMarketToWhoSee(p.getUniqueId().toString());
 						break;

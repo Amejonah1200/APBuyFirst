@@ -14,7 +14,7 @@ public class CategoryInfos {
 	private short subid;
 	private String desc;
 	private String owner;
-	
+
 	public CategoryInfos(String owner, String name, Material mat, short subid, String desc) {
 		this.name = name;
 		this.mat = mat;
@@ -22,7 +22,7 @@ public class CategoryInfos {
 		this.desc = desc;
 		this.owner = owner;
 	}
-	
+
 	public CategoryInfos(String owner) {
 		this.mat = Material.CHEST;
 		this.owner = owner;
@@ -35,7 +35,7 @@ public class CategoryInfos {
 	public String getOwner() {
 		return this.owner;
 	}
-	
+
 	public Material getMat() {
 		return this.mat;
 	}
@@ -59,20 +59,22 @@ public class CategoryInfos {
 	public void setDesc(String desc) {
 		this.desc = desc;
 	}
-	
+
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	public void save() throws MarketException {
 		APBuy.database.saveCategoryInfos(owner, name, desc, mat, subid);
 	}
 
 	public AIS getAIS() {
-		return new AIS(this.mat).setName(this.name == null ? "Preview" : this.name).addLineToLore("")
-				.addToLore(
-						Utils.createListFromStringToWidth(ChatColor.translateAlternateColorCodes('&', this.desc), 50))
-				.setDamage(this.subid);
+		AIS ais = new AIS(this.mat).setName(this.name == null ? "Preview" : this.name).setDamage(this.subid);
+		if (this.desc != null) {
+			ais.addLineToLore("").addToLore(
+					Utils.createListFromStringToWidth(ChatColor.translateAlternateColorCodes('&', this.desc), 50));
+		}
+		return ais;
 	}
-	
+
 }
