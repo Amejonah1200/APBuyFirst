@@ -1,5 +1,7 @@
 package ap.apb.apbuy.markets;
 
+import java.util.UUID;
+
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -15,6 +17,7 @@ public class MarketItem {
 	private long soldItems;
 	private String marketuuid;
 	private String catName;
+	private UUID uuid;
 
 	public MarketItem(String uuid, String catname) {
 		this.is = null;
@@ -24,17 +27,20 @@ public class MarketItem {
 		this.soldItems = 0;
 		this.marketuuid = uuid;
 		this.setCatName(catname);
+		this.setUuid(UUID.randomUUID());
+
 	}
 
-	public MarketItem(ItemStack is, String uuid, int price, long ammount, int sellAmmount, long selledItems,
+	public MarketItem(UUID uuid, ItemStack is, String owner, int price, long ammount, int sellAmmount, long selledItems,
 			String catname) {
 		this.is = is;
 		this.price = price;
 		this.ammount = ammount;
 		this.sellAmmount = sellAmmount;
 		this.soldItems = selledItems;
-		this.marketuuid = uuid;
+		this.marketuuid = owner;
 		this.setCatName(catname);
+		this.setUuid(uuid);
 	}
 
 	public String getCatName() {
@@ -114,13 +120,21 @@ public class MarketItem {
 	}
 
 	public void save() throws MarketException {
-		APBuy.database.saveItemInfos(this.marketuuid, this.catName, this.is, this.price, this.ammount, this.sellAmmount,
-				this.soldItems);
+		APBuy.database.saveItemInfos(this.uuid, this.marketuuid, this.catName, this.is, this.price, this.ammount,
+				this.sellAmmount, this.soldItems);
 	}
 
 	public MarketItem grantAmount(long amount) {
 		this.ammount = this.ammount + amount;
 		return this;
+	}
+
+	public UUID getUuid() {
+		return this.uuid;
+	}
+
+	public void setUuid(UUID uuid) {
+		this.uuid = uuid;
 	}
 
 }

@@ -21,9 +21,9 @@ public abstract interface Database {
 	public void saveCategoryInfos(String owner, String name, String desc, Material material, short subid)
 			throws MarketException;
 
-	public void saveItemInfos(String owner, String category, ItemStack itemstack, int price, long amount,
+	public void saveItemInfos(UUID id, String owner, String category, ItemStack itemstack, int price, long amount,
 			int sellamount, long solditems) throws MarketException;
-	
+
 	public MarketItem getMarketItemByIS(String owner, ItemStack is);
 
 	public MarketInfos getMarketInfos(String owner);
@@ -49,5 +49,9 @@ public abstract interface Database {
 	public boolean hasCategoryInfos(String owner, String catname);
 
 	public boolean hasMarketItem(String owner, ItemStack is);
+
+	public List<UUID> loadAllMarkets() throws MarketException;
+
+	
 
 }

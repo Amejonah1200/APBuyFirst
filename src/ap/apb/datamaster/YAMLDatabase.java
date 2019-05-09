@@ -31,47 +31,59 @@ public class YAMLDatabase implements Database {
 		return "yaml";
 	}
 
-//	@Override
-//	public void saveTotal(Market market) throws MarketException {
-//		FileConfiguration fcg = YamlConfiguration.loadConfiguration(getPlayerMarketFile(market.getMarketOwner()));
-//		if (market.getMarketOwner() != null) {
-//			fcg.set("Owner", market.getMarketOwner());
-//		}
-//		fcg.set("SoldItems", market.getSoldItems());
-//		fcg.set("Sales", market.getSales());
-//		fcg.set("Devise",
-//				market.getDevise() == null ? null : ChatColor.translateAlternateColorCodes('&', market.getDevise()));
-//		fcg.set("Name",
-//				market.getName() == null ? null : ChatColor.translateAlternateColorCodes('&', market.getName()));
-//		fcg.set("IsMarketOpen", market.isMarketOpen());
-//		List<String> l = new ArrayList<>();
-//		for (Category c : market.getMarketCategories()) {
-//			l.add(c.getName().replaceAll("§", "&"));
-//			fcg.set("Category." + c.getName().replaceAll("§", "&") + ".desc", c.getDesc());
-//			fcg.set("Category." + c.getName().replaceAll("§", "&") + ".material", c.getMat().toString());
-//			fcg.set("Category." + c.getName().replaceAll("§", "&") + ".subid", c.getSubid());
-//			fcg.set("Category." + c.getName().replaceAll("§", "&") + ".Items", c.getCatItems().size());
-//			List<MarketItem> iss = new ArrayList<>();
-//			iss.addAll(c.getCatItems());
-//			for (int i = 0; i < iss.size(); i++) {
-//				fcg.set("Category." + c.getName().replaceAll("§", "&") + ".Item." + i + ".is", iss.get(i).getIs());
-//				fcg.set("Category." + c.getName().replaceAll("§", "&") + ".Item." + i + ".price",
-//						iss.get(i).getPrice());
-//				fcg.set("Category." + c.getName().replaceAll("§", "&") + ".Item." + i + ".amount",
-//						iss.get(i).getAmmount());
-//				fcg.set("Category." + c.getName().replaceAll("§", "&") + ".Item." + i + ".sellAmount",
-//						iss.get(i).getSellAmmount());
-//				fcg.set("Category." + c.getName().replaceAll("§", "&") + ".Item." + i + ".soldItems",
-//						iss.get(i).getSoldItems());
-//			}
-//		}
-//		fcg.set("Categorys", l);
-//		try {
-//			fcg.save(getPlayerMarketFile(market.getMarketOwner()));
-//		} catch (IOException e) {
-//		}
-//		APBuy.getMarketHandler().updateLists();
-//	}
+	// @Override
+	// public void saveTotal(Market market) throws MarketException {
+	// FileConfiguration fcg =
+	// YamlConfiguration.loadConfiguration(getPlayerMarketFile(market.getMarketOwner()));
+	// if (market.getMarketOwner() != null) {
+	// fcg.set("Owner", market.getMarketOwner());
+	// }
+	// fcg.set("SoldItems", market.getSoldItems());
+	// fcg.set("Sales", market.getSales());
+	// fcg.set("Devise",
+	// market.getDevise() == null ? null :
+	// ChatColor.translateAlternateColorCodes('&', market.getDevise()));
+	// fcg.set("Name",
+	// market.getName() == null ? null :
+	// ChatColor.translateAlternateColorCodes('&', market.getName()));
+	// fcg.set("IsMarketOpen", market.isMarketOpen());
+	// List<String> l = new ArrayList<>();
+	// for (Category c : market.getMarketCategories()) {
+	// l.add(c.getName().replaceAll("§", "&"));
+	// fcg.set("Category." + c.getName().replaceAll("§", "&") + ".desc",
+	// c.getDesc());
+	// fcg.set("Category." + c.getName().replaceAll("§", "&") + ".material",
+	// c.getMat().toString());
+	// fcg.set("Category." + c.getName().replaceAll("§", "&") + ".subid",
+	// c.getSubid());
+	// fcg.set("Category." + c.getName().replaceAll("§", "&") + ".Items",
+	// c.getCatItems().size());
+	// List<MarketItem> iss = new ArrayList<>();
+	// iss.addAll(c.getCatItems());
+	// for (int i = 0; i < iss.size(); i++) {
+	// fcg.set("Category." + c.getName().replaceAll("§", "&") + ".Item." + i +
+	// ".is", iss.get(i).getIs());
+	// fcg.set("Category." + c.getName().replaceAll("§", "&") + ".Item." + i +
+	// ".price",
+	// iss.get(i).getPrice());
+	// fcg.set("Category." + c.getName().replaceAll("§", "&") + ".Item." + i +
+	// ".amount",
+	// iss.get(i).getAmmount());
+	// fcg.set("Category." + c.getName().replaceAll("§", "&") + ".Item." + i +
+	// ".sellAmount",
+	// iss.get(i).getSellAmmount());
+	// fcg.set("Category." + c.getName().replaceAll("§", "&") + ".Item." + i +
+	// ".soldItems",
+	// iss.get(i).getSoldItems());
+	// }
+	// }
+	// fcg.set("Categorys", l);
+	// try {
+	// fcg.save(getPlayerMarketFile(market.getMarketOwner()));
+	// } catch (IOException e) {
+	// }
+	// APBuy.getMarketHandler().updateLists();
+	// }
 
 	@Override
 	public List<UUID> loadAllOnlineMarkets() {
@@ -174,19 +186,20 @@ public class YAMLDatabase implements Database {
 		}
 	}
 
-//	@Override
-//	public List<UUID> getTopMarketsUUIDs(int top) {
-//		List<UUID> uuids = new ArrayList<>();
-//		int i = 0;
-//		for (String s : YamlConfiguration.loadConfiguration(APBuy.plugin.getPlayerMarketStats())
-//				.getStringList("TopMarkets")) {
-//			if ((i < top) || (top == -1)) {
-//				uuids.add(UUID.fromString(s.replaceFirst(Pattern.quote(".yml"), "")));
-//				i++;
-//			}
-//		}
-//		return uuids;
-//	}
+	// @Override
+	// public List<UUID> getTopMarketsUUIDs(int top) {
+	// List<UUID> uuids = new ArrayList<>();
+	// int i = 0;
+	// for (String s :
+	// YamlConfiguration.loadConfiguration(APBuy.plugin.getPlayerMarketStats())
+	// .getStringList("TopMarkets")) {
+	// if ((i < top) || (top == -1)) {
+	// uuids.add(UUID.fromString(s.replaceFirst(Pattern.quote(".yml"), "")));
+	// i++;
+	// }
+	// }
+	// return uuids;
+	// }
 
 	// @Override
 	// public boolean adminShopExist() {
@@ -220,33 +233,6 @@ public class YAMLDatabase implements Database {
 		fcg.set("Category." + name.replaceAll("§", "&") + ".desc", desc);
 		fcg.set("Category." + name.replaceAll("§", "&") + ".material", material.toString());
 		fcg.set("Category." + name.replaceAll("§", "&") + ".subid", subid);
-		try {
-			fcg.save(new File("plugins/APBuy/Markets/" + owner + ".yml"));
-		} catch (IOException e) {
-			throw new MarketException(ErrorCause.SAVE);
-		}
-	}
-
-	@Override
-	public void saveItemInfos(String owner, String category, ItemStack itemstack, int price, long amount,
-			int sellamount, long solditems) throws MarketException {
-		FileConfiguration fcg = YamlConfiguration
-				.loadConfiguration(new File("plugins/APBuy/Markets/" + owner + ".yml"));
-		int i = -1;
-		for (int i2 = 0; i2 < fcg.getInt("Category." + category.replaceAll("§", "&") + ".Items"); i2++) {
-			if (fcg.getItemStack("Category." + category.replaceAll("§", "&") + ".Item." + i + ".is")
-					.isSimilar(itemstack)) {
-				i = i2;
-				break;
-			}
-		}
-		if (i == -1)
-			return;
-
-		fcg.set("Category." + category.replaceAll("§", "&") + ".Item." + i + ".price", price);
-		fcg.set("Category." + category.replaceAll("§", "&") + ".Item." + i + ".amount", amount);
-		fcg.set("Category." + category.replaceAll("§", "&") + ".Item." + i + ".sellAmount", sellamount);
-		fcg.set("Category." + category.replaceAll("§", "&") + ".Item." + i + ".soldItems", solditems);
 		try {
 			fcg.save(new File("plugins/APBuy/Markets/" + owner + ".yml"));
 		} catch (IOException e) {
@@ -314,6 +300,40 @@ public class YAMLDatabase implements Database {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public List<UUID> loadAllMarkets() throws MarketException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void saveItemInfos(UUID id, String owner, String category, ItemStack itemstack, int price, long amount,
+			int sellamount, long solditems) throws MarketException {
+		FileConfiguration fcg = YamlConfiguration
+				.loadConfiguration(new File("plugins/APBuy/Markets/" + owner + ".yml"));
+		int i = -1;
+		for (int i2 = 0; i2 < fcg.getInt("Category." + category.replaceAll("§", "&") + ".Items"); i2++) {
+			if (fcg.getItemStack("Category." + category.replaceAll("§", "&") + ".Item." + i + ".is")
+					.isSimilar(itemstack)) {
+				i = i2;
+				break;
+			}
+		}
+		if (i == -1)
+			return;
+
+		fcg.set("Category." + category.replaceAll("§", "&") + ".Item." + i + ".price", price);
+		fcg.set("Category." + category.replaceAll("§", "&") + ".Item." + i + ".amount", amount);
+		fcg.set("Category." + category.replaceAll("§", "&") + ".Item." + i + ".sellAmount", sellamount);
+		fcg.set("Category." + category.replaceAll("§", "&") + ".Item." + i + ".soldItems", solditems);
+		fcg.set("Category." + category.replaceAll("§", "&") + ".Item." + i + ".uuid", id.toString());
+		try {
+			fcg.save(new File("plugins/APBuy/Markets/" + owner + ".yml"));
+		} catch (IOException e) {
+			throw new MarketException(ErrorCause.SAVE);
+		}
 	}
 
 }

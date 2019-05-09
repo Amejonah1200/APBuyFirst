@@ -112,6 +112,7 @@ public class APBCmd implements CommandExecutor {
 									if (!MarketHandler.adminshop.isOpen()) {
 										APBuy.getMarketHandler();
 										MarketHandler.adminshop.setOpen(true);
+										MarketHandler.adminshop.saveMarketInfos();
 										p.sendMessage("§7Der AdminShop wurde geöffnet.");
 									} else {
 										p.sendMessage("§7Der AdminShop ist schon geöffnet.");
@@ -121,6 +122,7 @@ public class APBCmd implements CommandExecutor {
 									if (MarketHandler.adminshop.isOpen()) {
 										APBuy.getMarketHandler();
 										MarketHandler.adminshop.setOpen(false);
+										MarketHandler.adminshop.saveMarketInfos();
 										p.sendMessage("§7Der AdminShop wurde geschlossen.");
 									} else {
 										p.sendMessage("§7Der AdminShop ist schon geschlossen.");

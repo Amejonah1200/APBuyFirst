@@ -52,6 +52,7 @@ public class MarketInfos {
 	}
 
 	public void save() throws MarketException {
+		System.out.println("b.b");
 		APBuy.database.saveMarketInfos(marketOwner, open, name, devise, sales, soldItems);
 	}
 
@@ -66,6 +67,7 @@ public class MarketInfos {
 	}
 
 	public MarketInfos setOpen(boolean open) {
+		System.out.println("a.a: " + open);
 		this.open = open;
 		return this;
 	}

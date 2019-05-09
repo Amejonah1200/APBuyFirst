@@ -1261,11 +1261,13 @@ public class MarketHandler implements Listener {
 				} else if (menu == "MyMarket:Main") {
 					switch (e.getSlot()) {
 					case 10:
+						System.out.println("a");
 						MarketInfos m = APBuy.database.getMarketInfos(p.getUniqueId().toString());
 						m.setOpen(!m.isOpen());
 						m.save();
 						this.openInvToP("MyMarket:Main", p);
 						reopenMarketToWhoSee(p.getUniqueId().toString());
+						System.out.println("b");
 						break;
 					case 12:
 						this.openInvToP("MyMarket:Editor:Opened", p);
