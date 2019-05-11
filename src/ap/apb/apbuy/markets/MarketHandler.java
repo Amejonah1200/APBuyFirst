@@ -420,7 +420,7 @@ public class MarketHandler implements Listener {
 												inv1.setItem(10 + i1 * 9 + i2,
 														APBuy.tagger.setNBTTag("Cat",
 																String.valueOf(catinfoss.get(count).getName()),
-																new AIS(catinfoss.get(count).getMat())
+																new AIS(catinfoss.get(count).getAIS().toIS())
 																		.setDamage(catinfoss.get(count).getSubid())
 																		.addLineToLore("")
 																		.addLineToLore(Translator.translate(
@@ -816,11 +816,11 @@ public class MarketHandler implements Listener {
 						List<MarketItem> miss = APBuy.database.getMarketItemsFromMarket(p.getUniqueId().toString());
 						Iterator<MarketItem> iterator = miss.iterator();
 						while (iterator.hasNext()) {
-							if (iterator.next().getCatName() != Cat) {
+							String s = iterator.next().getCatName();
+							if (!s.equals(Cat)) {
 								iterator.remove();
 							}
 						}
-
 						int size = miss.size();
 						int pages = ((size - (size % 28)) / 28);
 						int count = 28 * PMLocPage.get(p);
@@ -1227,11 +1227,13 @@ public class MarketHandler implements Listener {
 						break;
 					case 16:
 						if (e.getCurrentItem().getType() != Material.BARRIER) {
-//							if (APBuy.tagger.hasTag("Market", e.getCurrentItem())) {
-//								PMLoc.remove(p);
-//								openMarketVisualiserToPlayer("Main",
-//										APBuy.database.getTopMarketsUUIDs(1).get(0).toString(), p);
-//							}
+							// if (APBuy.tagger.hasTag("Market",
+							// e.getCurrentItem())) {
+							// PMLoc.remove(p);
+							// openMarketVisualiserToPlayer("Main",
+							// APBuy.database.getTopMarketsUUIDs(1).get(0).toString(),
+							// p);
+							// }
 						} else {
 							// if(BanManager.isNowBanned(p)) {
 							// BanManager.getBanByPlayer(p).sayMessage(p);
@@ -1261,13 +1263,11 @@ public class MarketHandler implements Listener {
 				} else if (menu == "MyMarket:Main") {
 					switch (e.getSlot()) {
 					case 10:
-						System.out.println("a");
 						MarketInfos m = APBuy.database.getMarketInfos(p.getUniqueId().toString());
 						m.setOpen(!m.isOpen());
 						m.save();
 						this.openInvToP("MyMarket:Main", p);
 						reopenMarketToWhoSee(p.getUniqueId().toString());
-						System.out.println("b");
 						break;
 					case 12:
 						this.openInvToP("MyMarket:Editor:Opened", p);
@@ -1460,11 +1460,13 @@ public class MarketHandler implements Listener {
 									APBuy.tagger.getNBTTagString("Market", e.getCurrentItem())
 											.replaceFirst(Pattern.quote(".yml"), ""),
 									p);
+							return;
 						}
 					}
 					if (APBuy.tagger.hasTag("ToPage", e.getCurrentItem())) {
 						PMLocPage.put(p, APBuy.tagger.getNBTTagInt("ToPage", e.getCurrentItem()));
 						this.openInvToP("Markets:Opened", p);
+						return;
 					}
 				} else if (menu.startsWith("MyMarket:ItemEditor:")) {
 					if (menu.startsWith("MyMarket:ItemEditor:Main")) {
@@ -1726,7 +1728,7 @@ public class MarketHandler implements Listener {
 							if (c.getName() != null) {
 								Market m = adminshop;
 								if (m.getCatInfosByName(c.getName()) == null) {
-
+									c.save();
 									creatingCat.remove(p);
 									openMarketVisualiserToPlayer("Cats", "AdminShop", p);
 								} else {
@@ -1918,7 +1920,7 @@ public class MarketHandler implements Listener {
 						}
 						return;
 					} else if (APBuy.tagger.hasTag("Cat", e.getCurrentItem())) {
-						if (onMarketVisualiser.get(p)[1] == "AdminShop") {
+						if (onMarketVisualiser.get(p)[1].equals("AdminShop")) {
 							if (p.hasPermission("apb.mod.adminshop")) {
 								if (e.getClick() == ClickType.CONTROL_DROP) {
 									adminshop.removeCategory(APBuy.tagger.getNBTTagString("Cat", e.getCurrentItem()));
@@ -1928,8 +1930,7 @@ public class MarketHandler implements Listener {
 							}
 						}
 						PMLocPage.put(p, 0);
-						openMarketVisualiserToPlayer("Cat:" + APBuy.tagger.getNBTTagString("Cat", e.getCurrentItem()),
-								((String) onMarketVisualiser.get(p)[1]), p);
+						openMarketVisualiserToPlayer("Cat:" + APBuy.tagger.getNBTTagString("Cat", e.getCurrentItem()), onMarketVisualiser.get(p)[1], p);
 						return;
 					} else if (APBuy.tagger.hasTag("ToBuy", e.getCurrentItem())) {
 						if (onMarketVisualiser.get(p)[1] == "AdminShop") {
@@ -2299,8 +2300,7 @@ public class MarketHandler implements Listener {
 					onMarketVisualiser.remove(p);
 					p.openInventory(MVMainInv);
 
-					onMarketVisualiser.put(p,
-							new String[] { "Main", m.getMarketOwner() == null ? "AdminShop" : m.getMarketOwner() });
+					onMarketVisualiser.put(p, new String[] { "Main", m.getMarketOwner() });
 				} else {
 					Inventory MVMainInv = Bukkit.createInventory(null, 27, "§0§lA§3§lP§r§8Buy - Markets");
 					for (int i = 0; i < 27; i++) {
@@ -2320,16 +2320,13 @@ public class MarketHandler implements Listener {
 					MVMainInv.setItem(4, m.getMarkeAIS().toIS());
 					onMarketVisualiser.remove(p);
 					p.openInventory(MVMainInv);
-					onMarketVisualiser.put(p,
-							new String[] { "Main", m.getMarketOwner() == null ? "AdminShop" : m.getMarketOwner() });
+					onMarketVisualiser.put(p, new String[] { "Main", m.getMarketOwner() });
 				}
 				break;
 			case "Cats":
 				int page = PMLocPage.get(p);
-				Inventory catsInv = Bukkit.createInventory(null, 54,
-						m.getName() != null ? m.getName().equalsIgnoreCase("AdminShop")
-								? "§0§lA§3§lP§r§8Buy - AdminShop" : "§0§lA§3§lP§r§8Buy - Markets"
-								: "§0§lA§3§lP§r§8Buy - Markets");
+				Inventory catsInv = Bukkit.createInventory(null, 54, m.getMarketOwner().equals("AdminShop")
+						? "§0§lA§3§lP§r§8Buy - AdminShop" : "§0§lA§3§lP§r§8Buy - Markets");
 				for (int i = 0; i < 54; i++) {
 					if ((10 <= i && i <= 16) || (19 <= i && i <= 25) || (28 <= i && i <= 34) || (37 <= i && i <= 43)
 							|| (i == 49)) {
@@ -2343,20 +2340,16 @@ public class MarketHandler implements Listener {
 								new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 					}
 				}
-				if (p.hasPermission("apb.mod.adminshop") && (m.getName() != null)) {
-					if (m.getName().equalsIgnoreCase("AdminShop")) {
-						catsInv.setItem(50, APBuy.tagger.setNBTTag("AddCat", true,
-								new AIS(Translator.translate("menu.inv.mymarket.editor.newcat"), 1, Material.CHEST)
-										.toIS()));
-						catsInv.setItem(48,
-								new AIS(Translator.translate("menu.inv.mymarket.editor.delete.title"), 1,
-										Material.CHEST)
-												.addLineToLore("")
-												.addToLore(Utils.createListFromStringToWidth(
-														Translator.translate("menu.inv.mymarket.editor.delete.desc"),
-														40))
-												.toIS());
-					}
+				if (p.hasPermission("apb.mod.adminshop") && (m.getMarketOwner().equals("AdminShop"))) {
+					catsInv.setItem(50,
+							APBuy.tagger.setNBTTag("AddCat", true,
+									new AIS(Translator.translate("menu.inv.mymarket.editor.newcat"), 1, Material.CHEST)
+											.toIS()));
+					catsInv.setItem(48,
+							new AIS(Translator.translate("menu.inv.mymarket.editor.delete.title"), 1, Material.CHEST)
+									.addLineToLore("").addToLore(Utils.createListFromStringToWidth(
+											Translator.translate("menu.inv.mymarket.editor.delete.desc"), 40))
+									.toIS());
 				}
 				catsInv.setItem(31, new AIS(Translator.translate("menu.openerror1"), 1, Material.PAPER)
 						.addLineToLore(Translator.translate("menu.openerror2")).toIS());
@@ -2432,10 +2425,8 @@ public class MarketHandler implements Listener {
 			case "Cat":
 				int page1 = PMLocPage.get(p);
 				CategoryInfos cat = m.getCatInfosByName(s.replaceFirst("Cat:", ""));
-				Inventory catInv = Bukkit.createInventory(null, 54,
-						m.getName() != null ? m.getName().equalsIgnoreCase("AdminShop")
-								? "§0§lA§3§lP§r§8Buy - AdminShop" : "§0§lA§3§lP§r§8Buy - Markets"
-								: "§0§lA§3§lP§r§8Buy - Markets");
+				Inventory catInv = Bukkit.createInventory(null, 54, m.getMarketOwner().equalsIgnoreCase("AdminShop")
+						? "§0§lA§3§lP§r§8Buy - AdminShop" : "§0§lA§3§lP§r§8Buy - Markets");
 				for (int i = 0; i < 54; i++) {
 					if ((10 <= i && i <= 16) || (19 <= i && i <= 25) || (28 <= i && i <= 34) || (37 <= i && i <= 43)
 							|| (i == 49)) {
@@ -2449,11 +2440,9 @@ public class MarketHandler implements Listener {
 								new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 					}
 				}
-				if (p.hasPermission("apb.mod.adminshop") && (m.getName() != null)) {
-					if (m.getName().equalsIgnoreCase("AdminShop")) {
-						catInv.setItem(50, APBuy.tagger.setNBTTag("AddItem", true,
-								new AIS(Translator.translate("menu.inv.iteminput.additem"), 1, Material.CHEST).toIS()));
-					}
+				if (p.hasPermission("apb.mod.adminshop") && m.getMarketOwner().equals("AdminShop")) {
+					catInv.setItem(50, APBuy.tagger.setNBTTag("AddItem", true,
+							new AIS(Translator.translate("menu.inv.iteminput.additem"), 1, Material.CHEST).toIS()));
 				}
 				catInv.setItem(31, new AIS(Translator.translate("menu.openerror1"), 1, Material.PAPER)
 						.addLineToLore(Translator.translate("menu.openerror2")).toIS());
@@ -2523,8 +2512,7 @@ public class MarketHandler implements Listener {
 								catInv.setItem(31, new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 							}
 							p.openInventory(catInv);
-							onMarketVisualiser.put(p, new String[] { "Cat:" + cat.getName(),
-									m.getMarketOwner() == null ? "AdminShop" : m.getMarketOwner() });
+							onMarketVisualiser.put(p, new String[] { "Cat:" + cat.getName(), m.getMarketOwner() });
 							PMLocPage.put(p, page1);
 						} catch (Exception e1) {
 							e1.printStackTrace();
@@ -2727,11 +2715,9 @@ public class MarketHandler implements Listener {
 		if (hasMarketByUUID("AdminShop")) {
 			// adminshop = APBuy.getMarketHandler().getMarketByFile(new
 			// File("plugins/APBuy/Markets/Adminshop.yml"));
-			System.out.println("loading");
 			adminshop = new Market("AdminShop", true);
 		} else {
 			adminshop = new Market("AdminShop", false);
-			System.out.println("creating");
 			adminshop.saveMarketInfos();
 		}
 	}

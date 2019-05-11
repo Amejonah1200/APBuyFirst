@@ -41,7 +41,7 @@ public class Market {
 
 	public CategoryInfos getCatInfosByName(String catname) {
 		for (CategoryInfos ci : this.getCatsInfos()) {
-			if (ci.getName() == catname) {
+			if (ci.getName().equals(catname)) {
 				return ci;
 			}
 		}
@@ -157,7 +157,7 @@ public class Market {
 		List<MarketItem> miss = this.getMarketItems();
 		Iterator<MarketItem> iterator = miss.iterator();
 		while (iterator.hasNext()) {
-			if (iterator.next().getCatName() != catname) {
+			if (!iterator.next().getCatName().equals(catname)) {
 				iterator.remove();
 			}
 		}
@@ -193,7 +193,13 @@ public class Market {
 	}
 
 	public long removeItem(ItemStack is, long l) throws MarketException {
-		APBuy.database.getMarketItemByIS(this.getMarketOwner(), is).grantAmount(-l).save();
+		APBuy.
+		database.
+		getMarketItemByIS(
+				this.getMarketOwner()
+				, is)
+		.grantAmount(-l)
+		.save();
 		return APBuy.database.getMarketItemByIS(this.getMarketOwner(), is).getAmmount();
 	}
 

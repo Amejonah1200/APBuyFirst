@@ -2,26 +2,26 @@ package ap.apb;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Constructor;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -433,50 +433,151 @@ public class Utils {
 		return l;
 	}
 
-	public static Map<String, Object> jsonToMap(JSONObject json) {
-		Map<String, Object> retMap = new HashMap<String, Object>();
-
-		if (json != null) {
-			retMap = toMap(json);
+	@SuppressWarnings({ "rawtypes", "unchecked", "restriction" })
+	public static String serializeItemStack(ItemStack paramItemStack) {
+		if (paramItemStack == null) {
+			return "null";
 		}
-		return retMap;
+		ByteArrayOutputStream localByteArrayOutputStream = null;
+		try {
+			Class localClass = getNMSClass("NBTTagCompound");
+			Constructor localConstructor = localClass.getConstructor(new Class[0]);
+			Object localObject1 = localConstructor.newInstance(new Object[0]);
+			Object localObject2 = getOBClass("inventory.CraftItemStack")
+					.getMethod("asNMSCopy", new Class[] { ItemStack.class })
+					.invoke(null, new Object[] { paramItemStack });
+			getNMSClass("ItemStack").getMethod("save", new Class[] { localClass }).invoke(localObject2,
+					new Object[] { localObject1 });
+			localByteArrayOutputStream = new ByteArrayOutputStream();
+			getNMSClass("NBTCompressedStreamTools")
+					.getMethod("a", new Class[] { localClass, java.io.OutputStream.class })
+					.invoke(null, new Object[] { localObject1, localByteArrayOutputStream });
+		} catch (Exception localException) {
+			localException.printStackTrace();
+		}
+		return com.sun.org.apache.xml.internal.security.utils.Base64.encode(localByteArrayOutputStream.toByteArray());
 	}
 
-	public static Map<String, Object> toMap(JSONObject object) {
-		Map<String, Object> map = new HashMap<String, Object>();
-
-		@SuppressWarnings("unchecked")
-		Iterator<String> keysItr = object.keySet().iterator();
-		while (keysItr.hasNext()) {
-			String key = keysItr.next();
-			Object value = object.get(key);
-
-			if (value instanceof JSONArray) {
-				value = toList((JSONArray) value);
-			}
-
-			else if (value instanceof JSONObject) {
-				value = toMap((JSONObject) value);
-			}
-			map.put(key, value);
+	@SuppressWarnings({ "rawtypes", "unchecked", "restriction" })
+	public static ItemStack deserializeItemStack(String paramString) {
+		if (paramString.equals("null")) {
+			return null;
 		}
-		return map;
+		java.io.ByteArrayInputStream localByteArrayInputStream = null;
+		try {
+			localByteArrayInputStream = new java.io.ByteArrayInputStream(
+					com.sun.org.apache.xml.internal.security.utils.Base64.decode(paramString));
+		} catch (com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException localBase64DecodingException) {
+		}
+
+		Class localClass1 = getNMSClass("NBTTagCompound");
+		Class localClass2 = getNMSClass("ItemStack");
+		Object localObject1 = null;
+		ItemStack localItemStack = null;
+		Object localObject2 = null;
+		try {
+			localObject1 = getNMSClass("NBTCompressedStreamTools")
+					.getMethod("a", new Class[] { java.io.InputStream.class })
+					.invoke(null, new Object[] { localByteArrayInputStream });
+			if ((getNMSVersion() == 1.11D) || (getNMSVersion() == 1.12D) || (getNMSVersion() == 1.13D)
+					|| (getNMSVersion() == 1.14D) || (getNMSVersion() == 1.15D)) {
+				Constructor localConstructor = localClass2.getConstructor(new Class[] { localClass1 });
+				localObject2 = localConstructor.newInstance(new Object[] { localObject1 });
+			} else {
+				localObject2 = localClass2.getMethod("createStack", new Class[] { localClass1 }).invoke(null,
+						new Object[] { localObject1 });
+			}
+
+			localItemStack = (ItemStack) getOBClass("inventory.CraftItemStack")
+					.getMethod("asBukkitCopy", new Class[] { localClass2 }).invoke(null, new Object[] { localObject2 });
+		} catch (Exception localException) {
+			localException.printStackTrace();
+		}
+		return localItemStack;
 	}
 
-	public static List<Object> toList(JSONArray array) {
-		List<Object> list = new ArrayList<Object>();
-		for (int i = 0; i < array.size(); i++) {
-			Object value = array.get(i);
-			if (value instanceof JSONArray) {
-				value = toList((JSONArray) value);
-			}
-
-			else if (value instanceof JSONObject) {
-				value = toMap((JSONObject) value);
-			}
-			list.add(value);
+	@SuppressWarnings("rawtypes")
+	public static Class<?> getNMSClass(String paramString) {
+		String str1 = Bukkit.getServer().getClass().getPackage().getName();
+		String str2 = str1.replace(".", ",").split(",")[3];
+		String str3 = "net.minecraft.server." + str2 + "." + paramString;
+		Class localClass = null;
+		try {
+			localClass = Class.forName(str3);
+		} catch (ClassNotFoundException localClassNotFoundException) {
+			localClassNotFoundException.printStackTrace();
+			System.err.println("Unable to find reflection class " + str3 + "!");
 		}
-		return list;
+		return localClass;
 	}
+
+	@SuppressWarnings("rawtypes")
+	public static Class<?> getOBClass(String paramString) {
+		String str1 = Bukkit.getServer().getClass().getPackage().getName();
+		String str2 = str1.replace(".", ",").split(",")[3];
+		String str3 = "org.bukkit.craftbukkit." + str2 + "." + paramString;
+		Class localClass = null;
+		try {
+			localClass = Class.forName(str3);
+		} catch (ClassNotFoundException localClassNotFoundException) {
+			localClassNotFoundException.printStackTrace();
+			System.err.println("Unable to find reflection class " + str3 + "!");
+		}
+		return localClass;
+	}
+
+	public static double getNMSVersion() {
+		String str1 = Bukkit.getServer().getClass().getPackage().getName();
+		String[] arrayOfString = str1.replace(".", ",").split(",")[3].split("_");
+		String str2 = arrayOfString[0].replace("v", "");
+		String str3 = arrayOfString[1];
+		return Double.parseDouble(str2 + "." + str3);
+	}
+
+	// public static Map<String, Object> jsonToMap(JSONObject json) {
+	// Map<String, Object> retMap = new HashMap<String, Object>();
+	//
+	// if (json != null) {
+	// retMap = toMap(json);
+	// }
+	// return retMap;
+	// }
+	//
+	// public static Map<String, Object> toMap(JSONObject object) {
+	// Map<String, Object> map = new HashMap<String, Object>();
+	//
+	// @SuppressWarnings("unchecked")
+	// Iterator<String> keysItr = object.keySet().iterator();
+	// while (keysItr.hasNext()) {
+	// String key = keysItr.next();
+	// Object value = object.get(key);
+	//
+	// if (value instanceof JSONArray) {
+	// value = toList((JSONArray) value);
+	// }
+	//
+	// else if (value instanceof JSONObject) {
+	// value = toMap((JSONObject) value);
+	// }
+	// map.put(key, value);
+	// }
+	// return map;
+	// }
+	//
+	// public static List<Object> toList(JSONArray array) {
+	// List<Object> list = new ArrayList<Object>();
+	// for (int i = 0; i < array.size(); i++) {
+	// Object value = array.get(i);
+	// if (value instanceof JSONArray) {
+	// value = toList((JSONArray) value);
+	// }
+	//
+	// else if (value instanceof JSONObject) {
+	// value = toMap((JSONObject) value);
+	// }
+	// list.add(value);
+	// }
+	// return list;
+	// }
 
 }

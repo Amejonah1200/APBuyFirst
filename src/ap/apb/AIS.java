@@ -106,14 +106,14 @@ public class AIS {
 			return this;
 		}
 	}
-	
+
 	public AIS setNBTTag(String key, Object obj) {
 		this.is.setItemMeta(this.meta);
 		this.is = APBuy.tagger.setNBTTag(key, obj, this.is);
 		this.meta = this.is.getItemMeta();
 		return this;
 	}
-	
+
 	public AIS removeNBTTag(String key) {
 		this.is.setItemMeta(this.meta);
 		this.is = APBuy.tagger.removeNBTTag(key, this.is);
@@ -136,8 +136,8 @@ public class AIS {
 	}
 
 	public AIS removeLatestLore(int i) {
-		List<String> s = this.meta.getLore();
-		if(i >= s.size()) {
+		List<String> s = this.meta.getLore() == null ? new ArrayList<>() : this.meta.getLore();
+		if (i >= s.size()) {
 			return this.setLore(null);
 		}
 		int b = s.size() - 1;

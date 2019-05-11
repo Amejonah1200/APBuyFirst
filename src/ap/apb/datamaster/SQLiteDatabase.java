@@ -29,7 +29,7 @@ public class SQLiteDatabase extends SQLDatabase {
 							+ "name VARCHAR(32), " + "devise varchar(64), " + "sales BIGINT, " + "solditems BIGINT, "
 							+ "material varchar(25) NOT NULL, " + "subid TINYINT, " + "PRIMARY KEY(owner)) ;")
 					.execute();
-			connection.prepareStatement("CREATE TABLE IF NOT EXISTS APBuy_Categories (" + "owner VARCHAR(36) NOT NULL, "
+			connection.prepareStatement("CREATE TABLE IF NOT EXISTS APBuy_Categorys (" + "owner VARCHAR(36) NOT NULL, "
 					+ "name VARCHAR(40) NOT NULL, " + "description VARCHAR(40), " + "material varchar(25) NOT NULL, "
 					+ "subid TINYINT, " + "PRIMARY KEY(owner, name));").execute();
 			connection.prepareStatement("CREATE TABLE IF NOT EXISTS APBuy_MItems (id VARCHAR(36), " + "owner VARCHAR(36) NOT NULL, "
