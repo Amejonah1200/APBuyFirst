@@ -1189,7 +1189,7 @@ public class Itoomel implements Listener {
 		if (itoomelStandard.containsKey(mis.getIs().getType())) {
 			l.addAll(itoomelStandard.get(mis.getIs().getType()));
 			for (int i = 0; i < l.size(); i++) {
-				if (l.get(i).getIs().equals(mis.getIs())) {
+				if (l.get(i).getIs().isSimilar(mis.getIs())) {
 					if (l.get(i).getMarketuuid().equals(mis.getMarketuuid())) {
 						l.set(i, mis);
 					}

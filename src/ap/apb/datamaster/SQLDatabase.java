@@ -224,9 +224,11 @@ public abstract class SQLDatabase implements Database {
 
 	@Override
 	public boolean hasMarketItem(String owner, ItemStack itemstack) {
+		ItemStack clone = itemstack.clone();
+		clone.setAmount(1);
 		try {
 			return connection.prepareStatement("SELECT * FROM APBuy_MItems WHERE owner = '" + owner
-					+ "' AND itemstack = '" + Utils.serializeItemStack(itemstack) + "';").executeQuery().next();
+					+ "' AND itemstack = '" + Utils.serializeItemStack(clone) + "';").executeQuery().next();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -249,14 +251,17 @@ public abstract class SQLDatabase implements Database {
 	}
 
 	@Override
-	public MarketItem getMarketItemByIS(String owner, ItemStack itemstack) {
+	public MarketItem getMarketItemByIS(String owner, ItemStack is) {
+		ItemStack clone = is.clone();
+		clone.setAmount(1);
 		try {
 			ResultSet set = connection.prepareStatement("SELECT * FROM APBuy_MItems WHERE owner = '" + owner
-					+ "' AND itemstack = '" + Utils.serializeItemStack(itemstack) + "';").executeQuery();
+					+ "' AND itemstack = '" + Utils.serializeItemStack(clone) + "';").executeQuery();
 			if (!set.next()) {
 				return null;
 			}
-			return new MarketItem(UUID.fromString(set.getString("id")), itemstack, owner, set.getInt("price"),
+			System.out.println(set.getLong("amount") + " " + clone.getAmount());
+			return new MarketItem(UUID.fromString(set.getString("id")), clone, owner, set.getInt("price"),
 					set.getLong("amount"), set.getInt("sellamount"), set.getLong("solditems"),
 					set.getString("category"));
 		} catch (SQLException e) {

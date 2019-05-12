@@ -36,7 +36,6 @@ public class Market {
 
 	public void buyed(ItemStack is, long amount) throws MarketException {
 		this.marketInfos.grantSalesOne().grandSoldItems(amount).save();
-		APBuy.database.getMarketItemByIS(this.marketInfos.getMarketOwner(), is).grantAmount(amount).save();
 	}
 
 	public CategoryInfos getCatInfosByName(String catname) {
@@ -193,13 +192,7 @@ public class Market {
 	}
 
 	public long removeItem(ItemStack is, long l) throws MarketException {
-		APBuy.
-		database.
-		getMarketItemByIS(
-				this.getMarketOwner()
-				, is)
-		.grantAmount(-l)
-		.save();
+		APBuy.database.getMarketItemByIS(this.getMarketOwner(), is).grantAmount(-l).save();
 		return APBuy.database.getMarketItemByIS(this.getMarketOwner(), is).getAmmount();
 	}
 

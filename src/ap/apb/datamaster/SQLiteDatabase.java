@@ -1,7 +1,10 @@
 package ap.apb.datamaster;
 
+import java.io.File;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
+import ap.apb.APBuy;
 
 public class SQLiteDatabase extends SQLDatabase {
 
@@ -11,19 +14,11 @@ public class SQLiteDatabase extends SQLDatabase {
 
 	public boolean connect(String... args) {
 		try {
-			// if (!new File(APBuy.plugin.getDataFolder(),
-			// "database.db").exists()) {
-			// new File(APBuy.plugin.getDataFolder(),
-			// "database.db").createNewFile();
-			// }
-			// Class.forName("org.sqlite.JDBC");
-			// connection = DriverManager.getConnection(
-			// "jdbc:sqlite:" + new File(APBuy.plugin.getDataFolder(),
-			// "database.db").getAbsolutePath());
-			Class.forName("com.mysql.jdbc.Driver");
-			String url = "jdbc:mysql://" + "remotemysql.com" + ":" + "3306" + "/" + "3Rqato4LUV"
-					+ "?autoReconnect=true";
-			connection = DriverManager.getConnection(url, "3Rqato4LUV", "BXQlyzZBKE");
+			 if (!new File(APBuy.plugin.getDataFolder(),"database.db").exists()) {
+				 new File(APBuy.plugin.getDataFolder(), "database.db").createNewFile();
+			 }
+			 Class.forName("org.sqlite.JDBC");
+			 connection = DriverManager.getConnection("jdbc:sqlite:" + new File(APBuy.plugin.getDataFolder(),"database.db").getAbsolutePath());
 			connection.prepareStatement(
 					"CREATE TABLE IF NOT EXISTS APBuy_Markets (" + "owner VARCHAR(36) NOT NULL, " + "open CHAR(1), "
 							+ "name VARCHAR(32), " + "devise varchar(64), " + "sales BIGINT, " + "solditems BIGINT, "

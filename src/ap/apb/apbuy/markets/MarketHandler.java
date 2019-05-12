@@ -1436,6 +1436,7 @@ public class MarketHandler implements Listener {
 										mis.setAmmount(mis.getAmmount()
 												+ e.getClickedInventory().getContents()[i].getAmount());
 										mis.save();
+										Itoomel.replaceMISInItoomel(mis);
 									} else {
 										notRegistered.add(e.getClickedInventory().getContents()[i]);
 									}
@@ -1930,7 +1931,8 @@ public class MarketHandler implements Listener {
 							}
 						}
 						PMLocPage.put(p, 0);
-						openMarketVisualiserToPlayer("Cat:" + APBuy.tagger.getNBTTagString("Cat", e.getCurrentItem()), onMarketVisualiser.get(p)[1], p);
+						openMarketVisualiserToPlayer("Cat:" + APBuy.tagger.getNBTTagString("Cat", e.getCurrentItem()),
+								onMarketVisualiser.get(p)[1], p);
 						return;
 					} else if (APBuy.tagger.hasTag("ToBuy", e.getCurrentItem())) {
 						if (onMarketVisualiser.get(p)[1] == "AdminShop") {
@@ -1945,7 +1947,10 @@ public class MarketHandler implements Listener {
 						}
 						if (BuyManager.openBuyManager(
 								new Market(onMarketVisualiser.get(p)[1], false)
-										.getMarketItemByIS(new AIS(e.getCurrentItem()).removeLatestLore(3).toIS()),
+										.getMarketItemByIS(new AIS(e.getCurrentItem().clone())
+												.removeLatestLore(
+														onMarketVisualiser.get(p)[1].equals("AdminShop") ? 2 : 3)
+												.removeNBTTag("ToBuy").toIS()),
 								onMarketVisualiser.get(p)[1], 1, (Player) e.getWhoClicked(), false,
 								onMarketVisualiser.get(p))) {
 							onMarketVisualiser.remove(p);

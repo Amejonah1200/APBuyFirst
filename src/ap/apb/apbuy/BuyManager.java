@@ -91,7 +91,7 @@ public class BuyManager {
 			buyer.sendMessage(Translator.translate("buymanager.noavailable"));
 			return false;
 		}
-		if (!marketItem.isBuyable()) {
+		if ((!marketItem.isBuyable()) && (!marketItem.getMarketuuid().equals("AdminShop"))) {
 			buyer.sendMessage(Translator.translate("buymanager.sold"));
 			return false;
 		}
@@ -264,7 +264,7 @@ public class BuyManager {
 				onBuying.add(this);
 				break;
 			case 12:
-				ammount = ammount > 1 ? ammount - 10 : 1;
+				ammount = ammount > 1 ? ammount - 1 : 1;
 				this.setWantToBuy(ammount);
 				onBuying.remove(this);
 				this.openBuyManager();
@@ -314,7 +314,7 @@ public class BuyManager {
 						: APBuy.ecohandler.transPtoP(this.getBuyer(), this.deductPrice(),
 								Bukkit.getOfflinePlayer(UUID.fromString(m.getMarketOwner())));
 				if (sh == 0) {
-					if ((this.getMarket() != "AdminShop") && (this.getMarket() != null)) {
+					if ((!this.getMarket().equals("AdminShop")) && (this.getMarket() != null)) {
 						this.getBuyer().sendMessage(Translator.translate("buymanager.thxmarket"));
 						m.removeItem(this.getMarketItem().getIs(), this.getWantToBuy() * this.getMarketItem().getSellAmmount());
 						if (this.getMarketItem().getAmmount()
