@@ -55,7 +55,7 @@ public class APBCmd implements CommandExecutor {
 				} else {
 					switch (args[0].toLowerCase()) {
 					case "trans":
-						// apb trans set [de/en/custom]
+						// TODO apb trans set [de/en/custom]
 						if (args.length == 3) {
 							switch (args[1]) {
 							case "set":
