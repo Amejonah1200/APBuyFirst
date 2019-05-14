@@ -58,7 +58,7 @@ public class APBuy extends JavaPlugin {
 			return;
 		}
 		// database = new YAMLDatabase();
-		database = new SQLiteDatabase();
+		database = new MySQLDatabase();
 		((SQLDatabase) database).connect();
 		if (this.getConfig().get("german") == null) {
 			this.getConfig().set("german", german);
@@ -175,7 +175,6 @@ public class APBuy extends JavaPlugin {
 		generalStop = true;
 		Bukkit.getScheduler().runTask(this, new ItoomelTask());
 		try {
-			System.out.println("Creating");
 			APBuy.getMarketHandler().createAdminShopWhenNotExist();
 		} catch (Exception e) {
 			e.printStackTrace();

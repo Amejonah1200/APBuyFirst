@@ -35,11 +35,12 @@ import ap.apb.anvilgui.mc1_8.AnvilGUI_v1_8_R3;
 import ap.apb.apbuy.BuyManager;
 import ap.apb.apbuy.itoomel.Itoomel;
 import ap.apb.datamaster.YAMLDatabase;
+import ap.apb.menu.Menu;
+import ap.apb.menu.menus.maincmd.MainMenu;
+import ap.apb.menu.menus.mymarket.MyMarketMainMenu;
 
 public class MarketHandler implements Listener {
-
-	public HashMap<Player, String> PMLoc = new HashMap<>();
-	public HashMap<Player, Integer> PMLocPage = new HashMap<>();
+	public List<Menu> menus = new ArrayList<>();
 	private HashMap<Player, CategoryInfos> creatingCat = new HashMap<>();
 	private HashMap<Player, MarketItem> creatingIS = new HashMap<>();
 	public HashMap<Player, String[]> onMarketVisualiser = new HashMap<>();
@@ -47,94 +48,12 @@ public class MarketHandler implements Listener {
 	public static Market adminshop = null;
 	public boolean settedAdminShop = false;
 
-	public void openMainMenu(Player p) {
-		try {
-			Inventory inv = Bukkit.createInventory(null, 27, Translator.translate("menu.title.mainmenu"));
-			for (int i = 0; i < 27; i++) {
-				ItemStack nothing = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15);
-				ItemMeta m = nothing.getItemMeta();
-				m.setDisplayName("§a");
-				nothing.setItemMeta(m);
-				inv.setItem(i, nothing);
-			}
-
-			if (!p.hasPermission("apb.mymarket.edit")) {
-				inv.setItem(4, new AIS("§3§lMy Market", 1, Material.BARRIER).addToLore(Utils
-						.createListFromStringToWidth(Translator.translate("menu.inv.mainmenu.norightsmymarket"), 25))
-						.toIS());
-			} else {
-				inv.setItem(4, new AIS("§3§lMy Market", 1, Material.CHEST)
-						.addLineToLore(Translator.translate("menu.inv.mainmenu.hereismymarket")).toIS());
-			}
-			if (!p.hasPermission("apb.markets.search")) {
-				inv.setItem(10, new AIS("§3Markets", 1, Material.BARRIER).addToLore(Utils
-						.createListFromStringToWidth(Translator.translate("menu.inv.mainmenu.norightsmarkets"), 25))
-						.toIS());
-			} else {
-				inv.setItem(10, new AIS("§3Markets", 1, Material.BOOK).addToLore(
-						Utils.createListFromStringToWidth(Translator.translate("menu.inv.mainmenu.hereismarkets"), 30))
-						.toIS());
-			}
-			if (p.hasPermission("apb.markets.search")) {
-				// - Top Market of The week 16
-				ItemStack is3 = new AIS("§3Top Market", Material.NETHER_STAR)
-						.addLineToLore(Translator.translate("menu.inv.mainmenu.hereistopmarket")).toIS();
-				inv.setItem(16,
-						YamlConfiguration.loadConfiguration(APBuy.plugin.getPlayerMarketStats())
-								.getString("TopMarket") == null
-										? is3
-										: APBuy.tagger.setNBTTag("Market",
-												YamlConfiguration.loadConfiguration(APBuy.plugin.getPlayerMarketStats())
-														.getString("TopMarket"),
-												is3));
-			} else {
-				inv.setItem(16, new AIS("§3Top Market", 1, Material.BARRIER).addToLore(Utils
-						.createListFromStringToWidth(Translator.translate("menu.inv.mainmenu.norightstopmarket"), 30))
-						.toIS());
-			}
-			// // - Help 16
-			// ItemStack is4 = new ItemStack(Material.PAPER);
-			// ItemMeta m4 = is4.getItemMeta();
-			// m4.setDisplayName("§3Help");
-			// List<String> s4 = new ArrayList<>();
-			// s4.add("§r§fHier kannst du Hilfe suchen.");
-			// m4.setLore(s4);
-			// is4.setItemMeta(m4);
-			// inv.setItem(22, is4);
-
-			inv.setItem(23,
-					new AIS("§7Commands", 1, Material.PAPER).addLineToLore("").addToLore(Utils
-							.createListFromStringToWidth(Translator.translate("menu.inv.mainmenu.hereiscommands"), 40))
-							.toIS());
-			inv.setItem(21, new AIS(
-					adminshop != null
-							? adminshop.isOpen()
-									? "§6AdminShop (§a" + Translator.translate("menu.inv.mainmenu.open") + "§6)"
-									: "§6AdminShop (§c" + Translator.translate("menu.inv.mainmenu.close") + "§6)"
-							: "§6AdminShop (§c" + Translator.translate("menu.inv.mainmenu.close") + "§6)",
-					1, Material.INK_SACK).setDamage((short) (adminshop != null ? adminshop.isOpen() ? 2 : 1 : 1))
-							.addLineToLore("").addLineToLore(Translator.translate("menu.inv.mainmenu.hereisadminshop"))
-							.toIS());
-			// if(settedAdminShop) {
-			// inv.setItem(22, new AIS("§", 1, ));
-			// }
-
-			p.openInventory(inv);
-			PMLoc.put(p, "MainMenu");
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Player: " + p.getName() + " (" + p.getUniqueId().toString() + ")");
-			p.closeInventory();
-			this.removeFromAll(p);
-			p.sendMessage(Translator.translate("dev.error"));
-			p.sendMessage("§cError Code: " + Utils.addToFix(e));
-		}
-	}
-
 	public void openInvToP(String menu, Player p) {
 		try {
 			if (menu == "MainMenu") {
-				this.openMainMenu(p);
+				Menu menu1 = new MainMenu(p);
+				menu1.openInv();
+				menus.add(menu1);
 				return;
 			}
 			if (menu.equalsIgnoreCase("cmds")) {
@@ -1060,14 +979,8 @@ public class MarketHandler implements Listener {
 				e.getPlayer().getLocation().getWorld().dropItemNaturally(e.getPlayer().getLocation().add(0, 1, 0), is);
 			}
 		}
-		if (PMLoc.containsKey(e.getPlayer())) {
-			if (PMLoc.get(e.getPlayer()).endsWith("Opened")) {
-				return;
-			}
-		}
 		if (onMarketVisualiser.containsKey(e.getPlayer())) {
 			onMarketVisualiser.remove(e.getPlayer());
-			PMLocPage.remove(e.getPlayer());
 		}
 		if (BuyManager.isBuying((Player) e.getPlayer())) {
 			e.getPlayer().sendMessage(Translator.translate("close.buycanceled"));
@@ -1075,26 +988,16 @@ public class MarketHandler implements Listener {
 		}
 		if (Itoomel.onItoomel.containsKey(e.getPlayer())) {
 			Itoomel.onItoomel.remove(e.getPlayer());
-			PMLocPage.remove(e.getPlayer());
 			return;
 		}
 		if (creatingIS.containsKey(e.getPlayer())) {
 			e.getPlayer().sendMessage(Translator.translate("close.itemcreate"));
 			creatingIS.remove(e.getPlayer());
-			PMLoc.remove(e.getPlayer());
-			PMLocPage.remove(e.getPlayer());
 			return;
 		}
 		if (creatingCat.containsKey(e.getPlayer())) {
 			e.getPlayer().sendMessage(Translator.translate("close.catcreate"));
 			creatingCat.remove(e.getPlayer());
-			PMLoc.remove(e.getPlayer());
-			PMLocPage.remove(e.getPlayer());
-			return;
-		}
-		if (PMLoc.containsKey(e.getPlayer())) {
-			PMLoc.remove(e.getPlayer());
-			PMLocPage.remove(e.getPlayer());
 			return;
 		}
 	}
@@ -1102,6 +1005,9 @@ public class MarketHandler implements Listener {
 	@EventHandler
 	public void onClick(InventoryClickEvent e) {
 		Player p = (Player) e.getWhoClicked();
+		if(performClick(e)) {
+			return;
+		}
 		try {
 			if (BuyManager.isBuying(p)) {
 				e.setCancelled(true);
@@ -1208,54 +1114,7 @@ public class MarketHandler implements Listener {
 					}
 					return;
 				}
-				if (menu == "MainMenu") {
-					switch (e.getSlot()) {
-					case 4:
-						if (e.getCurrentItem().getType() != Material.BARRIER) {
-							this.openInvToP("MyMarket:Main", p);
-						} else {
-							p.sendMessage(Translator.translate("click.norights"));
-						}
-						break;
-					case 10:
-						if (e.getCurrentItem().getType() != Material.BARRIER) {
-							this.openInvToP("Markets:Opened", p);
-							PMLocPage.put(p, 0);
-						} else {
-							p.sendMessage(Translator.translate("click.norights"));
-						}
-						break;
-					case 16:
-						if (e.getCurrentItem().getType() != Material.BARRIER) {
-							// if (APBuy.tagger.hasTag("Market",
-							// e.getCurrentItem())) {
-							// PMLoc.remove(p);
-							// openMarketVisualiserToPlayer("Main",
-							// APBuy.database.getTopMarketsUUIDs(1).get(0).toString(),
-							// p);
-							// }
-						} else {
-							// if(BanManager.isNowBanned(p)) {
-							// BanManager.getBanByPlayer(p).sayMessage(p);
-							// } else {
-							p.sendMessage(Translator.translate("click.norights"));
-							// }
-						}
-						break;
-					case 21:
-						if (e.getCurrentItem().getDurability() == 1) {
-							p.sendMessage(Translator.translate("click.adminsclose"));
-						} else {
-							PMLocPage.put(p, 0);
-							openMarketVisualiserToPlayer("Cats", "AdminShop", p);
-						}
-						break;
-					case 23:
-						this.openInvToP("cmds", p);
-						break;
-					}
-					return;
-				} else if (menu.equalsIgnoreCase("cmds")) {
+				if (menu.equalsIgnoreCase("cmds")) {
 					if (e.getSlot() == 22) {
 						this.openInvToP("MainMenu", p);
 						return;
@@ -2733,5 +2592,25 @@ public class MarketHandler implements Listener {
 
 	public Market getAdminshop() {
 		return MarketHandler.adminshop;
+	}
+
+	public Menu getMenuByPlayer(Player player) {
+		for (Menu menu : menus) {
+			if (menu.getPlayer().equals(player)) {
+				return menu;
+			}
+		}
+		return null;
+	}
+
+	public boolean performClick(InventoryClickEvent event) {
+		Menu menu = getMenuByPlayer((Player) event.getWhoClicked());
+		if(menu != null) {
+			if(menu.onClick(event)) {
+				event.setCancelled(true);
+			}
+			return true;
+		}
+		return false;
 	}
 }
