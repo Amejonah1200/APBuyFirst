@@ -280,7 +280,7 @@ public class APBCmd implements CommandExecutor {
 								if (APBuy.getMarketHandler().hasMarketByUUID(uuid)) {
 									if (APBuy.database.getMarketInfos(uuid).isOpen()
 											|| p.hasPermission("apb.mod.open")) {
-										APBuy.getMarketHandler().openMarketVisualiserToPlayer("Main", uuid, p, 0);
+										APBuy.getMarketHandler().openMarketVisualiserToPlayer("Main", uuid, p);
 										return true;
 									} else {
 										p.sendMessage("§cSein Market ist geschlossen!");
@@ -294,7 +294,7 @@ public class APBCmd implements CommandExecutor {
 								if (APBuy.getMarketHandler().hasMarketByUUID(args[2])) {
 									if (APBuy.database.getMarketInfos(args[2]).isOpen()
 											|| p.hasPermission("apb.mod.open")) {
-										APBuy.getMarketHandler().openMarketVisualiserToPlayer("Main", args[2], p, 0);
+										APBuy.getMarketHandler().openMarketVisualiserToPlayer("Main", args[2], p);
 										return true;
 									} else {
 										p.sendMessage("§cSein Market ist geschlossen!");

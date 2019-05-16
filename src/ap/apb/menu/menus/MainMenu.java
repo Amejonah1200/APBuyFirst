@@ -23,7 +23,7 @@ public class MainMenu extends Menu {
 	}
 
 	@Override
-	public Menu openInv(Object... args) {
+	public void openInv(Object... args) {
 		try {
 			Inventory inv = Bukkit.createInventory(null, 27, Translator.translate("menu.title.mainmenu"));
 			for (int i = 0; i < 27; i++) {
@@ -109,7 +109,6 @@ public class MainMenu extends Menu {
 			getPlayer().sendMessage(Translator.translate("dev.error"));
 			getPlayer().sendMessage("§cError Code: " + Utils.addToFix(e));
 		}
-		return this;
 	}
 
 	@Override
@@ -150,7 +149,7 @@ public class MainMenu extends Menu {
 			if (event.getCurrentItem().getDurability() == 1) {
 				getPlayer().sendMessage(Translator.translate("click.adminsclose"));
 			} else {
-				APBuy.getMarketHandler().openMarketVisualiserToPlayer("Cats", "AdminShop", getPlayer(), 0);
+				APBuy.getMarketHandler().openMarketVisualiserToPlayer("Cats", "AdminShop", getPlayer());
 			}
 			break;
 		case 23:
