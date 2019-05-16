@@ -236,10 +236,6 @@ public abstract class SQLDatabase implements Database {
 	}
 
 	@Override
-	public void updateList() {
-	}
-
-	@Override
 	public boolean hasPlayerMarketByUUID(String uuid) {
 		try {
 			return connection.prepareStatement("SELECT * FROM APBuy_Markets WHERE owner = '" + uuid + "';")

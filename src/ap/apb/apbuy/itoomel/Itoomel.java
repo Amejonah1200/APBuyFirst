@@ -40,7 +40,7 @@ public class Itoomel implements Listener {
 				e.setCancelled(true);
 				String menu = String.valueOf(Itoomel.onItoomel.get(p)[0]);
 				Material type = (Material) Itoomel.onItoomel.get(p)[1];
-				if (menu.equalsIgnoreCase("Main")) {
+				if (menu.equalsIgnoreCase("ICats")) {
 					if ((10 <= e.getSlot() && e.getSlot() <= 16) || (19 <= e.getSlot() && e.getSlot() <= 25)
 							|| (28 <= e.getSlot() && e.getSlot() <= 34) || (37 <= e.getSlot() && e.getSlot() <= 43)) {
 						if (APBuy.tagger.hasTag("ICat", e.getCurrentItem())) {
@@ -216,7 +216,6 @@ public class Itoomel implements Listener {
 				break;
 			case NOTFOUND:
 				p.sendMessage("§cDieser Market wurde nicht gefunden! (Error)");
-				APBuy.getMarketHandler().updateLists();
 				APBuy.getMarketHandler().removeFromAll(p);
 				p.closeInventory();
 				APBuy.getMarketHandler().openInvToP("Markets", p);

@@ -102,13 +102,7 @@ public class MarketItem {
 	}
 
 	public AIS getAISToShow() {
-		if (this.getIs() == null) {
-			return new AIS(Material.CHEST).addLineToLore("")
-					.addLineToLore("§7Preis §8\\§7 " + this.getSellAmmount() + " §8:§6 " + this.getPrice())
-					.addLineToLore("§7Items im Lager§8: "
-							+ (this.getAmmount() == 0 ? "§cKeins mehr da!" : "§6" + this.getAmmount()));
-		}
-		return new AIS(this.getIs().clone()).addLineToLore("")
+		return new AIS(this.getIs() == null ? new ItemStack(Material.CHEST) : this.getIs().clone()).addLineToLore("")
 				.addLineToLore("§7Preis §8\\§7 " + this.getSellAmmount() + " §8:§6 " + this.getPrice())
 				.addLineToLore("§7Items im Lager§8: "
 						+ (this.getAmmount() == 0 ? "§cKeins mehr da!" : "§6" + this.getAmmount()));

@@ -34,7 +34,6 @@ import ap.apb.anvilgui.AnvilGUI.AnvilSlot;
 import ap.apb.anvilgui.mc1_8.AnvilGUI_v1_8_R3;
 import ap.apb.apbuy.BuyManager;
 import ap.apb.apbuy.itoomel.Itoomel;
-import ap.apb.datamaster.YAMLDatabase;
 
 public class MarketHandler implements Listener {
 
@@ -288,8 +287,8 @@ public class MarketHandler implements Listener {
 									? Translator.translate("menu.inv.mymarket.main.nnd.notset") : m.getDevise()));
 					nNdlist.add("");
 					nNdlist.add(Translator.translate("menu.inv.mymarket.main.nnd.howto") + ":");
-					nNdlist.add("§8   /mr setName <Neues Market Name>");
-					nNdlist.add("§8   /mr setDevise <Neues Market Devise>");
+					nNdlist.add("§8   /mr setName <MarketName>");
+					nNdlist.add("§8   /mr setDevise <MarketDevise>");
 					nNdlist.add("§8   /mr resetName");
 					nNdlist.add("§8   /mr resetDevise");
 					nNdmeta.setLore(nNdlist);
@@ -658,14 +657,6 @@ public class MarketHandler implements Listener {
 						try {
 							// - Back Button 49
 							inv2.setItem(49, new AIS(Translator.translate("menu.back"), 1, Material.BARRIER).toIS());
-							if (APBuy.database instanceof YAMLDatabase) {
-								if ((YamlConfiguration.loadConfiguration(APBuy.plugin.getPlayerMarketStats())
-										.getStringList("TopMarkets") == null)
-										|| (YamlConfiguration.loadConfiguration(APBuy.plugin.getPlayerMarketStats())
-												.getBoolean("MusstBeUpdated"))) {
-									updateLists();
-								}
-							}
 							List<UUID> uuids = getTopMarkets();
 							// - Getting all Markets to display
 							int size = uuids.size();
@@ -1989,14 +1980,12 @@ public class MarketHandler implements Listener {
 								if (p.hasPermission("apb.mod.*") || p.hasPermission("apb.mod.reset")) {
 									APBuy.database.getMarketInfos((String) onMarketVisualiser.get(p)[1]).resetStats();
 									openMarketVisualiserToPlayer("Main", ((String) onMarketVisualiser.get(p)[1]), p);
-									updateLists();
 								}
 								break;
 							case 32:
 								if (p.hasPermission("apb.mod.*") || p.hasPermission("apb.mod.delete")) {
 									APBuy.database
 											.deleteMarket(UUID.fromString(((String) onMarketVisualiser.get(p)[1])));
-									updateLists();
 									Itoomel.removeMarketFromItoomel(
 											UUID.fromString(((String) onMarketVisualiser.get(p)[1])));
 									Itoomel.reopenItoomelToEveryone();
@@ -2013,8 +2002,6 @@ public class MarketHandler implements Listener {
 							switch (e1.getErrorCause()) {
 							case NOTFOUND:
 								p.sendMessage(Translator.translate("click.notfoundmarket"));
-
-								updateLists();
 								break;
 							case CATNOTFOUND:
 								p.sendMessage(Translator.translate("click.notfoundcat"));
@@ -2045,7 +2032,6 @@ public class MarketHandler implements Listener {
 				break;
 			case NOTFOUND:
 				p.sendMessage(Translator.translate("click.notfoundcat"));
-				updateLists();
 				this.removeFromAll(p);
 				p.closeInventory();
 				this.openInvToP("Markets", p);
@@ -2635,10 +2621,6 @@ public class MarketHandler implements Listener {
 			p.sendMessage(Translator.translate("dev.error"));
 			p.sendMessage("§cError Code: " + Utils.addToFix(e1));
 		}
-	}
-
-	public void updateLists() {
-		APBuy.database.updateList();
 	}
 
 	// public Market getMarketByPlayerName(String string) throws MarketException

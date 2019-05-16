@@ -117,7 +117,6 @@ public class APBuy extends JavaPlugin {
 			}
 		} catch (IOException e) {
 		}
-		APBuy.getMarketHandler().updateLists();
 		this.saveConfig();
 		getCommand("apb").setExecutor(new APBCmd());
 		getCommand("itoomel").setExecutor(new ItoomelCmd());

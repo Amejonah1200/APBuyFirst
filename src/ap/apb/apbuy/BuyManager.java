@@ -347,7 +347,6 @@ public class BuyManager {
 					m.buyed(this.getMarketItem().getIs(), this.getWantToBuy() * this.getMarketItem().getSellAmmount());
 					this.cancel();
 					if (!this.getMarket().equalsIgnoreCase("AdminShop")) {
-						APBuy.getMarketHandler().updateLists();
 						APBuy.getMarketHandler().reopenMarketToWhoSee(this.getMarket());
 					}
 				} else {

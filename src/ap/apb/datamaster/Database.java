@@ -44,14 +44,9 @@ public abstract interface Database {
 
 	public boolean hasPlayerMarketByUUID(String uuid);
 
-	public void updateList();
-
 	public boolean hasCategoryInfos(String owner, String catname);
 
 	public boolean hasMarketItem(String owner, ItemStack is);
 
 	public List<UUID> loadAllMarkets() throws MarketException;
-
-	
-
 }
