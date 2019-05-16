@@ -1,6 +1,5 @@
 package ap.apb.datamaster;
 
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class MySQLDatabase extends SQLDatabase {
@@ -12,9 +11,7 @@ public class MySQLDatabase extends SQLDatabase {
 	public boolean connect(String... args) {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			String url = "jdbc:mysql://" + "remotemysql.com" + ":" + "3306" + "/" + "3Rqato4LUV"
-                    + "?autoReconnect=true";
-            connection = DriverManager.getConnection(url, "3Rqato4LUV", "BXQlyzZBKE");
+			// Nope kein password xD
 			connection.prepareStatement(
 					"CREATE TABLE IF NOT EXISTS APBuy_Markets (" + "owner VARCHAR(36) NOT NULL, " + "open CHAR(1), "
 							+ "name VARCHAR(32), " + "devise varchar(64), " + "sales BIGINT, " + "solditems BIGINT, "

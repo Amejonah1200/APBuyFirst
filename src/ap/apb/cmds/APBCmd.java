@@ -51,7 +51,7 @@ public class APBCmd implements CommandExecutor {
 					return true;
 				}
 				if (args.length == 0) {
-					APBuy.getMarketHandler().openInvToP("MainMenu", p);
+					APBuy.getMarketHandler().openMainMenu(p);
 				} else {
 					switch (args[0].toLowerCase()) {
 					case "trans":
