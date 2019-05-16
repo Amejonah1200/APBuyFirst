@@ -42,7 +42,7 @@ import ap.apb.menu.menus.main.mymarket.MyMarketMainMenu;
 
 public class MarketHandler implements Listener {
 	public List<Menu> menus = new ArrayList<>();
-	private HashMap<Player, CategoryInfos> creatingCat = new HashMap<>();
+	public HashMap<Player, CategoryInfos> creatingCat = new HashMap<>();
 	private HashMap<Player, MarketItem> creatingIS = new HashMap<>();
 	public HashMap<Player, String[]> onMarketVisualiser = new HashMap<>();
 	public HashMap<Player, List<ItemStack>> onItemInput = new HashMap<>();
@@ -51,83 +51,19 @@ public class MarketHandler implements Listener {
 
 	public void openInvToP(String menu, Player p) {
 		try {
-			if (menu == "MainMenu") {
-				Menu menu1 = new MainMenu(p);
-				menu1.openInv();
-				menus.add(menu1);
+			if (menu.equalsIgnoreCase("MainMenu")) {
+				menus.add(new MainMenu(p).openInv());
 				return;
 			}
 			if (menu.equalsIgnoreCase("cmds")) {
-				Menu menu1 = new CmdsMenu(p);
-				menu1.openInv();
-				menus.add(menu1);
+				menus.add(new CmdsMenu(p).openInv());
 				return;
 			}
 			switch (menu.split(Pattern.quote(":"))[0]) {
 			case "MyMarket":
 				switch (menu.split(Pattern.quote(":"))[1]) {
 				case "Main":
-					Inventory inv = Bukkit.createInventory(null, 54, "§0§lA§3§lP§r§8Buy - My Market");
-					for (int i = 0; i < 54; i++) {
-						inv.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
-					}
-					MarketInfos m = APBuy.database.getMarketInfos(p.getUniqueId().toString());
-					// - Status 10
-					inv.setItem(10,
-							m.isOpen()
-									? new AIS(Translator.translate("menu.inv.mymarket.main.status.on"), 1, (short) 10,
-											Material.INK_SACK).toIS()
-									: new AIS(Translator.translate("menu.inv.mymarket.main.status.off"), 1, (short) 1,
-											Material.INK_SACK).toIS());
-					// - Soled Items 14
-
-					inv.setItem(14,
-							new AIS(Translator.translate("menu.inv.mymarket.main.stats.topic"), 1, Material.PAPER)
-									.addLineToLore("")
-									.addLineToLore(Translator.translate("menu.inv.mymarket.main.stats.solditems") + ": "
-											+ m.getSoldItems())
-									.addLineToLore(Translator.translate("menu.inv.mymarket.main.stats.solds") + ": "
-											+ m.getSales())
-									.toIS());
-
-					// - Name/Devise 16
-					ItemStack nameNdevise = new ItemStack(Material.PAPER, 1);
-					ItemMeta nNdmeta = nameNdevise.getItemMeta();
-					nNdmeta.setDisplayName(Translator.translate("menu.inv.mymarket.main.nnd.title"));
-					List<String> nNdlist = new ArrayList<>();
-					nNdlist.add(Translator.translate("menu.inv.mymarket.main.nnd.name") + ": §6" + (m.getName() == null
-							? Translator.translate("menu.inv.mymarket.main.nnd.notset") : m.getName()));
-					nNdlist.add(
-							Translator.translate("menu.inv.mymarket.main.nnd.devise") + ": §6" + (m.getDevise() == null
-									? Translator.translate("menu.inv.mymarket.main.nnd.notset") : m.getDevise()));
-					nNdlist.add("");
-					nNdlist.add(Translator.translate("menu.inv.mymarket.main.nnd.howto") + ":");
-					nNdlist.add("§8   /mr setName <Neues Market Name>");
-					nNdlist.add("§8   /mr setDevise <Neues Market Devise>");
-					nNdlist.add("§8   /mr resetName");
-					nNdlist.add("§8   /mr resetDevise");
-					nNdmeta.setLore(nNdlist);
-					nameNdevise.setItemMeta(nNdmeta);
-					inv.setItem(16, nameNdevise);
-
-					// - My Market Editor 12
-					List<String> mmislist = new ArrayList<>();
-					mmislist.add("");
-					mmislist.add(Translator.translate("menu.inv.mymarket.main.mymarket"));
-					inv.setItem(12, new AIS(Material.CHEST).addToLore(mmislist).toIS());
-
-					// - Back Button 49
-					inv.setItem(49, new AIS(Translator.translate("menu.back"), 1, Material.BARRIER).toIS());
-
-					// - Item Input 30
-					inv.setItem(31,
-							new AIS(Translator.translate("menu.inv.mymarket.main.iteminput.title"), 1, Material.HOPPER)
-									.addLineToLore("").addToLore(Utils.createListFromStringToWidth(
-											Translator.translate("menu.inv.mymarket.main.iteminput.desc"), 40))
-									.toIS());
-
-					p.openInventory(inv);
-					PMLoc.put(p, "MyMarket:Main");
+					menus.add(new MyMarketMainMenu(p).openInv());
 					break;
 				case "Editor":
 					Inventory inv1 = Bukkit.createInventory(null, 54, "§0§lA§3§lP§r§8Buy - Editor");
@@ -900,7 +836,7 @@ public class MarketHandler implements Listener {
 	@EventHandler
 	public void onClick(InventoryClickEvent e) {
 		Player p = (Player) e.getWhoClicked();
-		if(performClick(e)) {
+		if (performClick(e)) {
 			return;
 		}
 		try {
@@ -1015,29 +951,7 @@ public class MarketHandler implements Listener {
 						return;
 					}
 				} else if (menu == "MyMarket:Main") {
-					switch (e.getSlot()) {
-					case 10:
-						MarketInfos m = APBuy.database.getMarketInfos(p.getUniqueId().toString());
-						m.setOpen(!m.isOpen());
-						m.save();
-						this.openInvToP("MyMarket:Main", p);
-						reopenMarketToWhoSee(p.getUniqueId().toString());
-						break;
-					case 12:
-						this.openInvToP("MyMarket:Editor:Opened", p);
-						PMLocPage.put(p, 0);
-						break;
-					case 49:
-						PMLocPage.put(p, 0);
-						this.openInvToP("MainMenu", p);
-						break;
-					case 31:
-						onItemInput.put(p, new ArrayList<>());
-						this.openInvToP("MyMarket:ItemInput", p);
-						onItemInput.put(p, new ArrayList<>());
-						break;
-					}
-					return;
+					getMenuByPlayer(p).onClick(e);
 				} else if ((menu.startsWith("MyMarket:Editor") && (!menu.startsWith("MyMarket:Editor:Add")))) {
 					switch (e.getSlot()) {
 					case 49:
@@ -1784,9 +1698,7 @@ public class MarketHandler implements Listener {
 
 				}
 			}
-		} catch (
-
-		MarketException e1) {
+		} catch (MarketException e1) {
 			switch (e1.getErrorCause()) {
 			case CATNOTFOUND:
 				p.sendMessage(Translator.translate("click.notfoundmarket"));
@@ -1932,7 +1844,7 @@ public class MarketHandler implements Listener {
 		}
 	}
 
-	public void openMarketVisualiserToPlayer(String s, String uuid, Player p) {
+	public void openMarketVisualiserToPlayer(String s, String uuid, Player p, int page) {
 		try {
 			Market m = new Market(uuid, true);
 			switch (s.split(":")[0]) {
@@ -2500,8 +2412,8 @@ public class MarketHandler implements Listener {
 
 	public boolean performClick(InventoryClickEvent event) {
 		Menu menu = getMenuByPlayer((Player) event.getWhoClicked());
-		if(menu != null) {
-			if(menu.onClick(event)) {
+		if (menu != null) {
+			if (menu.onClick(event)) {
 				event.setCancelled(true);
 			}
 			return true;

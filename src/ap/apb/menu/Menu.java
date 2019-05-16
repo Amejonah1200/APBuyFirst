@@ -13,9 +13,9 @@ public abstract class Menu {
 		this.setPlayer(player);
 	}
 
-	public abstract void openInv(Object... args);
+	public abstract Menu openInv(Object... args);
 
-	public abstract boolean onClick(InventoryClickEvent event);
+	public abstract boolean onClick(InventoryClickEvent event) throws Exception;
 
 	public String getName() {
 		return this.name;

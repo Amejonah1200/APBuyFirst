@@ -14,11 +14,11 @@ import ap.apb.menu.Menu;
 public class CmdsMenu extends Menu {
 
 	public CmdsMenu(Player player) {
-		super("MainMenu:Cmds", player);
+		super("cmds", player);
 	}
 
 	@Override
-	public void openInv(Object... args) {
+	public Menu openInv(Object... args) {
 		Inventory inv = Bukkit.createInventory(null, 27, "§0§lA§3§lP§r§8Buy - Cmds");
 		for (int i = 0; i < 27; i++) {
 			inv.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
@@ -128,6 +128,7 @@ public class CmdsMenu extends Menu {
 		}
 
 		getPlayer().openInventory(inv);
+		return this;
 	}
 
 	@Override
