@@ -1,4 +1,4 @@
-package ap.apb.menu.menus;
+package ap.apb.menu.menus.maincmd;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

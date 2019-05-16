@@ -36,9 +36,8 @@ import ap.apb.apbuy.BuyManager;
 import ap.apb.apbuy.itoomel.Itoomel;
 import ap.apb.datamaster.YAMLDatabase;
 import ap.apb.menu.Menu;
-import ap.apb.menu.menus.MainMenu;
-import ap.apb.menu.menus.main.CmdsMenu;
-import ap.apb.menu.menus.main.mymarket.MyMarketMainMenu;
+import ap.apb.menu.menus.maincmd.MainMenu;
+import ap.apb.menu.menus.mymarket.MyMarketMainMenu;
 
 public class MarketHandler implements Listener {
 	public List<Menu> menus = new ArrayList<>();
@@ -58,9 +57,115 @@ public class MarketHandler implements Listener {
 				return;
 			}
 			if (menu.equalsIgnoreCase("cmds")) {
-				Menu menu1 = new CmdsMenu(p);
-				menu1.openInv();
-				menus.add(menu1);
+				Inventory inv = Bukkit.createInventory(null, 27, "§0§lA§3§lP§r§8Buy - Cmds");
+				for (int i = 0; i < 27; i++) {
+					inv.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
+				}
+				inv.setItem(22, new AIS(Translator.translate("menu.back"), 1, Material.BARRIER).toIS());
+
+				if (p.hasPermission("apb.*") || p.hasPermission("apb.mymarket.*")
+						|| p.hasPermission("apb.mymarket.edit") || p.hasPermission("apb.mymarket.setdevise")
+						|| p.hasPermission("apb.mymarket.setname")) {
+					AIS ais = new AIS("§7MyMarket", Material.PAPER);
+					ais.addLineToLore("");
+					if (p.hasPermission("apb.*") || p.hasPermission("apb.mymarket.*")
+							|| p.hasPermission("apb.mymarket.edit")) {
+						ais.addToLore(Utils.createListFromStringToWidthPlusEffect(
+								Translator.translate("menu.inv.cmds.mymarket.create"), 30));
+					}
+					if (p.hasPermission("apb.*") || p.hasPermission("apb.mymarket.*")
+							|| p.hasPermission("apb.mymarket.setname")) {
+						ais.addLineToLore("§7- [/apb setname <Name>]")
+								.addToLore(Utils.createListFromStringToWidthPlusEffect(
+										Translator.translate("menu.inv.cmds.mymarket.name"), 30));
+					}
+					if (p.hasPermission("apb.*") || p.hasPermission("apb.mymarket.*")
+							|| p.hasPermission("apb.mymarket.setdevise")) {
+						ais.addLineToLore("§7- [/apb setdevise <Devise>]")
+								.addToLore(Utils.createListFromStringToWidthPlusEffect(
+										Translator.translate("menu.inv.cmds.mymarket.devise"), 30));
+					}
+					inv.setItem(10, ais.toIS());
+				} else {
+					inv.setItem(10, new AIS(Translator.translate("menu.inv.cmds.mymarket.norights"), 1, (short) 7,
+							Material.STAINED_GLASS_PANE).toIS());
+				}
+				if (p.hasPermission("apb.*") || p.hasPermission("apb.markets.*") || p.hasPermission("apb.markets.buy")
+						|| p.hasPermission("apb.markets.search")) {
+					AIS ais = new AIS("§7Markets", Material.PAPER);
+					ais.addLineToLore("");
+					if (p.hasPermission("apb.*") || p.hasPermission("apb.mymarket.*")
+							|| p.hasPermission("apb.markets.search")) {
+						ais.addLineToLore(Translator.translate("menu.inv.cmds.markets.search.topic"))
+								.addLineToLore("§7- [/apb open name <Spielername>]")
+								.addToLore(Utils.createListFromStringToWidthPlusEffect(
+										"§8   " + Translator.translate("menu.inv.cmds.markets.search.name"), 30))
+								.addLineToLore("§7- [/apb open uuid <UUID>]")
+								.addToLore(Utils.createListFromStringToWidth(
+										"§8   " + Translator.translate("menu.inv.cmds.markets.search.uuid"), 30));
+					}
+					if (p.hasPermission("apb.*") || p.hasPermission("apb.mymarket.*")
+							|| p.hasPermission("apb.markets.buy")) {
+						ais.addLineToLore(Translator.translate("menu.inv.cmds.markets.buy"));
+					}
+					inv.setItem(12, ais.toIS());
+				} else {
+					inv.setItem(12, new AIS(Translator.translate("menu.inv.cmds.markets.norights"), 1, (short) 7,
+							Material.STAINED_GLASS_PANE).toIS());
+				}
+
+				if (p.hasPermission("apb.*") || p.hasPermission("apb.itoomel")) {
+					AIS ais = new AIS("§7Itoomel", Material.PAPER);
+					ais.addLineToLore("");
+					if (p.hasPermission("apb.*") || p.hasPermission("apb.itoomel")) {
+						ais.addLineToLore("§7Du kannst Itoomel benutzen.");
+					}
+					inv.setItem(14, ais.toIS());
+				} else {
+					inv.setItem(14,
+							new AIS("§cDu hast keine Itoomel-Rechte.", 1, (short) 7, Material.STAINED_GLASS_PANE)
+									.toIS());
+				}
+
+				if (p.hasPermission("apb.*") || p.hasPermission("apb.mod.*") || p.hasPermission("apb.mod.delete")
+						|| p.hasPermission("apb.mod.genstop") || p.hasPermission("apb.mod.itoomel")
+						|| p.hasPermission("apb.mod.reset") || p.hasPermission("apb.mod.status")
+						|| p.hasPermission("apb.mod.invissee") || p.hasPermission("apb.mod.adminshop")) {
+					AIS ais = new AIS("§7Mod", Material.PAPER);
+					ais.addLineToLore("");
+					if (p.hasPermission("apb.*") || p.hasPermission("apb.mod.*") || p.hasPermission("apb.mod.delete")) {
+						ais.addLineToLore(Translator.translate("menu.inv.cmds.mod.delete"));
+					}
+					if (p.hasPermission("apb.*") || p.hasPermission("apb.mod.*") || p.hasPermission("apb.mod.reset")) {
+						ais.addLineToLore(Translator.translate("menu.inv.cmds.mod.reset"));
+					}
+					if (p.hasPermission("apb.*") || p.hasPermission("apb.mod.*") || p.hasPermission("apb.mod.reset")) {
+						ais.addLineToLore(Translator.translate("menu.inv.cmds.mod.status"));
+					}
+					if (p.hasPermission("apb.*") || p.hasPermission("apb.mod.*")
+							|| p.hasPermission("apb.mod.invissee")) {
+						ais.addLineToLore(Translator.translate("menu.inv.cmds.mod.invissee"));
+					}
+					if (p.hasPermission("apb.*") || p.hasPermission("apb.mod.*")
+							|| p.hasPermission("apb.mod.genstop")) {
+						ais.addToLore(Utils.createListFromStringToWidthPlusEffect(
+								Translator.translate("menu.inv.cmds.mod.genstop"), 30));
+					}
+					if (p.hasPermission("apb.*") || p.hasPermission("apb.mod.adminshop")) {
+						ais.addLineToLore(Translator.translate("menu.inv.cmds.mod.adminshop.edit"))
+								.addLineToLore("§7- [/apb adminshop open]")
+								.addLineToLore("§8    " + Translator.translate("menu.inv.cmds.mod.adminshop.open"))
+								.addLineToLore("§7- [/apb adminshop close]")
+								.addLineToLore("§8    " + Translator.translate("menu.inv.cmds.mod.adminshop.close"));
+					}
+					inv.setItem(16, ais.toIS());
+				} else {
+					inv.setItem(16, new AIS(Translator.translate("menu.inv.cmds.mod.norights"), 1, (short) 7,
+							Material.STAINED_GLASS_PANE).toIS());
+				}
+
+				p.openInventory(inv);
+				PMLoc.put(p, "cmds");
 				return;
 			}
 			switch (menu.split(Pattern.quote(":"))[0]) {
