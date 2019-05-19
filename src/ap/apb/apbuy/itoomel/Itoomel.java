@@ -29,6 +29,7 @@ public class Itoomel implements Listener {
 
 	public static HashMap<Player, Object[]> onItoomel = new HashMap<>();
 	public static HashMap<Material, List<MarketItem>> itoomelStandard = new HashMap<>();
+	public static List<ItoomelSearch> searches = new ArrayList<>();
 
 	@EventHandler
 	public void onClick(InventoryClickEvent e) {
@@ -40,7 +41,7 @@ public class Itoomel implements Listener {
 				e.setCancelled(true);
 				String menu = String.valueOf(Itoomel.onItoomel.get(p)[0]);
 				Material type = (Material) Itoomel.onItoomel.get(p)[1];
-				if (menu.equalsIgnoreCase("ICats")) {
+				if (menu.equalsIgnoreCase("Main")) {
 					if ((10 <= e.getSlot() && e.getSlot() <= 16) || (19 <= e.getSlot() && e.getSlot() <= 25)
 							|| (28 <= e.getSlot() && e.getSlot() <= 34) || (37 <= e.getSlot() && e.getSlot() <= 43)) {
 						if (APBuy.tagger.hasTag("ICat", e.getCurrentItem())) {
@@ -136,16 +137,14 @@ public class Itoomel implements Listener {
 						}
 
 					} else if (APBuy.tagger.hasTag("ToBuy", e.getCurrentItem())) {
-						if (BuyManager
-								.openBuyManager(
-										new Market(
-												menu.startsWith("Market:") ? menu.replaceFirst("Market:", "")
-														: menu.replaceFirst("SubMarket:", ""),
-												false).getMarketItemByIS(
-														new AIS(e.getCurrentItem().clone()).removeLatestLore(4).toIS()),
-										menu.startsWith("Market:") ? menu.replaceFirst("Market:", "")
-												: menu.replaceFirst("SubMarket:", ""),
-										1, (Player) e.getWhoClicked(), true, null)) {
+						if (BuyManager.openBuyManager(
+								new Market(menu.startsWith("Market:") ? menu.replaceFirst("Market:", "")
+										: menu.replaceFirst("SubMarket:", ""), false)
+												.getMarketItemByIS(new AIS(e.getCurrentItem().clone())
+														.removeLatestLore(4).removeNBTTag("ToBuy").toIS()),
+								menu.startsWith("Market:") ? menu.replaceFirst("Market:", "")
+										: menu.replaceFirst("SubMarket:", ""),
+								1, (Player) e.getWhoClicked(), true, null)) {
 							APBuy.getMarketHandler().PMLocPage.remove(p);
 							Itoomel.onItoomel.remove(p);
 							return;
@@ -159,6 +158,8 @@ public class Itoomel implements Listener {
 							APBuy.getMarketHandler().PMLocPage.put(p, 0);
 							if (APBuy.tagger.hasTag("NoSubID", e.getCurrentItem())) {
 								Itoomel.openItoomel("Main", p, e.getCurrentItem().getType(), 0);
+//								Itoomel.openSearch(
+//										new ItoomelSearch(new ItemStack(e.getCurrentItem().clone().getType()), p, 0));
 							} else {
 								Itoomel.openItoomel("searchSubID:" + e.getCurrentItem().getDurability(), p,
 										e.getCurrentItem().getType(), 0);
@@ -238,6 +239,35 @@ public class Itoomel implements Listener {
 		}
 	}
 
+	private static void openSearch(ItoomelSearch itoomelSearch) {
+		if (isSearching(itoomelSearch.getPlayer())) {
+			removeFromSearch(itoomelSearch.getPlayer());
+			itoomelSearch.openItoomelSearch();
+			searches.add(itoomelSearch);
+		} else {
+			itoomelSearch.openItoomelSearch();
+			searches.add(itoomelSearch);
+		}
+	}
+
+	private static void removeFromSearch(Player player) {
+		Iterator<ItoomelSearch> iterator = searches.iterator();
+		while (iterator.hasNext()) {
+			if (iterator.next().getPlayer() == player) {
+				iterator.remove();
+			}
+		}
+	}
+
+	private static boolean isSearching(Player player) {
+		for (ItoomelSearch is : searches) {
+			if (is.getPlayer() == player) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public static void openItoomel(String menu, Player p, Material type, int page) {
 		try {
 			openItoomel(menu, p, type, page, 1);
@@ -254,8 +284,6 @@ public class Itoomel implements Listener {
 	}
 
 	public static void openItoomel(String menu, Player p, Material type, int page, int mode) throws MarketException {
-		// System.out.println("MenuItoomel: " + menu);
-		// System.out.println("Type: " + type.toString());
 		if ((menu == "Main") && ((type == Material.AIR) || type == null)) {
 			Itoomel.onItoomel.remove(p);
 			Inventory MainInv = Bukkit.createInventory(null, 54, "§0§lA§3§lP§r§8Buy - Itoomel");
@@ -771,9 +799,7 @@ public class Itoomel implements Listener {
 							}
 						}
 						List<Short> ss = getListOfSubIDs(mats, icat);
-						System.out.println(mats.size() + " " + ss.size());
 						mats = setMatsMenu(mats, icat, ss);
-						System.out.println(mats.size());
 						int size = mats.size();
 						int pages = ((size - (size % 28)) / 28);
 						int count = 28 * page;
@@ -1225,7 +1251,6 @@ public class Itoomel implements Listener {
 		List<String> l = new ArrayList<>();
 		if (itoomelStandard.containsKey(mat)) {
 			for (MarketItem mis : itoomelStandard.get(mat)) {
-				System.out.println(mis.getIs().getDurability() + " " + s + " " + mat.toString());
 				if ((mis.getIs().getDurability() == s) || (s == -1)) {
 					if (!l.contains(mis.getMarketuuid())) {
 						l.add(mis.getMarketuuid());

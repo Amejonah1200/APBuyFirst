@@ -30,8 +30,18 @@ permissions:
          apb.mod.genstop: true
          apb.mod.invissee: true
          apb.mod.adminshop: true
-   apb.dev:
-      description: You can see the Stacktraces.
+   apb.dev.*:
+      description: You can change the DB, and see Stacktraces.
+      children:
+         apb.dev.st: true
+         apb.dev.db: true
+         apb.dev.rl: true
+   apb.dev.st:
+      description: Allows seeing the Stacktraces.
+   apb.dev.db:
+      description: Allows changing the Database.
+   apb.dev.rl:
+      description: Allows reloading the Configs.
    apb.mod.status:
       description: Allows Moderation, change the status of a market.
    apb.mod.open:

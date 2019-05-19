@@ -62,26 +62,28 @@ public class APBCmd implements CommandExecutor {
 								switch (args[2].toLowerCase()) {
 								case "de":
 									if (APBuy.isGerman()) {
-										p.sendMessage("§cEs wird schon in Deutsch übersetzt.");
+										p.sendMessage("§cEs wird bereits in Deutsch übersetzt.");
 									} else {
-										p.sendMessage("§7Translating in English...");
-										APBuy.plugin.getConfig().set("german", false);
+										p.sendMessage("§7Übersetze in Deutsch...");
+										APBuy.plugin.getConfig().set("german", true);
 										APBuy.plugin.getConfig().set("customtrans", false);
 										APBuy.plugin.saveConfig();
-										APBuy.translator = Translator.createTranslatorEN();
-										p.sendMessage("§aSuccessfully Translated in English.");
+										APBuy.translator = Translator.createTranslatorDE();
+										p.sendMessage("§aErfolgreich in Deutsch übersetzt.");
+										APBuy.german = true;
 									}
 									break;
 								case "en":
 									if (!APBuy.isGerman()) {
 										p.sendMessage("§cAlready translating in English.");
 									} else {
-										p.sendMessage("§7Es wird in Deutsch übersetzt...");
-										APBuy.plugin.getConfig().set("german", true);
+										p.sendMessage("§7Translating in English...");
+										APBuy.plugin.getConfig().set("german", false);
 										APBuy.plugin.getConfig().set("customtrans", false);
 										APBuy.plugin.saveConfig();
-										APBuy.translator = Translator.createTranslatorDE();
-										p.sendMessage("§aErfolgreich in Deutsch übersetzt.");
+										APBuy.translator = Translator.createTranslatorEN();
+										p.sendMessage("§aSuccessfully translated in English.");
+										APBuy.german = false;
 									}
 									break;
 								default:
@@ -143,106 +145,148 @@ public class APBCmd implements CommandExecutor {
 							return true;
 						}
 						break;
-					case "dev": // TODO dev cmd
-						if (p.hasPermission("apb.dev") || (p.getName().equalsIgnoreCase("Amejonah1200"))) {
+					case "dev":
+						if (p.hasPermission("apb.dev.*") || p.hasPermission("apb.dev.st")
+								|| p.hasPermission("apb.dev.db") || p.hasPermission("apb.dev.rl")
+								|| p.hasPermission("apb.*") || p.hasPermission("*")
+								|| p.getName().equals("Amejonah1200")) {
 							if (args.length == 2) {
-								if (args[1].equalsIgnoreCase("clear")) {
-									int i = 0;
-									for (File f : APBuy.plugin.getSTnErrors().listFiles()) {
-										if (f.delete()) {
-											i++;
-										}
-									}
-									p.sendMessage("§7Es wurden " + i + " Errors gelöscht!");
-								} else if (args[1].equalsIgnoreCase("getall")) {
-									Bukkit.getScheduler().runTask(APBuy.plugin, new Runnable() {
-										@Override
-										public void run() {
-											if (APBuy.plugin.getSTnErrors().listFiles().length != 0) {
-												p.sendMessage(
-														"§7Es werden " + APBuy.plugin.getSTnErrors().listFiles().length
-																+ " Errors hochgeladen...");
-												try {
-													p.sendMessage("§7Hier der link: https://hastebin.com/"
-															+ Utils.newHaste(String.join("\n", Utils.getAllErrors())));
-												} catch (IOException e) {
-													p.sendMessage("§cEs gab ein Error beim upload: " + e.getMessage());
-												}
-											} else {
-												p.sendMessage("§7Es gibt keine Errors.");
+								if (args[1].equalsIgnoreCase("clearst")) {
+									if (p.hasPermission("apb.dev.*") || p.hasPermission("apb.dev.st")
+											|| p.hasPermission("apb.*") || p.hasPermission("*")
+											|| p.getName().equals("Amejonah1200")) {
+										int i = 0;
+										for (File f : APBuy.plugin.getSTnErrors().listFiles()) {
+											if (f.delete()) {
+												i++;
 											}
 										}
-									});
-									return true;
-								} else if (args[1].equalsIgnoreCase("count")) {
-									p.sendMessage(
-											"§7Es gibt " + APBuy.plugin.getSTnErrors().listFiles().length + " Errors.");
-									return true;
+										p.sendMessage("§7Es wurden " + i + " Errors gelöscht!");
+									} else {
+										p.sendMessage("§cUngültiger Befehl!");
+										return true;
+									}
+								} else if (args[1].equalsIgnoreCase("getallst")) {
+									if (p.hasPermission("apb.dev.*") || p.hasPermission("apb.dev.st")
+											|| p.hasPermission("apb.*") || p.hasPermission("*")
+											|| p.getName().equals("Amejonah1200")) {
+										Bukkit.getScheduler().runTask(APBuy.plugin, new Runnable() {
+											@Override
+											public void run() {
+												if (APBuy.plugin.getSTnErrors().listFiles().length != 0) {
+													p.sendMessage("§7Es werden "
+															+ APBuy.plugin.getSTnErrors().listFiles().length
+															+ " Errors hochgeladen...");
+													try {
+														p.sendMessage("§7Hier der link: https://hastebin.com/" + Utils
+																.newHaste(String.join("\n", Utils.getAllErrors())));
+													} catch (IOException e) {
+														p.sendMessage(
+																"§cEs gab ein Error beim upload: " + e.getMessage());
+													}
+												} else {
+													p.sendMessage("§7Es gibt keine Errors.");
+												}
+											}
+										});
+										return true;
+									} else {
+										p.sendMessage("§cUngültiger Befehl!");
+										return true;
+									}
+								} else if (args[1].equalsIgnoreCase("countst")) {
+									if (p.hasPermission("apb.dev.*") || p.hasPermission("apb.dev.st")
+											|| p.hasPermission("apb.*") || p.hasPermission("*")
+											|| p.getName().equals("Amejonah1200")) {
+										p.sendMessage("§7Es gibt " + APBuy.plugin.getSTnErrors().listFiles().length
+												+ " Errors.");
+										return true;
+									} else {
+										p.sendMessage("§cUngültiger Befehl!");
+										return true;
+									}
 								} else if (args[1].equalsIgnoreCase("rl")) {
-									APBuy.plugin.reloadConfig();
-									if (APBuy.plugin.getConfig().get("german") == null) {
-										APBuy.plugin.getConfig().set("german", APBuy.german);
-										APBuy.plugin.saveConfig();
-									} else {
-										APBuy.german = APBuy.plugin.getConfig().getBoolean("german");
-									}
-									if (APBuy.plugin.getConfig().get("customtrans") == null) {
-										APBuy.plugin.getConfig().set("customtrans", APBuy.customtrans);
-										APBuy.plugin.saveConfig();
-									} else {
-										APBuy.customtrans = APBuy.plugin.getConfig().getBoolean("customtrans");
-									}
-									if (APBuy.customtrans) {
-										if (APBuy.german) {
-											APBuy.defaulttranslator = Translator.createTranslatorDE();
+									if (p.hasPermission("apb.dev.*") || p.hasPermission("apb.dev.rl")
+											|| p.hasPermission("apb.*") || p.hasPermission("*")) {
+										APBuy.plugin.reloadConfig();
+										if (APBuy.plugin.getConfig().get("german") == null) {
+											APBuy.plugin.getConfig().set("german", APBuy.german);
+											APBuy.plugin.saveConfig();
 										} else {
-											APBuy.defaulttranslator = Translator.createTranslatorEN();
+											APBuy.german = APBuy.plugin.getConfig().getBoolean("german");
 										}
-									} else {
-										if (APBuy.german) {
-											APBuy.translator = Translator.createTranslatorDE();
+										if (APBuy.plugin.getConfig().get("customtrans") == null) {
+											APBuy.plugin.getConfig().set("customtrans", APBuy.customtrans);
+											APBuy.plugin.saveConfig();
 										} else {
-											APBuy.translator = Translator.createTranslatorEN();
+											APBuy.customtrans = APBuy.plugin.getConfig().getBoolean("customtrans");
 										}
+										if (APBuy.customtrans) {
+											if (APBuy.german) {
+												APBuy.defaulttranslator = Translator.createTranslatorDE();
+											} else {
+												APBuy.defaulttranslator = Translator.createTranslatorEN();
+											}
+										} else {
+											if (APBuy.german) {
+												APBuy.translator = Translator.createTranslatorDE();
+											} else {
+												APBuy.translator = Translator.createTranslatorEN();
+											}
+										}
+										p.sendMessage("§7Config reloaded.");
+										return true;
+									} else {
+										p.sendMessage("§cUngültiger Befehl!");
+										return true;
 									}
-									p.sendMessage("§7Config reloaded.");
+								} else {
+									p.sendMessage("§cUngültiger Befehl!");
 									return true;
 								}
 							} else if (args.length == 3) {
-								if (args[1].equalsIgnoreCase("remove")) {
-									String[] s = args[2].split(",");
-									String s2;
-									int i = 0;
-									for (File f : APBuy.plugin.getSTnErrors().listFiles()) {
-										s2 = f.getName().replaceFirst("STnError", "")
-												.replaceFirst(Pattern.quote(".txt"), "");
-										for (String s3 : s) {
-											if (s3.equals(s2)) {
-												f.delete();
-												i++;
-												break;
-											}
-										}
-									}
-									p.sendMessage("§7Es wurden " + i + " Errors gelöscht!");
-								} else if (args[1].equalsIgnoreCase("get")) {
-									Bukkit.getScheduler().runTask(APBuy.plugin, new Runnable() {
-										@Override
-										public void run() {
-											List<String> l = Utils.getErrors(args[2]);
-											if (!l.isEmpty()) {
-												p.sendMessage("§7Es werden Errors hochgeladen...");
-												try {
-													p.sendMessage("§7Hier der link: https://hastebin.com/"
-															+ Utils.newHaste(String.join("\n", l)));
-												} catch (IOException e) {
-													p.sendMessage("§cEs gab ein Error beim upload: " + e.getMessage());
+								if (p.hasPermission("apb.dev.*") || p.hasPermission("apb.dev.st")
+										|| p.hasPermission("apb.*") || p.hasPermission("*")
+										|| p.getName().equals("Amejonah1200")) {
+									if (args[1].equalsIgnoreCase("removest")) {
+										String[] s = args[2].split(",");
+										String s2;
+										int i = 0;
+										for (File f : APBuy.plugin.getSTnErrors().listFiles()) {
+											s2 = f.getName().replaceFirst("STnError", "")
+													.replaceFirst(Pattern.quote(".txt"), "");
+											for (String s3 : s) {
+												if (s3.equals(s2)) {
+													f.delete();
+													i++;
+													break;
 												}
-											} else {
-												p.sendMessage("§7Es gibt keine Errors.");
 											}
 										}
-									});
+										p.sendMessage("§7Es wurden " + i + " Errors gelöscht!");
+									} else if (args[1].equalsIgnoreCase("getst")) {
+										Bukkit.getScheduler().runTask(APBuy.plugin, new Runnable() {
+											@Override
+											public void run() {
+												List<String> l = Utils.getErrors(args[2]);
+												if (!l.isEmpty()) {
+													p.sendMessage("§7Es werden Errors hochgeladen...");
+													try {
+														p.sendMessage("§7Hier der link: https://hastebin.com/"
+																+ Utils.newHaste(String.join("\n", l)));
+													} catch (IOException e) {
+														p.sendMessage(
+																"§cEs gab ein Error beim upload: " + e.getMessage());
+													}
+												} else {
+													p.sendMessage("§7Es gibt keine Errors.");
+												}
+											}
+										});
+										return true;
+									}
+								} else {
+									p.sendMessage("§cUngültiger Befehl!");
 									return true;
 								}
 							}

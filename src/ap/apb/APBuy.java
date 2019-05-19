@@ -17,14 +17,23 @@ import org.bukkit.scheduler.BukkitTask;
 
 import ap.apb.anvilgui.AnvilGUI;
 import ap.apb.anvilgui.AnvilGUI.AnvilClickEventHandler;
-import ap.apb.anvilgui.mc1_8.*;
-import ap.apb.apbuy.itoomel.*;
+import ap.apb.anvilgui.mc1_8.AnvilGUI_v1_8_R1;
+import ap.apb.anvilgui.mc1_8.AnvilGUI_v1_8_R2;
+import ap.apb.anvilgui.mc1_8.AnvilGUI_v1_8_R3;
+import ap.apb.apbuy.itoomel.ICats;
+import ap.apb.apbuy.itoomel.Itoomel;
+import ap.apb.apbuy.itoomel.ItoomelCat;
+import ap.apb.apbuy.itoomel.ItoomelTask;
 import ap.apb.apbuy.markets.MarketHandler;
 import ap.apb.cmds.APBCmd;
 import ap.apb.cmds.ItoomelCmd;
-import ap.apb.datamaster.*;
+import ap.apb.datamaster.Database;
+import ap.apb.datamaster.SQLDatabase;
+import ap.apb.datamaster.SQLiteDatabase;
 import ap.apb.nbttager.NBTTager;
-import ap.apb.nbttager.mc1_8.*;
+import ap.apb.nbttager.mc1_8.NBTTager_v1_8_R1;
+import ap.apb.nbttager.mc1_8.NBTTager_v1_8_R2;
+import ap.apb.nbttager.mc1_8.NBTTager_v1_8_R3;
 
 public class APBuy extends JavaPlugin {
 
@@ -57,9 +66,10 @@ public class APBuy extends JavaPlugin {
 			Bukkit.getPluginManager().disablePlugin(this);
 			return;
 		}
-		// database = new YAMLDatabase();
 		database = new SQLiteDatabase();
-		((SQLDatabase) database).connect();
+		if (database instanceof SQLDatabase) {
+			((SQLDatabase) database).connect();
+		}
 		if (this.getConfig().get("german") == null) {
 			this.getConfig().set("german", german);
 			this.saveConfig();
@@ -174,7 +184,6 @@ public class APBuy extends JavaPlugin {
 		generalStop = true;
 		Bukkit.getScheduler().runTask(this, new ItoomelTask());
 		try {
-			System.out.println("Creating");
 			APBuy.getMarketHandler().createAdminShopWhenNotExist();
 		} catch (Exception e) {
 			e.printStackTrace();

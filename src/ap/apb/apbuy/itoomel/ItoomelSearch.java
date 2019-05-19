@@ -3,7 +3,6 @@ package ap.apb.apbuy.itoomel;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -62,12 +61,7 @@ public class ItoomelSearch {
 
 					@Override
 					public int compare(MarketItem o1, MarketItem o2) {
-						int i = Integer.compare(getSimilarPts(o1.getIs()), getSimilarPts(o2.getIs()));
-						if (i != 0) {
-							return i;
-						} else {
-							return new Random().nextInt(2) == 0 ? -1 : 1;
-						}
+						return Integer.compare(getSimilarPts(o1.getIs()), getSimilarPts(o2.getIs()));
 					}
 				});
 				int size = miss.size();
@@ -87,7 +81,7 @@ public class ItoomelSearch {
 													.addLineToLore("§6Market: " + Bukkit
 															.getOfflinePlayer(
 																	UUID.fromString(miss.get(count).getMarketuuid()))
-															.getName())
+															.getName().toString())
 													.toIS()));
 							count++;
 						}
