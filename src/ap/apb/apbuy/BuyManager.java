@@ -14,7 +14,7 @@ import ap.apb.AIS;
 import ap.apb.APBuy;
 import ap.apb.Translator;
 import ap.apb.Utils;
-import ap.apb.apbuy.itoomel.Itoomel;
+import ap.apb.apbuy.itoomel.ItoomelPrime;
 import ap.apb.apbuy.markets.Market;
 import ap.apb.apbuy.markets.MarketItem;
 
@@ -168,7 +168,7 @@ public class BuyManager {
 					this.getBuyer().sendMessage(Translator.translate("buymanager.nomarket"));
 					this.cancel();
 					if (this.thenInItoomel) {
-						Itoomel.openItoomel("Main", this.getBuyer(), this.getMarketItem().getIs().getType(), 0);
+						ItoomelPrime.openItoomel("Main", this.getBuyer(), this.getMarketItem().getIs().getType(), 0);
 					} else {
 						APBuy.getMarketHandler().removeFromAll(this.getBuyer());
 						APBuy.getMarketHandler().PMLocPage.put(this.getBuyer(), 0);
@@ -182,7 +182,7 @@ public class BuyManager {
 						this.getBuyer().sendMessage(Translator.translate("buymanager.marketclose"));
 						this.cancel();
 						if (this.thenInItoomel) {
-							Itoomel.openItoomel("Main", this.getBuyer(), this.getMarketItem().getIs().getType(), 0);
+							ItoomelPrime.openItoomel("Main", this.getBuyer(), this.getMarketItem().getIs().getType(), 0);
 						} else {
 							APBuy.getMarketHandler().removeFromAll(this.getBuyer());
 							APBuy.getMarketHandler().PMLocPage.put(this.getBuyer(), 0);
@@ -205,7 +205,7 @@ public class BuyManager {
 							this.getBuyer().sendMessage(Translator.translate("buymanager.nomore"));
 							this.cancel();
 							if (this.thenInItoomel) {
-								Itoomel.openItoomel("Main", this.getBuyer(), this.getMarketItem().getIs().getType(), 0);
+								ItoomelPrime.openItoomel("Main", this.getBuyer(), this.getMarketItem().getIs().getType(), 0);
 							} else {
 								APBuy.getMarketHandler().removeFromAll(this.getBuyer());
 								APBuy.getMarketHandler().PMLocPage.put(this.getBuyer(), 0);
@@ -226,7 +226,7 @@ public class BuyManager {
 							this.getBuyer().sendMessage(Translator.translate("buymanager.nomore"));
 							this.cancel();
 							if (this.thenInItoomel) {
-								Itoomel.openItoomel("Main", this.getBuyer(), this.getMarketItem().getIs().getType(), 0);
+								ItoomelPrime.openItoomel("Main", this.getBuyer(), this.getMarketItem().getIs().getType(), 0);
 							} else {
 								APBuy.getMarketHandler().removeFromAll(this.getBuyer());
 								APBuy.getMarketHandler().PMLocPage.put(this.getBuyer(), 0);
@@ -242,7 +242,7 @@ public class BuyManager {
 			case 48:
 				this.cancel();
 				if (this.thenInItoomel) {
-					Itoomel.openItoomel("Main", this.getBuyer(), this.getMarketItem().getIs().getType(), 0);
+					ItoomelPrime.openItoomel("Main", this.getBuyer(), this.getMarketItem().getIs().getType(), 0);
 				} else {
 					APBuy.getMarketHandler().removeFromAll(this.getBuyer());
 					APBuy.getMarketHandler().PMLocPage.put(this.getBuyer(), 0);
@@ -319,11 +319,11 @@ public class BuyManager {
 						m.removeItem(this.getMarketItem().getIs(), this.getWantToBuy() * this.getMarketItem().getSellAmmount());
 						if (this.getMarketItem().getAmmount()
 								- (this.getWantToBuy() * this.getMarketItem().getSellAmmount()) == 0) {
-							Itoomel.removeMISFromItoomel(this.getMarketItem().getIs(), this.getMarket());
+							ItoomelPrime.removeMISFromItoomel(this.getMarketItem().getIs(), this.getMarket());
 						} else {
 							this.getMarketItem().setAmmount(this.getMarketItem().getAmmount()
 									- (this.getWantToBuy() * this.getMarketItem().getSellAmmount()));
-							Itoomel.replaceMISInItoomel(this.getMarketItem());
+							ItoomelPrime.replaceMISInItoomel(this.getMarketItem());
 						}
 					} else {
 						this.getBuyer().sendMessage(Translator.translate("buymanager.thxadminshop"));

@@ -79,7 +79,7 @@ public abstract class ItoomelCat {
 		HashMap<Material, Short[]> cM = new HashMap<>();
 		cM.putAll(this.getCatMats());
 		for (Material mat : this.getCatMats().keySet()) {
-			if (!Itoomel.itoomelStandard.containsKey(mat)) {
+			if (!ItoomelPrime.itoomelStandard.containsKey(mat)) {
 				cM.remove(mat);
 			}
 		}

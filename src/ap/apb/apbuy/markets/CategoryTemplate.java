@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 
 import ap.apb.AIS;
 import ap.apb.Utils;
-import ap.apb.apbuy.itoomel.Itoomel;
+import ap.apb.apbuy.itoomel.ItoomelPrime;
 
 public class CategoryTemplate {
 
@@ -147,7 +147,7 @@ public class CategoryTemplate {
 			iss = iss + is.getAmount();
 			mis.setAmmount(iss);
 			this.addItem(mis);
-			Itoomel.addMISToItoomel(mis);
+			ItoomelPrime.addMISToItoomel(mis);
 		} else {
 			iss = iss + is.getAmount();
 			mis.setAmmount(iss);

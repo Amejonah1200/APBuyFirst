@@ -56,7 +56,7 @@ public class ItoomelSearch {
 			public void run() {
 				// - Getting all Markets to display
 				List<MarketItem> miss = new ArrayList<>();
-				miss.addAll(Itoomel.itoomelStandard.get(getItemStack().getType()));
+				miss.addAll(ItoomelPrime.itoomelStandard.get(getItemStack().getType()));
 				miss.sort(new Comparator<MarketItem>() {
 
 					@Override

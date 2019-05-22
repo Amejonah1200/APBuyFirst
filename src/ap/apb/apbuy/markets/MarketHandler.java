@@ -33,7 +33,7 @@ import ap.apb.anvilgui.AnvilGUI.AnvilClickEventHandler;
 import ap.apb.anvilgui.AnvilGUI.AnvilSlot;
 import ap.apb.anvilgui.mc1_8.AnvilGUI_v1_8_R3;
 import ap.apb.apbuy.BuyManager;
-import ap.apb.apbuy.itoomel.Itoomel;
+import ap.apb.apbuy.itoomel.ItoomelPrime;
 
 public class MarketHandler implements Listener {
 
@@ -748,7 +748,7 @@ public class MarketHandler implements Listener {
 
 	public void removeFromAll(Player p) {
 		if (PMLoc.containsKey(p) || creatingIS.containsKey(p) || creatingCat.containsKey(p)
-				|| onMarketVisualiser.containsKey(p) || onItemInput.containsKey(p) || Itoomel.onItoomel.containsKey(p)
+				|| onMarketVisualiser.containsKey(p) || onItemInput.containsKey(p) || ItoomelPrime.onItoomel.containsKey(p)
 				|| BuyManager.isBuying(p)) {
 			PMLoc.remove(p);
 			PMLocPage.remove(p);
@@ -756,7 +756,7 @@ public class MarketHandler implements Listener {
 			creatingIS.remove(p);
 			onMarketVisualiser.remove(p);
 			onItemInput.remove(p);
-			Itoomel.onItoomel.remove(p);
+			ItoomelPrime.onItoomel.remove(p);
 			BuyManager.removeBuyer(p);
 			p.closeInventory();
 		}
@@ -1064,8 +1064,8 @@ public class MarketHandler implements Listener {
 			e.getPlayer().sendMessage(Translator.translate("close.buycanceled"));
 			BuyManager.removeBuyer((Player) e.getPlayer());
 		}
-		if (Itoomel.onItoomel.containsKey(e.getPlayer())) {
-			Itoomel.onItoomel.remove(e.getPlayer());
+		if (ItoomelPrime.onItoomel.containsKey(e.getPlayer())) {
+			ItoomelPrime.onItoomel.remove(e.getPlayer());
 			PMLocPage.remove(e.getPlayer());
 			return;
 		}
@@ -1427,7 +1427,7 @@ public class MarketHandler implements Listener {
 										mis.setAmmount(mis.getAmmount()
 												+ e.getClickedInventory().getContents()[i].getAmount());
 										mis.save();
-										Itoomel.replaceMISInItoomel(mis);
+										ItoomelPrime.replaceMISInItoomel(mis);
 									} else {
 										notRegistered.add(e.getClickedInventory().getContents()[i]);
 									}
@@ -1506,7 +1506,7 @@ public class MarketHandler implements Listener {
 											int count = Utils.getPlaceForIS(p, is.getAmmount(), is.getIs());
 											Utils.addItemToPlayer(p, is.getIs().clone(), count);
 											m.removeItem(is.getIs().clone(), count);
-											Itoomel.removeMISFromItoomel(is.getIs(), is.getMarketuuid());
+											ItoomelPrime.removeMISFromItoomel(is.getIs(), is.getMarketuuid());
 											this.openItemEditor(
 													menu.endsWith(":Opened")
 															? menu.substring(0, menu.length() - 7)
@@ -1531,7 +1531,7 @@ public class MarketHandler implements Listener {
 											int count = Utils.getPlaceForIS(p, test, is.getIs());
 											Utils.addItemToPlayer(p, is.getIs().clone(), count);
 											if (m.removeItem(is.getIs().clone(), count) == 0) {
-												Itoomel.removeMISFromItoomel(is.getIs(), is.getMarketuuid());
+												ItoomelPrime.removeMISFromItoomel(is.getIs(), is.getMarketuuid());
 											}
 											// else {
 											// is.setAmmount(is.getAmmount() -
@@ -1986,9 +1986,9 @@ public class MarketHandler implements Listener {
 								if (p.hasPermission("apb.mod.*") || p.hasPermission("apb.mod.delete")) {
 									APBuy.database
 											.deleteMarket(UUID.fromString(((String) onMarketVisualiser.get(p)[1])));
-									Itoomel.removeMarketFromItoomel(
+									ItoomelPrime.removeMarketFromItoomel(
 											UUID.fromString(((String) onMarketVisualiser.get(p)[1])));
-									Itoomel.reopenItoomelToEveryone();
+									ItoomelPrime.reopenItoomelToEveryone();
 									reopenMarketsToEveryone();
 									p.closeInventory();
 								}

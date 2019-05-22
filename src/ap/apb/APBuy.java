@@ -21,7 +21,7 @@ import ap.apb.anvilgui.mc1_8.AnvilGUI_v1_8_R1;
 import ap.apb.anvilgui.mc1_8.AnvilGUI_v1_8_R2;
 import ap.apb.anvilgui.mc1_8.AnvilGUI_v1_8_R3;
 import ap.apb.apbuy.itoomel.ICats;
-import ap.apb.apbuy.itoomel.Itoomel;
+import ap.apb.apbuy.itoomel.ItoomelPrime;
 import ap.apb.apbuy.itoomel.ItoomelCat;
 import ap.apb.apbuy.itoomel.ItoomelTask;
 import ap.apb.apbuy.markets.MarketHandler;
@@ -45,9 +45,9 @@ public class APBuy extends JavaPlugin {
 	private BukkitTask Itoomeltask;
 	public static APBuy plugin;
 	public static NBTTager tagger;
-	private boolean removeGen = false;
+	private static boolean removeGen = false;
 	public static EcoHandler ecohandler;
-	private boolean generalStop = false;
+	private static boolean generalStop = false;
 	private boolean needSetup = false;
 	private boolean autoCreate = true;
 	private List<ItoomelCat> icatslist = new ArrayList<>();
@@ -131,7 +131,7 @@ public class APBuy extends JavaPlugin {
 		getCommand("apb").setExecutor(new APBCmd());
 		getCommand("itoomel").setExecutor(new ItoomelCmd());
 		Bukkit.getPluginManager().registerEvents(APBuy.getMarketHandler(), this);
-		Bukkit.getPluginManager().registerEvents(new Itoomel(), this);
+		Bukkit.getPluginManager().registerEvents(new ItoomelPrime(), this);
 		if (autoCreate && (!generalStop)) {
 			Bukkit.getPluginManager().registerEvents(new Listener() {
 				@EventHandler
@@ -294,19 +294,19 @@ public class APBuy extends JavaPlugin {
 	}
 
 	public boolean isRemoveGen() {
-		return this.removeGen;
+		return removeGen;
 	}
 
-	public void setRemoveGen(boolean removeGen) {
-		this.removeGen = removeGen;
+	public static void setRemoveGen(boolean removeGena) {
+		removeGen = removeGena;
 	}
 
-	public boolean isGeneralStop() {
-		return this.generalStop;
+	public static boolean isGeneralStop() {
+		return generalStop;
 	}
 
-	public void setGeneralStop(boolean generalStop) {
-		this.generalStop = generalStop;
+	public static void setGeneralStop(boolean generalStoa) {
+		generalStop = generalStoa;
 	}
 
 	public boolean isNeedSetup() {

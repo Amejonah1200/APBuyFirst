@@ -31,8 +31,8 @@ public class APBCmd implements CommandExecutor {
 				if (p.hasPermission("apb.mod.genstop") && (!APBuy.plugin.isNeedSetup())) {
 					if (args.length == 1) {
 						if (args[0].equalsIgnoreCase("genstop")) {
-							APBuy.plugin.setGeneralStop(!APBuy.plugin.isGeneralStop());
-							if (APBuy.plugin.isGeneralStop()) {
+							APBuy.setGeneralStop(!APBuy.isGeneralStop());
+							if (APBuy.isGeneralStop()) {
 								p.sendMessage(APBuy.translator.trans("apbcmd.genstop.nownbcu"));
 								p.sendMessage(APBuy.translator.trans("apbcmd.genstop.howtooff"));
 								return true;
@@ -43,7 +43,7 @@ public class APBCmd implements CommandExecutor {
 						}
 					}
 				}
-				if (APBuy.plugin.isGeneralStop()) {
+				if (APBuy.isGeneralStop()) {
 					p.sendMessage(APBuy.translator.trans("apbcmd.genstop.nbcu"));
 					if (p.hasPermission("apb.mod.genstop") && (!APBuy.plugin.isNeedSetup())) {
 						p.sendMessage(APBuy.translator.trans("apbcmd.genstop.howtooff"));

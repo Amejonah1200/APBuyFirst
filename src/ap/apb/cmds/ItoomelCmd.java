@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 import ap.apb.APBuy;
 import ap.apb.Utils;
-import ap.apb.apbuy.itoomel.Itoomel;
+import ap.apb.apbuy.itoomel.ItoomelPrime;
 
 public class ItoomelCmd implements CommandExecutor {
 
@@ -17,7 +17,7 @@ public class ItoomelCmd implements CommandExecutor {
 		try {
 			if (arg0 instanceof Player) {
 				Player p = (Player) arg0;
-				if (APBuy.plugin.isGeneralStop()) {
+				if (APBuy.isGeneralStop()) {
 					p.sendMessage(
 							"§cAktuel kann niemand Itoomel öffnen. Bitte kontakiere die Mods, wenn Fragen offen sind!");
 					return true;
@@ -31,7 +31,7 @@ public class ItoomelCmd implements CommandExecutor {
 				// }
 				if (arg3.length == 0) {
 					if (p.hasPermission("apb.itoomel")) {
-						Itoomel.openItoomel("Main", p, Material.AIR, 0);
+						ItoomelPrime.openItoomel("Main", p, Material.AIR, 0);
 					} else {
 						p.sendMessage("§c[Itoomel] Dafür hast du keine Rechte!");
 					}
@@ -39,7 +39,7 @@ public class ItoomelCmd implements CommandExecutor {
 					if (p.hasPermission("apb.itoomel")) {
 						if (arg3[0].equalsIgnoreCase("search")) {
 							if (((Player) p).getInventory().getItemInHand().getType() != Material.AIR) {
-								Itoomel.openItoomel("Main", p,
+								ItoomelPrime.openItoomel("Main", p,
 										p.getInventory().getItemInHand().getType(), 0);
 							} else {
 								p.sendMessage("§cBitte halte einen Item in der Hand.");

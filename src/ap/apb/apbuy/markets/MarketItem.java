@@ -131,4 +131,8 @@ public class MarketItem {
 		this.uuid = uuid;
 	}
 
+	public boolean isSimilar(MarketItem mis) {
+		return mis.getIs().isSimilar(this.getIs()) && mis.getMarketuuid().equals(this.getMarketuuid());
+	}
+
 }

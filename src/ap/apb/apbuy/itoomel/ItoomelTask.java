@@ -35,9 +35,9 @@ public class ItoomelTask implements Runnable {
 					}
 				}
 			}
-			Itoomel.reopenItoomelToEveryone();
-			Itoomel.itoomelStandard = allMM;
-			APBuy.plugin.setGeneralStop(!APBuy.plugin.isRemoveGen());
+			ItoomelPrime.reopenItoomelToEveryone();
+			ItoomelPrime.itoomelStandard = allMM;
+			APBuy.setGeneralStop(!APBuy.plugin.isRemoveGen());
 			System.out.println("[APB] Itoomel finished.");
 		} catch (Exception e1) {
 			e1.printStackTrace();
