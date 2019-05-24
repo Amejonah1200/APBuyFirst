@@ -8,7 +8,10 @@ import org.bukkit.entity.Player;
 
 import ap.apb.APBuy;
 import ap.apb.Utils;
+import ap.apb.apbuy.itoomel.Itoomel;
+import ap.apb.apbuy.itoomel.ItoomelNavigation;
 import ap.apb.apbuy.itoomel.ItoomelPrime;
+import ap.apb.apbuy.itoomel.ItoomelNavigation.ItoomelMenu;
 
 public class ItoomelCmd implements CommandExecutor {
 
@@ -31,7 +34,8 @@ public class ItoomelCmd implements CommandExecutor {
 				// }
 				if (arg3.length == 0) {
 					if (p.hasPermission("apb.itoomel")) {
-						ItoomelPrime.openItoomel("Main", p, Material.AIR, 0);
+//						ItoomelPrime.openItoomel("Main", p, Material.AIR, 0);
+						Itoomel.getInstance().openNav(new ItoomelNavigation(ItoomelMenu.MAIN, p));
 					} else {
 						p.sendMessage("§c[Itoomel] Dafür hast du keine Rechte!");
 					}

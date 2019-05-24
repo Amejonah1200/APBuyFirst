@@ -50,11 +50,7 @@ public class MarketHandler implements Listener {
 		try {
 			Inventory inv = Bukkit.createInventory(null, 27, Translator.translate("menu.title.mainmenu"));
 			for (int i = 0; i < 27; i++) {
-				ItemStack nothing = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15);
-				ItemMeta m = nothing.getItemMeta();
-				m.setDisplayName("§a");
-				nothing.setItemMeta(m);
-				inv.setItem(i, nothing);
+				inv.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
 			}
 
 			if (!p.hasPermission("apb.mymarket.edit")) {
@@ -748,8 +744,8 @@ public class MarketHandler implements Listener {
 
 	public void removeFromAll(Player p) {
 		if (PMLoc.containsKey(p) || creatingIS.containsKey(p) || creatingCat.containsKey(p)
-				|| onMarketVisualiser.containsKey(p) || onItemInput.containsKey(p) || ItoomelPrime.onItoomel.containsKey(p)
-				|| BuyManager.isBuying(p)) {
+				|| onMarketVisualiser.containsKey(p) || onItemInput.containsKey(p)
+				|| ItoomelPrime.onItoomel.containsKey(p) || BuyManager.isBuying(p)) {
 			PMLoc.remove(p);
 			PMLocPage.remove(p);
 			creatingCat.remove(p);

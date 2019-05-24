@@ -21,9 +21,8 @@ import ap.apb.anvilgui.mc1_8.AnvilGUI_v1_8_R1;
 import ap.apb.anvilgui.mc1_8.AnvilGUI_v1_8_R2;
 import ap.apb.anvilgui.mc1_8.AnvilGUI_v1_8_R3;
 import ap.apb.apbuy.itoomel.ICats;
-import ap.apb.apbuy.itoomel.ItoomelPrime;
+import ap.apb.apbuy.itoomel.Itoomel;
 import ap.apb.apbuy.itoomel.ItoomelCat;
-import ap.apb.apbuy.itoomel.ItoomelTask;
 import ap.apb.apbuy.markets.MarketHandler;
 import ap.apb.cmds.APBCmd;
 import ap.apb.cmds.ItoomelCmd;
@@ -57,6 +56,7 @@ public class APBuy extends JavaPlugin {
 	public static boolean german = true;
 	public static boolean customtrans = false;
 	public static Database database;
+	public static Itoomel itoomel;
 
 	@Override
 	public void onEnable() {
@@ -96,6 +96,7 @@ public class APBuy extends JavaPlugin {
 			}
 		}
 		this.setMarketHandler(new MarketHandler());
+		itoomel = new Itoomel();
 		if (this.getConfig().get("AutoCreateAccount") == null) {
 			this.getConfig().set("AutoCreateAccount", autoCreate);
 			this.saveConfig();
@@ -131,7 +132,8 @@ public class APBuy extends JavaPlugin {
 		getCommand("apb").setExecutor(new APBCmd());
 		getCommand("itoomel").setExecutor(new ItoomelCmd());
 		Bukkit.getPluginManager().registerEvents(APBuy.getMarketHandler(), this);
-		Bukkit.getPluginManager().registerEvents(new ItoomelPrime(), this);
+//		Bukkit.getPluginManager().registerEvents(new ItoomelPrime(), this);
+		Bukkit.getPluginManager().registerEvents(itoomel, this);
 		if (autoCreate && (!generalStop)) {
 			Bukkit.getPluginManager().registerEvents(new Listener() {
 				@EventHandler
@@ -160,7 +162,6 @@ public class APBuy extends JavaPlugin {
 		icatslist.add(icats.new ICatFood());
 		icatslist.add(icats.new ICatBrewing());
 		icatslist.add(icats.new ICatRedstone());
-
 		ItoomelCat icat = new ItoomelCat("§7Other stuff", Material.CHEST,
 				"Hier wird alles sein was nicht einsortiert werden konnte.") {
 			@Override
@@ -182,7 +183,7 @@ public class APBuy extends JavaPlugin {
 		System.out.println("[APB] Starting Itoomel...");
 		removeGen = !generalStop;
 		generalStop = true;
-		Bukkit.getScheduler().runTask(this, new ItoomelTask());
+//		Bukkit.getScheduler().runTask(this, new ItoomelTask());
 		try {
 			APBuy.getMarketHandler().createAdminShopWhenNotExist();
 		} catch (Exception e) {

@@ -6,6 +6,11 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 
 import ap.apb.APBuy;
@@ -13,11 +18,14 @@ import ap.apb.Utils;
 import ap.apb.apbuy.markets.Market;
 import ap.apb.apbuy.markets.MarketItem;
 
-public class Itoomel {
+public class Itoomel implements Listener {
 
 	private List<MarketItem> itoomelitems;
+	private List<ItoomelNavigation> itoomelNav;
 
 	public Itoomel() {
+		itoomelitems = new ArrayList<>();
+		itoomelNav = new ArrayList<>();
 		APBuy.setRemoveGen(!APBuy.isGeneralStop());
 		APBuy.setGeneralStop(true);
 		this.load();
@@ -146,6 +154,62 @@ public class Itoomel {
 			}
 		}
 		return false;
+	}
+
+	public static Itoomel getInstance() {
+		return APBuy.itoomel;
+	}
+
+	public void removeFromNav(Player player) {
+		Iterator<ItoomelNavigation> iterator = itoomelNav.iterator();
+		while (iterator.hasNext()) {
+			if (iterator.next().getPlayer().equals(player)) {
+				iterator.remove();
+			}
+		}
+	}
+
+	@EventHandler
+	public void onClick(InventoryClickEvent e) {
+		for (ItoomelNavigation nav : itoomelNav) {
+			if (nav.getPlayer().equals(e.getWhoClicked())) {
+				nav.onClick(e);
+				break;
+			}
+		}
+	}
+
+	@EventHandler
+	public void onClose(InventoryCloseEvent e) {
+		for (ItoomelNavigation nav : itoomelNav) {
+			if (e.getPlayer().equals(nav.getPlayer())) {
+				nav.onClose();
+				break;
+			}
+		}
+	}
+
+	public void openNav(ItoomelNavigation nav) {
+		removeFromNav(nav.getPlayer());
+		nav.open();
+		itoomelNav.add(nav);
+	}
+
+	public List<MarketItem> getAllMisFromNSize(int fromID, int size) {
+		List<MarketItem> list = new ArrayList<>();
+		if (fromID < itoomelitems.size()) {
+			for (int i = fromID; i < itoomelitems.size(); i++) {
+				if (i == fromID + size) {
+					break;
+				}
+				list.add(itoomelitems.get(i));
+			}
+		}
+		return list;
+	}
+
+	public int getPages() {
+		return ((itoomelitems.size() - (itoomelitems.size() % 28)) / 28);
 	}
 
 }
