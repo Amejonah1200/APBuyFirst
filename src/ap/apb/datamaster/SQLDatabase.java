@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -339,6 +340,63 @@ public abstract class SQLDatabase implements Database {
 			e.printStackTrace();
 		}
 		return catinfoss;
+	}
+
+	@Override
+	public HashMap<ItemStack, String[]> getItemsFromItemDepot(String owner) {
+		HashMap<ItemStack, String[]> hmitms = new HashMap<>();
+		try {
+			ResultSet set = connection.prepareStatement("SELECT * FROM APBuy_ItemDepot WHERE owner = '" + owner + "';")
+					.executeQuery();
+			while (set.next()) {
+				hmitms.put(Utils.deserializeItemStack(set.getString("itemstack")),
+						new String[] { set.getString("uuid"), String.valueOf(set.getLong("amount")) });
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return hmitms;
+	}
+
+	@Override
+	public void saveMisToItemDepot(String uuid, String owner, ItemStack itemStack, long amount) {
+		if(amount == 0) {
+			removeItemFromItemDepot(owner, itemStack);
+			return;
+		}
+		try {
+			connection
+					.prepareStatement("REPLACE INTO APBuy_ItemDepot (uuid, owner, itemstack, amount) VALUES ('" + uuid
+							+ "', '" + owner + "', '" + Utils.serializeItemStack(itemStack) + "', " + amount + ");")
+					.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void removeItemFromItemDepot(String owner, ItemStack itemStack) {
+		try {
+			connection.prepareStatement("DELETE FROM APBuy_ItemDepot WHERE owner = '" + owner + "' AND itemstack = '"
+					+ Utils.serializeItemStack(itemStack) + "';").execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public String[] getItemDataFromDepot(String owner, ItemStack itemstack) {
+		String[] data = null;
+		try {
+			ResultSet set = connection.prepareStatement("SELECT * FROM APBuy_ItemDepot WHERE owner = '" + owner
+					+ "' AND itemstack = '" + Utils.serializeItemStack(itemstack) + "';").executeQuery();
+			if (set.next()) {
+				data = new String[] { set.getString("uuid"), String.valueOf(set.getLong("amount")) };
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return data;
 	}
 
 }

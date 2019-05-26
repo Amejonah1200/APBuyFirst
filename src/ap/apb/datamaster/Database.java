@@ -1,5 +1,6 @@
 package ap.apb.datamaster;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -49,4 +50,13 @@ public abstract interface Database {
 	public boolean hasMarketItem(String owner, ItemStack is);
 
 	public List<UUID> loadAllMarkets() throws MarketException;
+	
+	public HashMap<ItemStack, String[]> getItemsFromItemDepot(String owner);
+	
+	public void saveMisToItemDepot(String uuid, String owner, ItemStack itemStack, long amount);
+	
+	public void removeItemFromItemDepot(String owner, ItemStack itemStack);
+
+	public String[] getItemDataFromDepot(String uuid, ItemStack itemstack);
+	
 }

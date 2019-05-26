@@ -10,7 +10,6 @@ import ap.apb.APBuy;
 import ap.apb.Utils;
 import ap.apb.apbuy.itoomel.Itoomel;
 import ap.apb.apbuy.itoomel.ItoomelNavigation;
-import ap.apb.apbuy.itoomel.ItoomelPrime;
 import ap.apb.apbuy.itoomel.ItoomelNavigation.ItoomelMenu;
 
 public class ItoomelCmd implements CommandExecutor {
@@ -34,8 +33,8 @@ public class ItoomelCmd implements CommandExecutor {
 				// }
 				if (arg3.length == 0) {
 					if (p.hasPermission("apb.itoomel")) {
-//						ItoomelPrime.openItoomel("Main", p, Material.AIR, 0);
-						Itoomel.getInstance().openNav(new ItoomelNavigation(ItoomelMenu.MAIN, p));
+						// ItoomelPrime.openItoomel("Main", p, Material.AIR, 0);
+						Itoomel.getInstance().openNav(new ItoomelNavigation(ItoomelMenu.ALL_ITEMS, p));
 					} else {
 						p.sendMessage("§c[Itoomel] Dafür hast du keine Rechte!");
 					}
@@ -43,8 +42,11 @@ public class ItoomelCmd implements CommandExecutor {
 					if (p.hasPermission("apb.itoomel")) {
 						if (arg3[0].equalsIgnoreCase("search")) {
 							if (((Player) p).getInventory().getItemInHand().getType() != Material.AIR) {
-								ItoomelPrime.openItoomel("Main", p,
-										p.getInventory().getItemInHand().getType(), 0);
+								// ItoomelPrime.openItoomel("Main", p,
+								// p.getInventory().getItemInHand().getType(),
+								// 0);
+								Itoomel.getInstance().openNav(
+										new String[] { "SEARCH_MAT", p.getItemInHand().getType().toString() }, p);
 							} else {
 								p.sendMessage("§cBitte halte einen Item in der Hand.");
 							}

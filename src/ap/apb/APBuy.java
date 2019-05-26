@@ -23,6 +23,7 @@ import ap.apb.anvilgui.mc1_8.AnvilGUI_v1_8_R3;
 import ap.apb.apbuy.itoomel.ICats;
 import ap.apb.apbuy.itoomel.Itoomel;
 import ap.apb.apbuy.itoomel.ItoomelCat;
+import ap.apb.apbuy.markets.ItemDepot;
 import ap.apb.apbuy.markets.MarketHandler;
 import ap.apb.cmds.APBCmd;
 import ap.apb.cmds.ItoomelCmd;
@@ -57,10 +58,12 @@ public class APBuy extends JavaPlugin {
 	public static boolean customtrans = false;
 	public static Database database;
 	public static Itoomel itoomel;
+	public static ItemDepot itemDepot;
 
 	@Override
 	public void onEnable() {
 		plugin = this;
+		itemDepot = new ItemDepot();
 		if (!setupNBTTager()) {
 			System.err.println("[APBuy] Wrong version!");
 			Bukkit.getPluginManager().disablePlugin(this);
@@ -96,7 +99,6 @@ public class APBuy extends JavaPlugin {
 			}
 		}
 		this.setMarketHandler(new MarketHandler());
-		itoomel = new Itoomel();
 		if (this.getConfig().get("AutoCreateAccount") == null) {
 			this.getConfig().set("AutoCreateAccount", autoCreate);
 			this.saveConfig();
@@ -132,8 +134,8 @@ public class APBuy extends JavaPlugin {
 		getCommand("apb").setExecutor(new APBCmd());
 		getCommand("itoomel").setExecutor(new ItoomelCmd());
 		Bukkit.getPluginManager().registerEvents(APBuy.getMarketHandler(), this);
-//		Bukkit.getPluginManager().registerEvents(new ItoomelPrime(), this);
-		Bukkit.getPluginManager().registerEvents(itoomel, this);
+		Bukkit.getPluginManager().registerEvents(itemDepot, this);
+		// Bukkit.getPluginManager().registerEvents(new ItoomelPrime(), this);
 		if (autoCreate && (!generalStop)) {
 			Bukkit.getPluginManager().registerEvents(new Listener() {
 				@EventHandler
@@ -181,9 +183,12 @@ public class APBuy extends JavaPlugin {
 		icat.registerMats();
 		icatslist.add(icat);
 		System.out.println("[APB] Starting Itoomel...");
-		removeGen = !generalStop;
 		generalStop = true;
-//		Bukkit.getScheduler().runTask(this, new ItoomelTask());
+		removeGen = false;
+		itoomel = new Itoomel();
+		generalStop = false;
+		Bukkit.getPluginManager().registerEvents(itoomel, this);
+		// Bukkit.getScheduler().runTask(this, new ItoomelTask());
 		try {
 			APBuy.getMarketHandler().createAdminShopWhenNotExist();
 		} catch (Exception e) {
@@ -218,12 +223,16 @@ public class APBuy extends JavaPlugin {
 		} catch (Exception e) {
 			return false;
 		}
-		if (version.equals("v1_8_R1")) {
+		switch (version) {
+		case "v1_8_R1":
 			tagger = new NBTTager_v1_8_R1();
-		} else if (version.equals("v1_8_R2")) {
+			break;
+		case "v1_8_R2":
 			tagger = new NBTTager_v1_8_R2();
-		} else if (version.equals("v1_8_R3")) {
+			break;
+		case "v1_8_R3":
 			tagger = new NBTTager_v1_8_R3();
+			break;
 		}
 		return tagger != null;
 	}

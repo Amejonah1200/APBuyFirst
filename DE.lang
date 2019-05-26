@@ -145,7 +145,7 @@ menu.info=§7Info
 menu.price=§6Preis
 
 
-close.buycanceled=§cDein Kauf ist abgebrochen.
+close.buycanceled=§cDein Kauf wurde abgebrochen.
 close.itemcreate=§cDas hinzufügen eines Items wurde abgebrochen. (Reload oder Fenster zu).
 close.catcreate=§cDeine erstellung einer Kategorie wurde abgebrochen. (Reload oder Fenster zu).
 

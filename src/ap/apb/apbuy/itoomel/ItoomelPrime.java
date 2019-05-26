@@ -67,8 +67,8 @@ public class ItoomelPrime implements Listener {
 							}
 						} else if (APBuy.tagger.hasTag("Market", e.getCurrentItem())) {
 							APBuy.getMarketHandler().PMLocPage.put(p, 0);
-							ItoomelPrime.openItoomel("Market:" + APBuy.tagger.getNBTTagString("Market", e.getCurrentItem()),
-									p, type, 0);
+							ItoomelPrime.openItoomel(
+									"Market:" + APBuy.tagger.getNBTTagString("Market", e.getCurrentItem()), p, type, 0);
 						}
 					} else if (e.getSlot() == 49) {
 						if (e.getCurrentItem().getType() == Material.BARRIER) {
@@ -129,10 +129,11 @@ public class ItoomelPrime implements Listener {
 								APBuy.tagger.getNBTTagInt("ToPage", e.getCurrentItem()));
 						if (type == Material.AIR) {
 							int i = (int) ItoomelPrime.onItoomel.get(p)[2];
-							ItoomelPrime.openItoomel(menu, p, type, APBuy.tagger.getNBTTagInt("ToPage", e.getCurrentItem()),
-									i);
+							ItoomelPrime.openItoomel(menu, p, type,
+									APBuy.tagger.getNBTTagInt("ToPage", e.getCurrentItem()), i);
 						} else {
-							ItoomelPrime.openItoomel(menu, p, type, APBuy.tagger.getNBTTagInt("ToPage", e.getCurrentItem()),
+							ItoomelPrime.openItoomel(menu, p, type,
+									APBuy.tagger.getNBTTagInt("ToPage", e.getCurrentItem()),
 									menu.startsWith("Market:") ? 0 : (Integer) ItoomelPrime.onItoomel.get(p)[2]);
 						}
 
@@ -142,8 +143,6 @@ public class ItoomelPrime implements Listener {
 										: menu.replaceFirst("SubMarket:", ""), false)
 												.getMarketItemByIS(new AIS(e.getCurrentItem().clone())
 														.removeLatestLore(4).removeNBTTag("ToBuy").toIS()),
-								menu.startsWith("Market:") ? menu.replaceFirst("Market:", "")
-										: menu.replaceFirst("SubMarket:", ""),
 								1, (Player) e.getWhoClicked(), true, null)) {
 							APBuy.getMarketHandler().PMLocPage.remove(p);
 							ItoomelPrime.onItoomel.remove(p);
@@ -158,8 +157,10 @@ public class ItoomelPrime implements Listener {
 							APBuy.getMarketHandler().PMLocPage.put(p, 0);
 							if (APBuy.tagger.hasTag("NoSubID", e.getCurrentItem())) {
 								ItoomelPrime.openItoomel("Main", p, e.getCurrentItem().getType(), 0);
-//								Itoomel.openSearch(
-//										new ItoomelSearch(new ItemStack(e.getCurrentItem().clone().getType()), p, 0));
+								// Itoomel.openSearch(
+								// new ItoomelSearch(new
+								// ItemStack(e.getCurrentItem().clone().getType()),
+								// p, 0));
 							} else {
 								ItoomelPrime.openItoomel("searchSubID:" + e.getCurrentItem().getDurability(), p,
 										e.getCurrentItem().getType(), 0);
@@ -173,11 +174,11 @@ public class ItoomelPrime implements Listener {
 								APBuy.tagger.getNBTTagInt("ToPage", e.getCurrentItem()));
 						if (type == Material.AIR) {
 							int i = (int) ItoomelPrime.onItoomel.get(p)[2];
-							ItoomelPrime.openItoomel(menu, p, type, APBuy.tagger.getNBTTagInt("ToPage", e.getCurrentItem()),
-									i);
+							ItoomelPrime.openItoomel(menu, p, type,
+									APBuy.tagger.getNBTTagInt("ToPage", e.getCurrentItem()), i);
 						} else {
-							ItoomelPrime.openItoomel(menu, p, type, APBuy.tagger.getNBTTagInt("ToPage", e.getCurrentItem()),
-									0);
+							ItoomelPrime.openItoomel(menu, p, type,
+									APBuy.tagger.getNBTTagInt("ToPage", e.getCurrentItem()), 0);
 						}
 					}
 				} else if (menu.equalsIgnoreCase("search")) {
@@ -188,8 +189,8 @@ public class ItoomelPrime implements Listener {
 						}
 					} else if (APBuy.tagger.hasTag("Market", e.getCurrentItem())) {
 						APBuy.getMarketHandler().PMLocPage.put(p, 0);
-						ItoomelPrime.openItoomel("Market:" + APBuy.tagger.getNBTTagString("Market", e.getCurrentItem()), p,
-								type, 0);
+						ItoomelPrime.openItoomel("Market:" + APBuy.tagger.getNBTTagString("Market", e.getCurrentItem()),
+								p, type, 0);
 					}
 				} else if (menu.contains("searchSubID:")) {
 					if (e.getSlot() == 49) {
@@ -199,8 +200,9 @@ public class ItoomelPrime implements Listener {
 						}
 					} else if (APBuy.tagger.hasTag("Market", e.getCurrentItem())) {
 						APBuy.getMarketHandler().PMLocPage.put(p, 0);
-						ItoomelPrime.openItoomel("SubMarket:" + APBuy.tagger.getNBTTagString("Market", e.getCurrentItem()),
-								p, type, 0, Integer.valueOf(menu.replaceFirst("searchSubID:", "")));
+						ItoomelPrime.openItoomel(
+								"SubMarket:" + APBuy.tagger.getNBTTagString("Market", e.getCurrentItem()), p, type, 0,
+								Integer.valueOf(menu.replaceFirst("searchSubID:", "")));
 					}
 				}
 			}
@@ -236,17 +238,6 @@ public class ItoomelPrime implements Listener {
 			APBuy.getMarketHandler().removeFromAll(p);
 			p.sendMessage("§cEin Fehler ist aufgetreten, bitte kontaktiere einen Dev.");
 			p.sendMessage("§c Das hier dem Dev sagen : " + Utils.addToFix(e1));
-		}
-	}
-
-	private static void openSearch(ItoomelSearch itoomelSearch) {
-		if (isSearching(itoomelSearch.getPlayer())) {
-			removeFromSearch(itoomelSearch.getPlayer());
-			itoomelSearch.openItoomelSearch();
-			searches.add(itoomelSearch);
-		} else {
-			itoomelSearch.openItoomelSearch();
-			searches.add(itoomelSearch);
 		}
 	}
 
@@ -324,20 +315,20 @@ public class ItoomelPrime implements Listener {
 									if (count >= size) {
 										break;
 									}
-									MainInv.setItem(10 + i1 * 9 + i2,
-											APBuy.tagger.setNBTTag("ICat", allMats.get(count).getCatMat().toString(),
-													new AIS(new ItemStack(allMats.get(count).getCatMat()).clone())
-															.addLineToLore("")
-															.addToLore(Utils.createListFromStringToWidth(
-																	"§7" + allMats.get(count).getDescription(), 40))
-															.addLineToLore("")
-															.addLineToLore("§7Total Items: "
-																	+ ItoomelPrime.getTotalItems(allMats.get(count)))
-															.addLineToLore("§7Total Markets: "
-																	+ ItoomelPrime.getTotalMarkets(allMats.get(count)))
-															.addLineToLore("§7Sold Items: "
-																	+ ItoomelPrime.getTotalSoldItems(allMats.get(count)))
-															.setName(allMats.get(count).getName()).toIS()));
+									MainInv.setItem(10 + i1 * 9 + i2, APBuy.tagger.setNBTTag("ICat",
+											allMats.get(count).getCatMat().toString(),
+											new AIS(new ItemStack(allMats.get(count).getCatMat()).clone())
+													.addLineToLore("")
+													.addToLore(Utils.createListFromStringToWidth(
+															"§7" + allMats.get(count).getDescription(), 40))
+													.addLineToLore("")
+													.addLineToLore("§7Total Items: "
+															+ ItoomelPrime.getTotalItems(allMats.get(count)))
+													.addLineToLore("§7Total Markets: "
+															+ ItoomelPrime.getTotalMarkets(allMats.get(count)))
+													.addLineToLore("§7Sold Items: "
+															+ ItoomelPrime.getTotalSoldItems(allMats.get(count)))
+													.setName(allMats.get(count).getName()).toIS()));
 									count++;
 								}
 								if (count >= size) {
@@ -1080,8 +1071,8 @@ public class ItoomelPrime implements Listener {
 			int i = APBuy.getMarketHandler().PMLocPage.get(p);
 			APBuy.getMarketHandler().PMLocPage.remove(p);
 			if (String.valueOf(ItoomelPrime.onItoomel.get(p)[0]).contains("Market:")) {
-				if (APBuy.getMarketHandler()
-						.hasMarketByUUID(String.valueOf(ItoomelPrime.onItoomel.get(p)[0]).replaceFirst("Market:", ""))) {
+				if (APBuy.getMarketHandler().hasMarketByUUID(
+						String.valueOf(ItoomelPrime.onItoomel.get(p)[0]).replaceFirst("Market:", ""))) {
 					APBuy.getMarketHandler().PMLocPage.put(p, 0);
 					ItoomelPrime.openItoomel(String.valueOf(ItoomelPrime.onItoomel.get(p)[0]), p,
 							(Material) ItoomelPrime.onItoomel.get(p)[1], 0);

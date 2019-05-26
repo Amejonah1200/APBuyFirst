@@ -33,6 +33,7 @@ import ap.apb.anvilgui.AnvilGUI.AnvilClickEventHandler;
 import ap.apb.anvilgui.AnvilGUI.AnvilSlot;
 import ap.apb.anvilgui.mc1_8.AnvilGUI_v1_8_R3;
 import ap.apb.apbuy.BuyManager;
+import ap.apb.apbuy.itoomel.Itoomel;
 import ap.apb.apbuy.itoomel.ItoomelPrime;
 
 public class MarketHandler implements Listener {
@@ -292,10 +293,10 @@ public class MarketHandler implements Listener {
 					inv.setItem(16, nameNdevise);
 
 					// - My Market Editor 12
-					List<String> mmislist = new ArrayList<>();
-					mmislist.add("");
-					mmislist.add(Translator.translate("menu.inv.mymarket.main.mymarket"));
-					inv.setItem(12, new AIS(Material.CHEST).addToLore(mmislist).toIS());
+					inv.setItem(12,
+							new AIS(Material.CHEST).addLineToLore("")
+									.addLineToLore(Translator.translate("menu.inv.mymarket.main.mymarket"))
+									.setName("§7My Market").toIS());
 
 					// - Back Button 49
 					inv.setItem(49, new AIS(Translator.translate("menu.back"), 1, Material.BARRIER).toIS());
@@ -306,6 +307,10 @@ public class MarketHandler implements Listener {
 									.addLineToLore("").addToLore(Utils.createListFromStringToWidth(
 											Translator.translate("menu.inv.mymarket.main.iteminput.desc"), 40))
 									.toIS());
+
+					if (ItemDepot.getInstance().hasItemDepot(p)) {
+						inv.setItem(28, new AIS(Material.CHEST).setName("§7Item Depot").toIS());
+					}
 
 					p.openInventory(inv);
 					PMLoc.put(p, "MyMarket:Main");
@@ -745,7 +750,8 @@ public class MarketHandler implements Listener {
 	public void removeFromAll(Player p) {
 		if (PMLoc.containsKey(p) || creatingIS.containsKey(p) || creatingCat.containsKey(p)
 				|| onMarketVisualiser.containsKey(p) || onItemInput.containsKey(p)
-				|| ItoomelPrime.onItoomel.containsKey(p) || BuyManager.isBuying(p)) {
+				|| ItoomelPrime.onItoomel.containsKey(p) || BuyManager.isBuying(p)
+				|| Itoomel.getInstance().isInNav(p)) {
 			PMLoc.remove(p);
 			PMLocPage.remove(p);
 			creatingCat.remove(p);
@@ -755,6 +761,7 @@ public class MarketHandler implements Listener {
 			ItoomelPrime.onItoomel.remove(p);
 			BuyManager.removeBuyer(p);
 			p.closeInventory();
+			Itoomel.getInstance().removeFromNav(p);
 		}
 	}
 
@@ -1264,6 +1271,11 @@ public class MarketHandler implements Listener {
 						PMLocPage.put(p, 0);
 						this.openInvToP("MainMenu", p);
 						break;
+					case 28:
+						if (e.getCurrentItem().getType() == Material.CHEST) {
+							ItemDepot.getInstance().openItemDepot(p, 0);
+						}
+						break;
 					case 31:
 						onItemInput.put(p, new ArrayList<>());
 						this.openInvToP("MyMarket:ItemInput", p);
@@ -1423,7 +1435,8 @@ public class MarketHandler implements Listener {
 										mis.setAmmount(mis.getAmmount()
 												+ e.getClickedInventory().getContents()[i].getAmount());
 										mis.save();
-										ItoomelPrime.replaceMISInItoomel(mis);
+										// ItoomelPrime.replaceMISInItoomel(mis);
+										Itoomel.getInstance().updateMis(mis);
 									} else {
 										notRegistered.add(e.getClickedInventory().getContents()[i]);
 									}
@@ -1495,14 +1508,15 @@ public class MarketHandler implements Listener {
 									}
 								} else if (e.getClick() == ClickType.MIDDLE) {
 									Market m = new Market(p.getUniqueId().toString(), true);
-									MarketItem is = m.getMarketItemByIS(APBuy.tagger.removeNBTTag("Item",
+									MarketItem mis = m.getMarketItemByIS(APBuy.tagger.removeNBTTag("Item",
 											new AIS(e.getCurrentItem().clone()).removeLatestLore(4).toIS()));
-									if (is != null) {
-										if (Utils.getPlaceForIS(p, is.getAmmount(), is.getIs()) != 0) {
-											int count = Utils.getPlaceForIS(p, is.getAmmount(), is.getIs());
-											Utils.addItemToPlayer(p, is.getIs().clone(), count);
-											m.removeItem(is.getIs().clone(), count);
-											ItoomelPrime.removeMISFromItoomel(is.getIs(), is.getMarketuuid());
+									if (mis != null) {
+										if (Utils.getPlaceForIS(p, mis.getAmmount(), mis.getIs()) != 0) {
+											int count = Utils.getPlaceForIS(p, mis.getAmmount(), mis.getIs());
+											Utils.addItemToPlayer(p, mis.getIs().clone(), count);
+											m.removeItem(mis.getIs().clone(), count);
+											ItoomelPrime.removeMISFromItoomel(mis.getIs(), mis.getMarketuuid());
+											Itoomel.getInstance().updateMis(m.getMarketItemByIS(mis.getIs()));
 											this.openItemEditor(
 													menu.endsWith(":Opened")
 															? menu.substring(0, menu.length() - 7)
@@ -1510,7 +1524,7 @@ public class MarketHandler implements Listener {
 															: menu.replaceFirst("MyMarket:ItemEditor:Main:", ""),
 													"Main", p);
 										} else {
-											if (is.getAmmount() == 0) {
+											if (mis.getAmmount() == 0) {
 												p.sendMessage(Translator.translate("click.noitems"));
 											} else {
 												p.sendMessage(Translator.translate("click.noinvplace"));
@@ -1528,12 +1542,11 @@ public class MarketHandler implements Listener {
 											Utils.addItemToPlayer(p, is.getIs().clone(), count);
 											if (m.removeItem(is.getIs().clone(), count) == 0) {
 												ItoomelPrime.removeMISFromItoomel(is.getIs(), is.getMarketuuid());
+												Itoomel.getInstance().removeMisByMarketNIS(is.getIs(),
+														is.getMarketuuid());
+											} else {
+												Itoomel.getInstance().updateMis(m.getMarketItemByIS(is.getIs()));
 											}
-											// else {
-											// is.setAmmount(is.getAmmount() -
-											// 32);
-											// Itoomel.replaceMISInItoomel(is);
-											// }
 											this.openItemEditor(
 													menu.endsWith(":Opened")
 															? menu.substring(0, menu.length() - 7)
@@ -1938,8 +1951,7 @@ public class MarketHandler implements Listener {
 												.removeLatestLore(
 														onMarketVisualiser.get(p)[1].equals("AdminShop") ? 2 : 3)
 												.removeNBTTag("ToBuy").toIS()),
-								onMarketVisualiser.get(p)[1], 1, (Player) e.getWhoClicked(), false,
-								onMarketVisualiser.get(p))) {
+								1, (Player) e.getWhoClicked(), false, onMarketVisualiser.get(p))) {
 							onMarketVisualiser.remove(p);
 						}
 						return;
@@ -1963,6 +1975,19 @@ public class MarketHandler implements Listener {
 							case 22:
 								PMLocPage.put(p, 0);
 								this.openInvToP("Markets:Opened", p);
+								break;
+							case 29:
+								// TODO TraferPerm ItemDepot
+								if (p.hasPermission("apb.mod.*") || p.hasPermission("apb.mod.status")) {
+									String uuid = onMarketVisualiser.get(p)[1];
+									p.closeInventory();
+									p.sendMessage("§cTransfering to ItemDepot...");
+									ItemDepot.getInstance().transferMarketToItemDepot(uuid);
+									APBuy.database.deleteMarket(UUID.fromString(uuid));
+									p.sendMessage("§aSuccessfully tranfered "
+											+ Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName()
+											+ "'s Market to the ItemDepot.");
+								}
 								break;
 							case 28:
 								if (p.hasPermission("apb.mod.*") || p.hasPermission("apb.mod.status")) {
@@ -2182,6 +2207,11 @@ public class MarketHandler implements Listener {
 									.toIS());
 					MVMainInv.setItem(49, new AIS(Translator.translate("menu.back"), 1, Material.BARRIER).toIS());
 					MVMainInv.setItem(4, m.getMarkeAIS().toIS());
+					if (p.hasPermission("apb.mod.*") || p.hasPermission("apb.mod.status")) {
+						// TODO TransferePerms by the ItemDepot button
+						MVMainInv.setItem(29, new AIS("§7Market ins ItemDepot verschieben", Material.STORAGE_MINECART)
+								.addLineToLore("").addLineToLore("None").toIS());
+					}
 					if (p.hasPermission("apb.mod.*") || p.hasPermission("apb.mod.status")) {
 						if (m.isOpen()) {
 							MVMainInv

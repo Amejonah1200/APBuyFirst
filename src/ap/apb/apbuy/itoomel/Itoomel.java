@@ -1,6 +1,7 @@
 package ap.apb.apbuy.itoomel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -15,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 
 import ap.apb.APBuy;
 import ap.apb.Utils;
+import ap.apb.apbuy.itoomel.ItoomelNavigation.ItoomelMenu;
 import ap.apb.apbuy.markets.Market;
 import ap.apb.apbuy.markets.MarketItem;
 
@@ -26,8 +28,6 @@ public class Itoomel implements Listener {
 	public Itoomel() {
 		itoomelitems = new ArrayList<>();
 		itoomelNav = new ArrayList<>();
-		APBuy.setRemoveGen(!APBuy.isGeneralStop());
-		APBuy.setGeneralStop(true);
 		this.load();
 	}
 
@@ -43,7 +43,6 @@ public class Itoomel implements Listener {
 				}
 			}
 			itoomelitems = miss;
-			APBuy.setGeneralStop(!APBuy.plugin.isRemoveGen());
 			System.out.println("[APB] Itoomel finished.");
 		} catch (Exception e1) {
 			e1.printStackTrace();
@@ -96,7 +95,9 @@ public class Itoomel implements Listener {
 		MarketItem mis;
 		while (iterator.hasNext()) {
 			mis = iterator.next();
+			System.out.println(mis.getMarketuuid() + " " + mis.getIs().toString());
 			if (mis.getMarketuuid().equals(uuid) && mis.getIs().isSimilar(is)) {
+				System.out.println("remove");
 				iterator.remove();
 			}
 		}
@@ -126,12 +127,13 @@ public class Itoomel implements Listener {
 		} else {
 			if (getMisBySimilarMis(mis) == null) {
 				addMis(mis);
-			} else
+			} else {
 				for (MarketItem misa : itoomelitems) {
 					if (misa.isSimilar(mis)) {
 						misa.setAmmount(mis.getAmmount());
 					}
 				}
+			}
 		}
 	}
 
@@ -171,10 +173,19 @@ public class Itoomel implements Listener {
 
 	@EventHandler
 	public void onClick(InventoryClickEvent e) {
-		for (ItoomelNavigation nav : itoomelNav) {
-			if (nav.getPlayer().equals(e.getWhoClicked())) {
-				nav.onClick(e);
-				break;
+		if (e.getClickedInventory() == e.getView().getTopInventory()) {
+			for (ItoomelNavigation nav : itoomelNav) {
+				if (nav.getPlayer().equals(e.getWhoClicked())) {
+					nav.onTopInvClick(e);
+					break;
+				}
+			}
+		} else {
+			for (ItoomelNavigation nav : itoomelNav) {
+				if (nav.getPlayer().equals(e.getWhoClicked())) {
+					nav.onBottomInvClick(e);
+					break;
+				}
 			}
 		}
 	}
@@ -190,26 +201,57 @@ public class Itoomel implements Listener {
 	}
 
 	public void openNav(ItoomelNavigation nav) {
+		System.out.println("Perform open: " + nav.getMenu().toString());
 		removeFromNav(nav.getPlayer());
 		nav.open();
 		itoomelNav.add(nav);
 	}
 
 	public List<MarketItem> getAllMisFromNSize(int fromID, int size) {
-		List<MarketItem> list = new ArrayList<>();
-		if (fromID < itoomelitems.size()) {
-			for (int i = fromID; i < itoomelitems.size(); i++) {
-				if (i == fromID + size) {
-					break;
-				}
-				list.add(itoomelitems.get(i));
-			}
-		}
-		return list;
+		return itoomelitems;
 	}
 
 	public int getPages() {
 		return ((itoomelitems.size() - (itoomelitems.size() % 28)) / 28);
+	}
+
+	public HashMap<Material, Long> getMatsNAmount() {
+		HashMap<Material, Long> hmstats = new HashMap<>();
+		long leng = 0;
+		for (MarketItem mis : itoomelitems) {
+			if (hmstats.containsKey(mis.getIs().getType())) {
+				leng = hmstats.get(mis.getIs().getType());
+				leng += mis.getAmmount();
+				hmstats.put(mis.getIs().getType(), leng);
+			} else {
+				hmstats.put(mis.getIs().getType(), mis.getAmmount());
+			}
+		}
+		return hmstats;
+	}
+
+	public void openNav(String[] args, Player player) {
+		System.out.println("Args-Openening: " + args[0].toLowerCase());
+		switch (args[0].toLowerCase()) {
+		case "search_mat":
+			System.out.println("Openning Search_Mat");
+			ItoomelSearch isearch = new ItoomelSearch(new ItemStack(Material.valueOf(args[1])), player);
+			this.openNav(new ItoomelNavigation(ItoomelMenu.SEARCH_MAT, player, isearch));
+			break;
+		default:
+			System.out.println("opening_other");
+			this.openNav(new ItoomelNavigation(ItoomelMenu.valueOf(args[0]), player));
+			break;
+		}
+	}
+
+	public boolean isInNav(Player p) {
+		for (ItoomelNavigation inav : itoomelNav) {
+			if (inav.getPlayer().equals(p)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }
