@@ -241,24 +241,6 @@ public class ItoomelPrime implements Listener {
 		}
 	}
 
-	private static void removeFromSearch(Player player) {
-		Iterator<ItoomelSearch> iterator = searches.iterator();
-		while (iterator.hasNext()) {
-			if (iterator.next().getPlayer() == player) {
-				iterator.remove();
-			}
-		}
-	}
-
-	private static boolean isSearching(Player player) {
-		for (ItoomelSearch is : searches) {
-			if (is.getPlayer() == player) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	public static void openItoomel(String menu, Player p, Material type, int page) {
 		try {
 			openItoomel(menu, p, type, page, 1);

@@ -56,7 +56,9 @@ menu.inv.cmds.mod.invissee=§7Du kannst nicht zu verkaufende Items sehen.
 menu.inv.cmds.mod.adminshop.edit=§7Du kannst den Adminshop bearbeiten.
 menu.inv.cmds.mod.adminshop.open=Damit kannst du ihn öffnen.
 menu.inv.cmds.mod.adminshop.close=Damit kannst du ihn schließen.
+menu.inv.cmds.mod.itemdepot=§7Du kannst Markets in den ItemDepot verschieben.
 menu.inv.cmds.mod.norights=§cDu hast keine Mod-Rechte
+
 
 menu.inv.mymarket.main.status.on=§aDein Shop ist offen.
 menu.inv.mymarket.main.status.off=§cDein Shop ist geschlossen.
@@ -71,6 +73,7 @@ menu.inv.mymarket.main.nnd.notset=§cNicht gesetzt
 menu.inv.mymarket.main.mymarket=§8Hier kannst du deinen Market bearbeiten.
 menu.inv.mymarket.main.iteminput.title=§7Item Input
 menu.inv.mymarket.main.iteminput.desc=§7Hier kannst du deine Items in deinem Market einspeichern lassen, sie werden dann automatisch einsortiert.
+menu.inv.mymarket.main.itemdepot.desc=§7Hier kannst du deine Items wieder holen, dein Market wurde ins ItemDepot verschoben und gelöscht.
 menu.inv.mymarket.editoradd.noitem=§cHast keinen Item im Inv.
 menu.inv.mymarket.editoradd.change.name=§7Name ändern
 menu.inv.mymarket.editoradd.change.desc=§7Description ändern
@@ -129,6 +132,7 @@ menu.inv.marketv.main.mod.delete.norights=§4Du hast keine rechte um den Market z
 menu.inv.marketv.main.mod.invissee.title=§7Verstecke Items sehen
 menu.inv.marketv.main.mod.invissee.whatdoes=§7Um verstecke Items zu sehen, klicke hier drauf.
 menu.inv.marketv.main.mod.invissee.norights=§4Du hast keine rechte um verstecke Items zu sehen.
+menu.inv.marketv.main.mod.itemdepot=§7Market ins ItemDepot verschieben und löschen
 menu.inv.marketv.items.available=§7Auf Lager
 
 menu.title.buymanager=§0§lA§3§lP§r§8Buy - Buy
@@ -224,6 +228,8 @@ icats.brewing.desc=Hier kannst du dir zeug fürs Brauen besorgen.
 icats.redstone.title=§cRedstone
 icats.redstone.desc=Hier kannst du dir Redstone-stuff besorgen.
 
+itemdepot.trans.doing=§cMarket von §6%s0%§c wird ins ItemDepot verschoben...
+itemdepot.trans.done=§aErfolgreich §6%s0%§a's Market ins ItemDepot verschoben.
 
 misc.reload=§cSorry, es gab einfach ein reload... :/
 dev.error=§c[APBuy] Ein Fehler ist aufgetreten, bitte kontaktiere einen Dev.

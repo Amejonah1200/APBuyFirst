@@ -30,6 +30,7 @@ permissions:
          apb.mod.genstop: true
          apb.mod.invissee: true
          apb.mod.adminshop: true
+         apb.mod.itemdepot: true
    apb.dev.*:
       description: You can change the DB, and see Stacktraces.
       children:
@@ -46,6 +47,8 @@ permissions:
       description: Allows Moderation, change the status of a market.
    apb.mod.open:
       description: Allows Moderation, see Markets when they are closed.
+   apb.mod.itemdepot
+      description: Transfer a Market to the ItemDepot, and delete it after.
    apb.mod.genstop:
       description: Allows Moderation, Generall stopping..
    apb.mod.reset:

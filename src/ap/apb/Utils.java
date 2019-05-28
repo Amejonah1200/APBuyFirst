@@ -68,6 +68,7 @@ public class Utils {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public static String getUuid(String name) {
 		String url = "https://api.mojang.com/users/profiles/minecraft/" + name;
 		try {

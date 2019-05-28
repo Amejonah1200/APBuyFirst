@@ -451,6 +451,7 @@ public class ItoomelNavigation {
 			switch (e.getSlot()) {
 			case 4:
 				this.setMenu(ItoomelMenu.ALL_ITEMS);
+				this.setPage(0);
 				this.open();
 				return;
 			case 10:
@@ -467,10 +468,12 @@ public class ItoomelNavigation {
 			e.setCancelled(true);
 			if (e.getSlot() == 49) {
 				this.setMenu(ItoomelMenu.MAIN);
+				this.setPage(0);
 				this.open();
 				return;
 			} else if (e.getSlot() == 48) {
 				this.setMenu(ItoomelMenu.ALL_MATS);
+				this.setPage(0);
 				this.open();
 				return;
 			}

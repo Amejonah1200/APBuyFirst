@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 import ap.apb.APBuy;
 import ap.apb.Utils;
+import ap.apb.VersionUtils;
 import ap.apb.apbuy.itoomel.Itoomel;
 import ap.apb.apbuy.itoomel.ItoomelNavigation;
 import ap.apb.apbuy.itoomel.ItoomelNavigation.ItoomelMenu;
@@ -41,12 +42,19 @@ public class ItoomelCmd implements CommandExecutor {
 				} else if (arg3.length == 1) {
 					if (p.hasPermission("apb.itoomel")) {
 						if (arg3[0].equalsIgnoreCase("search")) {
-							if (((Player) p).getInventory().getItemInHand().getType() != Material.AIR) {
-								// ItoomelPrime.openItoomel("Main", p,
-								// p.getInventory().getItemInHand().getType(),
-								// 0);
-								Itoomel.getInstance().openNav(
-										new String[] { "SEARCH_MAT", p.getItemInHand().getType().toString() }, p);
+							if (VersionUtils.getItemInMainHand(p) != null) {
+								if (VersionUtils.getItemInMainHand(p).getType() != Material.AIR) {
+									// ItoomelPrime.openItoomel("Main", p,
+									// p.getInventory().getItemInHand().getType(),
+									// 0);
+									Itoomel.getInstance()
+											.openNav(
+													new String[] { "SEARCH_MAT",
+															VersionUtils.getItemInMainHand(p).getType().toString() },
+													p);
+								} else {
+									p.sendMessage("§cBitte halte einen Item in der Hand.");
+								}
 							} else {
 								p.sendMessage("§cBitte halte einen Item in der Hand.");
 							}

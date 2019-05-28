@@ -17,6 +17,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import ap.apb.anvilgui.AnvilGUI;
 import ap.apb.anvilgui.AnvilGUI.AnvilClickEventHandler;
+import ap.apb.anvilgui.mc1_12.AnvilGUI_v1_12_R1;
 import ap.apb.anvilgui.mc1_8.AnvilGUI_v1_8_R1;
 import ap.apb.anvilgui.mc1_8.AnvilGUI_v1_8_R2;
 import ap.apb.anvilgui.mc1_8.AnvilGUI_v1_8_R3;
@@ -31,6 +32,7 @@ import ap.apb.datamaster.Database;
 import ap.apb.datamaster.SQLDatabase;
 import ap.apb.datamaster.SQLiteDatabase;
 import ap.apb.nbttager.NBTTager;
+import ap.apb.nbttager.mc1_12.NBTTager_v1_12_R1;
 import ap.apb.nbttager.mc1_8.NBTTager_v1_8_R1;
 import ap.apb.nbttager.mc1_8.NBTTager_v1_8_R2;
 import ap.apb.nbttager.mc1_8.NBTTager_v1_8_R3;
@@ -233,6 +235,9 @@ public class APBuy extends JavaPlugin {
 		case "v1_8_R3":
 			tagger = new NBTTager_v1_8_R3();
 			break;
+		case "v1_12_R1":
+			tagger = new NBTTager_v1_12_R1();
+			break;
 		}
 		return tagger != null;
 	}
@@ -245,12 +250,19 @@ public class APBuy extends JavaPlugin {
 		} catch (Exception e) {
 			return null;
 		}
-		if (version.equals("v1_8_R1")) {
+		switch (version) {
+		case "v1_8_R1":
 			anvilgui = new AnvilGUI_v1_8_R1(p, h);
-		} else if (version.equals("v1_8_R2")) {
+			break;
+		case "v1_8_R2":
 			anvilgui = new AnvilGUI_v1_8_R2(p, h);
-		} else if (version.equals("v1_8_R3")) {
+			break;
+		case "v1_8_R3":
 			anvilgui = new AnvilGUI_v1_8_R3(p, h);
+			break;
+		case "v1_12_R1":
+			anvilgui = new AnvilGUI_v1_12_R1(p, h);
+			break;
 		}
 		return anvilgui;
 	}

@@ -30,7 +30,7 @@ import ap.apb.Utils;
 import ap.apb.anvilgui.AnvilGUI;
 import ap.apb.anvilgui.AnvilGUI.AnvilClickEvent;
 import ap.apb.anvilgui.AnvilGUI.AnvilClickEventHandler;
-import ap.apb.anvilgui.AnvilGUI.AnvilSlot;
+import ap.apb.anvilgui.AnvilGUIObj.AnvilSlot;
 import ap.apb.anvilgui.mc1_8.AnvilGUI_v1_8_R3;
 import ap.apb.apbuy.BuyManager;
 import ap.apb.apbuy.itoomel.Itoomel;
@@ -207,7 +207,9 @@ public class MarketHandler implements Listener {
 				if (p.hasPermission("apb.*") || p.hasPermission("apb.mod.*") || p.hasPermission("apb.mod.delete")
 						|| p.hasPermission("apb.mod.genstop") || p.hasPermission("apb.mod.itoomel")
 						|| p.hasPermission("apb.mod.reset") || p.hasPermission("apb.mod.status")
-						|| p.hasPermission("apb.mod.invissee") || p.hasPermission("apb.mod.adminshop")) {
+						|| p.hasPermission("apb.mod.invissee") || p.hasPermission("apb.mod.adminshop")
+				// || p.hasPermission("apb.mod.itemdepot")
+				) {
 					AIS ais = new AIS("§7Mod", Material.PAPER);
 					ais.addLineToLore("");
 					if (p.hasPermission("apb.*") || p.hasPermission("apb.mod.*") || p.hasPermission("apb.mod.delete")) {
@@ -228,7 +230,12 @@ public class MarketHandler implements Listener {
 						ais.addToLore(Utils.createListFromStringToWidthPlusEffect(
 								Translator.translate("menu.inv.cmds.mod.genstop"), 30));
 					}
-					if (p.hasPermission("apb.*") || p.hasPermission("apb.mod.adminshop")) {
+					if (p.hasPermission("apb.*") || p.hasPermission("apb.mod.*")
+							|| p.hasPermission("apb.mod.itemdepot")) {
+						ais.addLineToLore(Translator.translate("menu.inv.cmds.mod.itemdepot"));
+					}
+					if (p.hasPermission("apb.*") || p.hasPermission("apb.mod.*")
+							|| p.hasPermission("apb.mod.adminshop")) {
 						ais.addLineToLore(Translator.translate("menu.inv.cmds.mod.adminshop.edit"))
 								.addLineToLore("§7- [/apb adminshop open]")
 								.addLineToLore("§8    " + Translator.translate("menu.inv.cmds.mod.adminshop.open"))
@@ -309,7 +316,11 @@ public class MarketHandler implements Listener {
 									.toIS());
 
 					if (ItemDepot.getInstance().hasItemDepot(p)) {
-						inv.setItem(28, new AIS(Material.CHEST).setName("§7Item Depot").toIS());
+						inv.setItem(28,
+								new AIS(Material.CHEST).setName("§7Item Depot").addLineToLore("")
+										.addToLore(Utils.createListFromStringToWidth(
+												Translator.translate("menu.inv.mymarket.main.itemdepot.desc"), 40))
+										.toIS());
 					}
 
 					p.openInventory(inv);
@@ -1977,16 +1988,16 @@ public class MarketHandler implements Listener {
 								this.openInvToP("Markets:Opened", p);
 								break;
 							case 29:
-								// TODO TraferPerm ItemDepot
-								if (p.hasPermission("apb.mod.*") || p.hasPermission("apb.mod.status")) {
+								if (p.hasPermission("apb.mod.*") || p.hasPermission("apb.mod.itemdepot")) {
 									String uuid = onMarketVisualiser.get(p)[1];
 									p.closeInventory();
-									p.sendMessage("§cTransfering to ItemDepot...");
+									p.sendMessage(Translator.translate("itemdepot.trans.doing",
+											new Object[] { Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName() }));
 									ItemDepot.getInstance().transferMarketToItemDepot(uuid);
 									APBuy.database.deleteMarket(UUID.fromString(uuid));
-									p.sendMessage("§aSuccessfully tranfered "
-											+ Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName()
-											+ "'s Market to the ItemDepot.");
+									Itoomel.getInstance().removeMarket(uuid);
+									p.sendMessage(Translator.translate("itemdepot.trans.done",
+											new Object[] { Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName() }));
 								}
 								break;
 							case 28:
@@ -2207,10 +2218,9 @@ public class MarketHandler implements Listener {
 									.toIS());
 					MVMainInv.setItem(49, new AIS(Translator.translate("menu.back"), 1, Material.BARRIER).toIS());
 					MVMainInv.setItem(4, m.getMarkeAIS().toIS());
-					if (p.hasPermission("apb.mod.*") || p.hasPermission("apb.mod.status")) {
-						// TODO TransferePerms by the ItemDepot button
-						MVMainInv.setItem(29, new AIS("§7Market ins ItemDepot verschieben", Material.STORAGE_MINECART)
-								.addLineToLore("").addLineToLore("None").toIS());
+					if (p.hasPermission("apb.mod.*") || p.hasPermission("apb.mod.itemdepot")) {
+						MVMainInv.setItem(29, new AIS(Translator.translate("menu.inv.marketv.main.mod.itemdepot"),
+								Material.STORAGE_MINECART).toIS());
 					}
 					if (p.hasPermission("apb.mod.*") || p.hasPermission("apb.mod.status")) {
 						if (m.isOpen()) {
