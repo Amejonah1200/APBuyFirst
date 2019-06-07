@@ -1,11 +1,17 @@
 package ap.apb.apbuy.markets;
 
+import java.sql.SQLException;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
 import ap.apb.AIS;
 import ap.apb.APBuy;
+import ap.apb.APBuyException;
 import ap.apb.Utils;
+import ap.apb.datamaster.Datamaster;
+import ap.apb.datamaster.SQLDatabase;
+import ap.apb.datamaster.SQLiteDatabase;
 
 public class CategoryInfos {
 
@@ -64,8 +70,8 @@ public class CategoryInfos {
 		this.name = name;
 	}
 
-	public void save() throws MarketException {
-		APBuy.database.saveCategoryInfos(owner, name, desc, mat, subid);
+	public void save() throws APBuyException {
+		APBuy.getDatamaster().getDatabase().saveCategoryInfos(owner, name, desc, mat, subid);
 	}
 
 	public AIS getAIS() {
@@ -75,6 +81,20 @@ public class CategoryInfos {
 					Utils.createListFromStringToWidth(ChatColor.translateAlternateColorCodes('&', this.desc), 50));
 		}
 		return ais;
+	}
+
+	public void save(SQLDatabase db) {
+		try {
+			db.getConnection()
+					.prepareStatement(
+							"REPLACE INTO " + Datamaster.getAPBuy_CategorysTableName(db instanceof SQLiteDatabase)
+									+ " (owner, name, description, material, subid) VALUES ('" + owner + "', '" + name
+									+ "', " + (desc == null ? "NULL" : "'" + desc + "'") + ", '"
+									+ this.getMat().toString() + "', " + subid + ");")
+					.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

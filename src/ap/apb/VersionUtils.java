@@ -11,7 +11,7 @@ public class VersionUtils {
 		return isVersion1_12() ? player.getInventory().getItemInMainHand() : player.getInventory().getItemInHand();
 	}
 
-	private static boolean isVersion1_12() {
+	public static boolean isVersion1_12() {
 		return Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].equals("v1_12_R1");
 	}
 

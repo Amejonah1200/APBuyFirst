@@ -1,5 +1,6 @@
 package ap.apb.apbuy.markets;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 import org.bukkit.Material;
@@ -7,13 +8,18 @@ import org.bukkit.inventory.ItemStack;
 
 import ap.apb.AIS;
 import ap.apb.APBuy;
+import ap.apb.APBuyException;
+import ap.apb.Utils;
+import ap.apb.datamaster.Datamaster;
+import ap.apb.datamaster.SQLDatabase;
+import ap.apb.datamaster.SQLiteDatabase;
 
 public class MarketItem {
 
 	private ItemStack is;
 	private int price;
-	private long ammount;
-	private int sellAmmount;
+	private long amount;
+	private int sellAmount;
 	private long soldItems;
 	private String marketuuid;
 	private String catName;
@@ -22,8 +28,8 @@ public class MarketItem {
 	public MarketItem(String uuid, String catname) {
 		this.is = null;
 		this.price = 0;
-		this.ammount = 0;
-		this.sellAmmount = 1;
+		this.amount = 0;
+		this.sellAmount = 1;
 		this.soldItems = 0;
 		this.marketuuid = uuid;
 		this.setCatName(catname);
@@ -35,8 +41,8 @@ public class MarketItem {
 			String catname) {
 		this.is = is;
 		this.price = price;
-		this.ammount = ammount;
-		this.sellAmmount = sellAmmount;
+		this.amount = ammount;
+		this.sellAmount = sellAmmount;
 		this.soldItems = selledItems;
 		this.marketuuid = owner;
 		this.setCatName(catname);
@@ -53,7 +59,7 @@ public class MarketItem {
 	}
 
 	public boolean isBuyable() {
-		return (this.ammount >= this.sellAmmount) || (this.marketuuid == "AdminShop");
+		return (this.amount >= this.sellAmount) || (this.marketuuid == "AdminShop");
 	}
 
 	public ItemStack getIs() {
@@ -75,16 +81,16 @@ public class MarketItem {
 	}
 
 	public MarketItem setAmmount(long ammount) {
-		this.ammount = ammount;
+		this.amount = ammount;
 		return this;
 	}
 
 	public long getAmmount() {
-		return this.ammount;
+		return this.amount;
 	}
 
 	public int getSellAmmount() {
-		return this.sellAmmount;
+		return this.sellAmount;
 	}
 
 	public long getSoldItems() {
@@ -97,7 +103,7 @@ public class MarketItem {
 	}
 
 	public MarketItem setSellAmmount(int sellAmmount) {
-		this.sellAmmount = sellAmmount;
+		this.sellAmount = sellAmmount;
 		return this;
 	}
 
@@ -113,13 +119,13 @@ public class MarketItem {
 		return this.marketuuid;
 	}
 
-	public void save() throws MarketException {
-		APBuy.database.saveItemInfos(this.uuid, this.marketuuid, this.catName, this.is, this.price, this.ammount,
-				this.sellAmmount, this.soldItems);
+	public void save() throws APBuyException {
+		APBuy.getDatamaster().getDatabase().saveItemInfos(this.uuid, this.marketuuid, this.catName, this.is, this.price,
+				this.amount, this.sellAmount, this.soldItems);
 	}
 
 	public MarketItem grantAmount(long amount) {
-		this.ammount = this.ammount + amount;
+		this.amount = this.amount + amount;
 		return this;
 	}
 
@@ -133,6 +139,21 @@ public class MarketItem {
 
 	public boolean isSimilar(MarketItem mis) {
 		return mis.getIs().isSimilar(this.getIs()) && mis.getMarketuuid().equals(this.getMarketuuid());
+	}
+
+	public void save(SQLDatabase db) {
+		try {
+			db.getConnection()
+					.prepareStatement(
+							"REPLACE INTO " + Datamaster.getAPBuy_MItemsTableName(db instanceof SQLiteDatabase)
+									+ " (id, owner, category, price, amount, sellamount, solditems, itemstack) VALUES ('"
+									+ this.getUuid().toString() + "', '" + this.getMarketuuid() + "', '"
+									+ this.getCatName() + "', " + price + ", " + amount + ", " + sellAmount + ", "
+									+ soldItems + ", '" + Utils.serializeItemStack(is) + "');")
+					.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

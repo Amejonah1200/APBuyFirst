@@ -12,12 +12,14 @@ public class EcoHandler {
 	public static Economy ecoVault = null;
 
 	public static boolean isEcoInstalled() {
-		return Bukkit.getServer().getPluginManager().getPlugin("Vault") != null;
-
+		if (Bukkit.getServer().getPluginManager().getPlugin("Vault") != null) {
+			return Bukkit.getServer().getPluginManager().getPlugin("Vault").isEnabled();
+		}
+		return false;
 	}
 
 	public static boolean setupEconomy() {
-		if (Bukkit.getServer().getPluginManager().getPlugin("Vault") == null) {
+		if (!isEcoInstalled()) {
 			return false;
 		}
 		RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);

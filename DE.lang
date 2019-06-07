@@ -17,6 +17,7 @@ apbcmd.name.set=§a[APBuy] Gesetzter Name: §b
 apbcmd.name.reset=§a[APBuy] Name zurückgesetzt.
 apbcmd.devise.set=§a[APBuy] Gesetze Devise: §b
 apbcmd.devise.reset=§a[APBuy] Devise zurückgesetzt.
+apbcmd.allargs=§c[APBuy] Hast du alle Argumente ausgefühlt?
 
 aplayerchat.allok=§aAlles tiptop!
 aplayerchat.notfound=§cEcoHandler nicht gefunden, richtig geschrieben?

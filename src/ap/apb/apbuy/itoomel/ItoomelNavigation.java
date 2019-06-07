@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 
 import ap.apb.AIS;
 import ap.apb.APBuy;
+import ap.apb.APBuyException;
 import ap.apb.Translator;
 import ap.apb.Utils;
 import ap.apb.apbuy.BuyManager;
@@ -478,14 +479,22 @@ public class ItoomelNavigation {
 				return;
 			}
 			if (APBuy.tagger.hasTag("MIS", e.getCurrentItem())) {
-				if (BuyManager
-						.openBuyManager(
-								Itoomel.getInstance().getMisByMarketNIS(
-										new AIS(e.getCurrentItem().clone()).removeLatestLore(4).removeNBTTag("MIS")
-												.toIS(),
-										APBuy.tagger.getNBTTagString("MIS", e.getCurrentItem().clone())),
-								1, this.getPlayer(), true, new String[] { "ALL_ITEMS" })) {
-					Itoomel.getInstance().removeFromNav(this.getPlayer());
+				try {
+					if (BuyManager
+							.openBuyManager(
+									Itoomel.getInstance().getMisByMarketNIS(
+											new AIS(e.getCurrentItem().clone()).removeLatestLore(4).removeNBTTag("MIS")
+													.toIS(),
+											APBuy.tagger.getNBTTagString("MIS", e.getCurrentItem().clone())),
+									1, this.getPlayer(), true, new String[] { "ALL_ITEMS" })) {
+						Itoomel.getInstance().removeFromNav(this.getPlayer());
+					}
+				} catch (APBuyException e1) {
+					e1.printStackTrace();
+					APBuy.getMarketHandler().removeFromAll(this.getPlayer());
+					System.out.println("Player: " + this.getPlayer().getName() + " (" + this.getPlayer().getUniqueId().toString() + ")");
+					this.getPlayer().sendMessage(Translator.translate("dev.error"));
+					this.getPlayer().sendMessage("§cFehler code: " + Utils.addToFix(e1));
 				}
 			}
 			if (APBuy.tagger.hasTag("ToPage", e.getCurrentItem())) {
@@ -529,15 +538,23 @@ public class ItoomelNavigation {
 				return;
 			}
 			if (APBuy.tagger.hasTag("MIS", e.getCurrentItem())) {
-				if (BuyManager
-						.openBuyManager(
-								Itoomel.getInstance().getMisByMarketNIS(
-										new AIS(e.getCurrentItem().clone()).removeLatestLore(4).removeNBTTag("MIS")
-												.toIS(),
-										APBuy.tagger.getNBTTagString("MIS", e.getCurrentItem().clone())),
-								1, this.getPlayer(), true,
-								new String[] { "SEARCH_MAT", e.getCurrentItem().getType().toString() })) {
-					Itoomel.getInstance().removeFromNav(this.getPlayer());
+				try {
+					if (BuyManager
+							.openBuyManager(
+									Itoomel.getInstance().getMisByMarketNIS(
+											new AIS(e.getCurrentItem().clone()).removeLatestLore(4).removeNBTTag("MIS")
+													.toIS(),
+											APBuy.tagger.getNBTTagString("MIS", e.getCurrentItem().clone())),
+									1, this.getPlayer(), true,
+									new String[] { "SEARCH_MAT", e.getCurrentItem().getType().toString() })) {
+						Itoomel.getInstance().removeFromNav(this.getPlayer());
+					}
+				} catch (APBuyException e1) {
+					e1.printStackTrace();
+					APBuy.getMarketHandler().removeFromAll(this.getPlayer());
+					System.out.println("Player: " + this.getPlayer().getName() + " (" + this.getPlayer().getUniqueId().toString() + ")");
+					this.getPlayer().sendMessage(Translator.translate("dev.error"));
+					this.getPlayer().sendMessage("§cFehler code: " + Utils.addToFix(e1));
 				}
 			}
 			if (APBuy.tagger.hasTag("ToPage", e.getCurrentItem())) {
@@ -571,15 +588,23 @@ public class ItoomelNavigation {
 				return;
 			}
 			if (APBuy.tagger.hasTag("MIS", e.getCurrentItem())) {
-				if (BuyManager
-						.openBuyManager(
-								Itoomel.getInstance().getMisByMarketNIS(
-										new AIS(e.getCurrentItem().clone()).removeLatestLore(4).removeNBTTag("MIS")
-												.toIS(),
-										APBuy.tagger.getNBTTagString("MIS", e.getCurrentItem().clone())),
-								1, this.getPlayer(), true,
-								new String[] { "SEARCH_MAT", e.getCurrentItem().getType().toString() })) {
-					Itoomel.getInstance().removeFromNav(this.getPlayer());
+				try {
+					if (BuyManager
+							.openBuyManager(
+									Itoomel.getInstance().getMisByMarketNIS(
+											new AIS(e.getCurrentItem().clone()).removeLatestLore(4).removeNBTTag("MIS")
+													.toIS(),
+											APBuy.tagger.getNBTTagString("MIS", e.getCurrentItem().clone())),
+									1, this.getPlayer(), true,
+									new String[] { "SEARCH_MAT", e.getCurrentItem().getType().toString() })) {
+						Itoomel.getInstance().removeFromNav(this.getPlayer());
+					}
+				} catch (APBuyException e1) {
+					e1.printStackTrace();
+					APBuy.getMarketHandler().removeFromAll(this.getPlayer());
+					System.out.println("Player: " + this.getPlayer().getName() + " (" + this.getPlayer().getUniqueId().toString() + ")");
+					this.getPlayer().sendMessage(Translator.translate("dev.error"));
+					this.getPlayer().sendMessage("§cFehler code: " + Utils.addToFix(e1));
 				}
 			}
 			if (APBuy.tagger.hasTag("ToPage", e.getCurrentItem())) {

@@ -1,5 +1,6 @@
 package ap.apb.datamaster;
 
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class MySQLDatabase extends SQLDatabase {
@@ -11,23 +12,9 @@ public class MySQLDatabase extends SQLDatabase {
 	public boolean connect(String... args) {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			// Nope kein password xD
-			connection.prepareStatement(
-					"CREATE TABLE IF NOT EXISTS APBuy_Markets (" + "owner VARCHAR(36) NOT NULL, " + "open CHAR(1), "
-							+ "name VARCHAR(32), " + "devise varchar(64), " + "sales BIGINT, " + "solditems BIGINT, "
-							+ "material varchar(25) NOT NULL, " + "subid TINYINT, " + "PRIMARY KEY(owner)) ;")
-					.execute();
-			connection.prepareStatement("CREATE TABLE IF NOT EXISTS APBuy_Categorys (" + "owner VARCHAR(36) NOT NULL, "
-					+ "name VARCHAR(40) NOT NULL, " + "description VARCHAR(40), " + "material varchar(25) NOT NULL, "
-					+ "subid TINYINT, " + "PRIMARY KEY(owner, name));").execute();
-			connection.prepareStatement(
-					"CREATE TABLE IF NOT EXISTS APBuy_MItems (id VARCHAR(36), " + "owner VARCHAR(36) NOT NULL, "
-							+ "category VARCHAR(40) NOT NULL, " + "price INT, " + "amount INT, " + "sellamount INT, "
-							+ "solditems INT, " + "itemstack LONGTEXT NOT NULL, " + "PRIMARY KEY(owner, id));")
-					.execute();
-			connection.prepareStatement("CREATE TABLE IF NOT EXISTS `APBuy_ItemDepot` ( `uuid` CHAR(36) NOT NULL , "
-					+ "`owner` CHAR(36) NOT NULL , `itemstack` LONGTEXT NOT NULL ,"
-					+ "`amount` BIGINT NOT NULL , PRIMARY KEY (`owner`, `uuid`));").execute();
+			String url = "jdbc:mysql://" + args[0] + ":" + args[1] + "/" + args[2] + "?autoReconnect=true";
+			connection = DriverManager.getConnection(url, args[3], args[4]);
+			this.createTableIfNotExist(false);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;

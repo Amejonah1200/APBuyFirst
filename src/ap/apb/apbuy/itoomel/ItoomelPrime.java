@@ -19,10 +19,10 @@ import org.bukkit.inventory.ItemStack;
 
 import ap.apb.AIS;
 import ap.apb.APBuy;
+import ap.apb.APBuyException;
 import ap.apb.Utils;
 import ap.apb.apbuy.BuyManager;
 import ap.apb.apbuy.markets.Market;
-import ap.apb.apbuy.markets.MarketException;
 import ap.apb.apbuy.markets.MarketItem;
 
 public class ItoomelPrime implements Listener {
@@ -206,26 +206,32 @@ public class ItoomelPrime implements Listener {
 					}
 				}
 			}
-		} catch (MarketException e1) {
+		} catch (APBuyException e1) {
 			switch (e1.getErrorCause()) {
-			case CATNOTFOUND:
+			case NOTFOUND_CAT:
 				p.sendMessage("§cDieser Kategorie wurde nicht gefunden! (Error)");
 				APBuy.getMarketHandler().removeFromAll(p);
 				p.closeInventory();
-				return;
-			case LOAD:
-				break;
-			case MIS:
-				break;
-			case NOTFOUND:
+			case NOTFOUND_MARKET:
 				p.sendMessage("§cDieser Market wurde nicht gefunden! (Error)");
 				APBuy.getMarketHandler().removeFromAll(p);
 				p.closeInventory();
 				APBuy.getMarketHandler().openInvToP("Markets", p);
 				return;
-			case NULL:
+			case SQL:
+				p.sendMessage("§cEs gab ein Fehler bei der DatenBank (SQL Fehler)");
+				Utils.addToFix(e1);
+				APBuy.getMarketHandler().removeFromAll(p);
+				p.closeInventory();
 				break;
-			case SAVE:
+			default:
+				e1.printStackTrace();
+				System.out.println("Player: " + p.getName() + " (" + p.getUniqueId().toString() + ")");
+				System.out.println("Slot: " + e.getSlot());
+				p.closeInventory();
+				APBuy.getMarketHandler().removeFromAll(p);
+				p.sendMessage("§cEin Fehler ist aufgetreten, bitte kontaktiere einen Dev.");
+				p.sendMessage("§c Das hier dem Dev sagen : " + Utils.addToFix(e1));
 				break;
 			}
 			APBuy.getMarketHandler().removeFromAll(p);
@@ -256,7 +262,7 @@ public class ItoomelPrime implements Listener {
 		}
 	}
 
-	public static void openItoomel(String menu, Player p, Material type, int page, int mode) throws MarketException {
+	public static void openItoomel(String menu, Player p, Material type, int page, int mode) throws APBuyException {
 		if ((menu == "Main") && ((type == Material.AIR) || type == null)) {
 			ItoomelPrime.onItoomel.remove(p);
 			Inventory MainInv = Bukkit.createInventory(null, 54, "§0§lA§3§lP§r§8Buy - Itoomel");
@@ -393,7 +399,7 @@ public class ItoomelPrime implements Listener {
 							public int compare(String arg0, String arg1) {
 								try {
 									return APBuy.getMarketHandler().compareByUUID(arg0, arg1);
-								} catch (MarketException e) {
+								} catch (APBuyException e) {
 								}
 								return 0;
 							}
@@ -532,7 +538,6 @@ public class ItoomelPrime implements Listener {
 						e1.printStackTrace();
 						System.out.println("Player: " + p.getName() + " (" + p.getUniqueId().toString() + ")");
 						System.out.println("Menu: " + menu);
-						p.closeInventory();
 						APBuy.getMarketHandler().removeFromAll(p);
 						p.sendMessage("§cEin Fehler ist aufgetreten, bitte kontaktiere einen Dev.");
 						p.sendMessage("§c Das hier dem Dev sagen : " + Utils.addToFix(e1));
@@ -676,7 +681,7 @@ public class ItoomelPrime implements Listener {
 							public int compare(String arg0, String arg1) {
 								try {
 									return APBuy.getMarketHandler().compareByUUID(arg0, arg1);
-								} catch (MarketException e) {
+								} catch (APBuyException e) {
 								}
 								return 0;
 							}
@@ -915,7 +920,7 @@ public class ItoomelPrime implements Listener {
 							public int compare(String arg0, String arg1) {
 								try {
 									return APBuy.getMarketHandler().compareByUUID(arg0, arg1);
-								} catch (MarketException e) {
+								} catch (APBuyException e) {
 								}
 								return 0;
 							}
@@ -932,13 +937,12 @@ public class ItoomelPrime implements Listener {
 									}
 									MainInv.setItem(10 + i1 * 9 + i2, APBuy.tagger.setNBTTag("Market",
 											allMarket.get(count),
-											new AIS(new ItemStack(APBuy.database.getMarketInfos(allMarket.get(count))
-													.getMarketAIS().toIS()).clone())
-															.addLineToLore("")
-															.addLineToLore("§7Items: "
+											new AIS(new ItemStack(APBuy.getDatamaster().getDatabase()
+													.getMarketInfos(allMarket.get(count)).getMarketAIS().toIS())
+															.clone()).addLineToLore("").addLineToLore("§7Items: "
 																	+ (new Market(allMarket.get(count), false)
 																			.getAmmountOfMaterialSubID(type, s)))
-															.toIS()));
+																	.toIS()));
 									count++;
 								}
 								if (count >= size) {
@@ -966,7 +970,6 @@ public class ItoomelPrime implements Listener {
 						e1.printStackTrace();
 						System.out.println("Player: " + p.getName() + " (" + p.getUniqueId().toString() + ")");
 						System.out.println("Menu: " + menu);
-						p.closeInventory();
 						APBuy.getMarketHandler().removeFromAll(p);
 						p.sendMessage("§cEin Fehler ist aufgetreten, bitte kontaktiere einen Dev.");
 						p.sendMessage("§c Das hier dem Dev sagen : " + Utils.addToFix(e1));
@@ -1045,7 +1048,7 @@ public class ItoomelPrime implements Listener {
 		return leng;
 	}
 
-	public static void reopenItoomelToEveryone() {
+	public static void reopenItoomelToEveryone() throws APBuyException {
 		for (Player p : ItoomelPrime.onItoomel.keySet()) {
 			if (BuyManager.isBuying(p)) {
 				continue;
@@ -1075,7 +1078,7 @@ public class ItoomelPrime implements Listener {
 		}
 	}
 
-	public static void addMarketToItoomel(Market m) {
+	public static void addMarketToItoomel(Market m) throws APBuyException {
 		if (!isMarketInItoomel(m.getMarketOwner())) {
 			for (MarketItem mis : m.getMarketItems()) {
 				if (mis.isBuyable()) {

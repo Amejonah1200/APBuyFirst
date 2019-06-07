@@ -15,10 +15,7 @@ public class Translator {
 	}
 
 	public String trans(String toTranslate) {
-		String s = (this == APBuy.defaulttranslator) || (!APBuy.isCustomtrans())
-				? this.translated.containsKey(toTranslate) ? this.translated.get(toTranslate) : toTranslate
-				: this.translated.containsKey(toTranslate) ? this.translated.get(toTranslate)
-						: APBuy.defaulttranslator.trans(toTranslate);
+		String s = this.translated.containsKey(toTranslate) ? this.translated.get(toTranslate) : toTranslate;
 		return s.startsWith("redirect:") ? this.trans(s.replaceFirst("redirect:", "")) : s;
 	}
 
@@ -51,7 +48,6 @@ public class Translator {
 			String zeile = "";
 			while ((zeile = br.readLine()) != null) {
 				ss.add(zeile);
-//				System.out.println(zeile);
 			}
 			br.close();
 		} catch (Exception e1) {
@@ -62,32 +58,6 @@ public class Translator {
 				toCreate.put(s.split("=")[0], getTranslatedString(s));
 			}
 		}
-//		List<String> ss1 = new ArrayList<>();
-//		ss1.add("--Keys--");
-//		ss1.addAll(toCreate.keySet());
-//		ss1.add("--Keys--");
-//		ss1.add("--Values--");
-//		for (String s : toCreate.keySet()) {
-//			ss1.add(toCreate.get(s));
-//		}
-//		ss1.add("--Values--");
-//		FileWriter fw = null;
-//		BufferedWriter bw;
-//		try {
-//			fw = new FileWriter(APBuy.plugin.getSTnErrors() + "/TranstextsTest.txt");
-//		} catch (IOException e1) {
-//			e1.printStackTrace();
-//		}
-//		bw = new BufferedWriter(fw);
-//		try {
-//			for (String s : ss1) {
-//				bw.write(s);
-//				bw.newLine();
-//			}
-//			bw.close();
-//		} catch (IOException e1) {
-//			e1.printStackTrace();
-//		}
 		return new Translator(toCreate);
 	}
 

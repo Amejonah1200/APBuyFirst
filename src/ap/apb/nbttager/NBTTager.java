@@ -3,8 +3,6 @@ package ap.apb.nbttager;
 import org.bukkit.inventory.ItemStack;
 
 public interface NBTTager {
-
-	// TODO NBTTagger compress
 	
 	public ItemStack setNBTTag(String key, Object o,ItemStack is);
 	

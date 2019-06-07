@@ -9,36 +9,40 @@ import org.bukkit.inventory.ItemStack;
 
 import ap.apb.AIS;
 import ap.apb.APBuy;
+import ap.apb.APBuyException;
+import ap.apb.datamaster.Database;
 
 public class Market {
 
 	public MarketInfos marketInfos;
+	public Database database;
 
-	public Market(String uuid, boolean load) {
+	public Market(String uuid, boolean load) throws APBuyException {
+		this.database = APBuy.getDatamaster().getDatabase();
 		if (load) {
-			marketInfos = APBuy.database.getMarketInfos(uuid);
+			marketInfos = database.getMarketInfos(uuid);
 		} else {
 			marketInfos = new MarketInfos(uuid, null, null, false, 0, 0);
 		}
 	}
 
-	public void saveMarketInfos() throws MarketException {
+	public void saveMarketInfos() throws APBuyException {
 		this.marketInfos.save();
 	}
 
-	public List<CategoryInfos> getCatsInfos() {
-		return APBuy.database.getAllCategoryInfosFromMarket(this.marketInfos.getMarketOwner());
+	public List<CategoryInfos> getCatsInfos() throws APBuyException {
+		return database.getAllCategoryInfosFromMarket(this.marketInfos.getMarketOwner());
 	}
 
-	public List<MarketItem> getMarketItems() {
-		return APBuy.database.getMarketItemsFromMarket(this.marketInfos.getMarketOwner());
+	public List<MarketItem> getMarketItems() throws APBuyException {
+		return database.getMarketItemsFromMarket(this.marketInfos.getMarketOwner());
 	}
 
-	public void buyed(ItemStack is, long amount) throws MarketException {
+	public void buyed(ItemStack is, long amount) throws APBuyException {
 		this.marketInfos.grantSalesOne().grandSoldItems(amount).save();
 	}
 
-	public CategoryInfos getCatInfosByName(String catname) {
+	public CategoryInfos getCatInfosByName(String catname) throws APBuyException {
 		for (CategoryInfos ci : this.getCatsInfos()) {
 			if (ci.getName().equals(catname)) {
 				return ci;
@@ -47,7 +51,7 @@ public class Market {
 		return null;
 	}
 
-	public MarketItem getMarketItemByIS(ItemStack is) {
+	public MarketItem getMarketItemByIS(ItemStack is) throws APBuyException {
 		for (MarketItem mis : this.getMarketItems()) {
 			if (mis.getIs().isSimilar(is)) {
 				return mis;
@@ -56,7 +60,7 @@ public class Market {
 		return null;
 	}
 
-	public MarketItem getMarketItemByISByCat(ItemStack is, String catname) {
+	public MarketItem getMarketItemByISByCat(ItemStack is, String catname) throws APBuyException {
 		for (MarketItem mis : this.getMarketItems()) {
 			if (mis.getIs().isSimilar(is) && mis.getCatName().equals(catname)) {
 				return mis;
@@ -65,7 +69,7 @@ public class Market {
 		return null;
 	}
 
-	public List<MarketItem> getMarketItemsByMat(Material mat) {
+	public List<MarketItem> getMarketItemsByMat(Material mat) throws APBuyException {
 		List<MarketItem> miss = new ArrayList<>();
 		for (MarketItem mis : this.getMarketItems()) {
 			if (mis.getIs().getType() == mat) {
@@ -75,7 +79,7 @@ public class Market {
 		return miss;
 	}
 
-	public List<MarketItem> getMarketItemsByMat(Material mat, String catname) {
+	public List<MarketItem> getMarketItemsByMat(Material mat, String catname) throws APBuyException {
 		List<MarketItem> miss = new ArrayList<>();
 		for (MarketItem mis : this.getMarketItems()) {
 			if ((mis.getIs().getType() == mat) && (mis.getCatName().equals(catname))) {
@@ -143,7 +147,7 @@ public class Market {
 		return this.marketInfos.getMarketAIS();
 	}
 
-	public boolean isItemStackRegistered(ItemStack is) {
+	public boolean isItemStackRegistered(ItemStack is) throws APBuyException {
 		for (MarketItem mis : this.getMarketItems()) {
 			if (mis.getIs().isSimilar(is)) {
 				return true;
@@ -152,7 +156,7 @@ public class Market {
 		return false;
 	}
 
-	public List<MarketItem> getMarketItemsByCat(String catname) {
+	public List<MarketItem> getMarketItemsByCat(String catname) throws APBuyException {
 		List<MarketItem> miss = this.getMarketItems();
 		Iterator<MarketItem> iterator = miss.iterator();
 		while (iterator.hasNext()) {
@@ -163,11 +167,11 @@ public class Market {
 		return miss;
 	}
 
-	public void removeCategory(String catname) throws MarketException {
-		APBuy.database.removeCategory(this.getMarketOwner(), catname);
+	public void removeCategory(String catname) throws APBuyException {
+		database.removeCategory(this.getMarketOwner(), catname);
 	}
 
-	public boolean has(MarketItem mis2, long leng) {
+	public boolean has(MarketItem mis2, long leng) throws APBuyException {
 		MarketItem mis = this.getMarketItemByIS(mis2.getIs().clone());
 		if (mis.getIs().isSimilar(mis2.getIs().clone())) {
 			if (mis.isBuyable()) {
@@ -179,7 +183,7 @@ public class Market {
 		return false;
 	}
 
-	public boolean isMisChanged(MarketItem marketItem) {
+	public boolean isMisChanged(MarketItem marketItem) throws APBuyException {
 		MarketItem mis = this.getMarketItemByIS(marketItem.getIs().clone());
 		if (mis.getIs().isSimilar(marketItem.getIs().clone())) {
 			if (mis.isBuyable() == marketItem.isBuyable()) {
@@ -191,12 +195,12 @@ public class Market {
 		return true;
 	}
 
-	public long removeItem(ItemStack is, long l) throws MarketException {
-		APBuy.database.getMarketItemByIS(this.getMarketOwner(), is).grantAmount(-l).save();
-		return APBuy.database.getMarketItemByIS(this.getMarketOwner(), is).getAmmount();
+	public long removeItem(ItemStack is, long l) throws APBuyException {
+		database.getMarketItemByIS(this.getMarketOwner(), is).grantAmount(-l).save();
+		return database.getMarketItemByIS(this.getMarketOwner(), is).getAmmount();
 	}
 
-	public long getAmmountOfMaterialSubID(Material type, Short s) {
+	public long getAmmountOfMaterialSubID(Material type, Short s) throws APBuyException {
 		List<MarketItem> miss = new ArrayList<>();
 		miss.addAll(this.getMarketItemsByMat(type));
 		long i = 0;
@@ -208,7 +212,7 @@ public class Market {
 		return i;
 	}
 
-	public long getAmmountOfMaterial(Material type) {
+	public long getAmmountOfMaterial(Material type) throws APBuyException {
 		List<MarketItem> miss = new ArrayList<>();
 		miss.addAll(this.getMarketItemsByMat(type));
 		long i = 0;
@@ -218,7 +222,7 @@ public class Market {
 		return i;
 	}
 
-	public List<MarketItem> getMISsByTypeRest(Material type) {
+	public List<MarketItem> getMISsByTypeRest(Material type) throws APBuyException {
 		List<MarketItem> miss = new ArrayList<>();
 		miss.addAll(this.getMarketItemsByMat(type));
 		Iterator<MarketItem> iterator = miss.iterator();
@@ -230,7 +234,7 @@ public class Market {
 		return miss;
 	}
 
-	public List<MarketItem> getMISsByTypeRestSubID(Material type, int subid) {
+	public List<MarketItem> getMISsByTypeRestSubID(Material type, int subid) throws APBuyException {
 		List<MarketItem> miss = new ArrayList<>();
 		miss.addAll(this.getMarketItemsByMat(type));
 		Iterator<MarketItem> iterator = miss.iterator();

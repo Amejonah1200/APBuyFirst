@@ -13,6 +13,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import ap.apb.AIS;
 import ap.apb.APBuy;
+import ap.apb.APBuyException;
 import ap.apb.Translator;
 import ap.apb.Utils;
 import ap.apb.apbuy.itoomel.Itoomel;
@@ -75,13 +76,13 @@ public class BuyManager {
 	}
 
 	public static boolean openBuyManager(MarketItem marketItem, long wantToBuy, Player buyer, boolean thenInItoomel,
-			String[] mv) {
+			String[] mv) throws APBuyException {
 		if (marketItem == null) {
 			buyer.sendMessage(Translator.translate("buymanager.noavailable"));
 			return false;
 		}
-		if (APBuy.database.hasPlayerMarketByUUID(marketItem.getMarketuuid())) {
-			if (!APBuy.database.getMarketInfos(marketItem.getMarketuuid()).isOpen()) {
+		if (APBuy.getDatamaster().getDatabase().hasPlayerMarketByUUID(marketItem.getMarketuuid())) {
+			if (!APBuy.getDatamaster().getDatabase().getMarketInfos(marketItem.getMarketuuid()).isOpen()) {
 				buyer.sendMessage(Translator.translate("buymanager.marketclose"));
 				return false;
 			}
@@ -166,7 +167,7 @@ public class BuyManager {
 			long ammount = this.wantToBuy;
 			switch (slot) {
 			case 50:
-				if (!APBuy.database.hasPlayerMarketByUUID(this.getMarket())) {
+				if (!APBuy.getDatamaster().getDatabase().hasPlayerMarketByUUID(this.getMarket())) {
 					this.getBuyer().sendMessage(Translator.translate("buymanager.nomarket"));
 					this.cancel();
 					if (this.thenInItoomel) {
@@ -394,7 +395,6 @@ public class BuyManager {
 			e1.printStackTrace();
 			System.out.println(
 					"Player: " + this.getBuyer().getName() + " (" + this.getBuyer().getUniqueId().toString() + ")");
-			this.getBuyer().closeInventory();
 			APBuy.getMarketHandler().removeFromAll(this.getBuyer());
 			this.getBuyer().sendMessage(Translator.translate("dev.error"));
 			this.getBuyer().sendMessage("§cError Code: " + Utils.addToFix(e1));
@@ -429,7 +429,6 @@ public class BuyManager {
 	public void cancel() {
 		removeBuyer(this.getBuyer());
 		APBuy.getMarketHandler().removeFromAll(this.getBuyer());
-		this.getBuyer().closeInventory();
 	}
 
 	public double deductPrice() {

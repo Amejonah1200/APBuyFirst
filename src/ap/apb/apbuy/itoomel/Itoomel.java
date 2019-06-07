@@ -15,6 +15,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 
 import ap.apb.APBuy;
+import ap.apb.APBuyException;
 import ap.apb.Utils;
 import ap.apb.apbuy.itoomel.ItoomelNavigation.ItoomelMenu;
 import ap.apb.apbuy.markets.Market;
@@ -141,7 +142,7 @@ public class Itoomel implements Listener {
 		itoomelitems.add(mis);
 	}
 
-	public void addMarket(Market market) {
+	public void addMarket(Market market) throws APBuyException {
 		for (MarketItem mis : market.getMarketItems()) {
 			if (mis.isBuyable()) {
 				itoomelitems.add(mis);

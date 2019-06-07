@@ -1,5 +1,6 @@
 package ap.apb.apbuy.markets;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -8,6 +9,10 @@ import org.bukkit.Material;
 
 import ap.apb.AIS;
 import ap.apb.APBuy;
+import ap.apb.APBuyException;
+import ap.apb.datamaster.Datamaster;
+import ap.apb.datamaster.SQLDatabase;
+import ap.apb.datamaster.SQLiteDatabase;
 
 public class MarketInfos {
 
@@ -51,8 +56,8 @@ public class MarketInfos {
 		return this.sales;
 	}
 
-	public void save() throws MarketException {
-		APBuy.database.saveMarketInfos(marketOwner, open, name, devise, sales, soldItems);
+	public void save() throws APBuyException {
+		APBuy.getDatamaster().getDatabase().saveMarketInfos(marketOwner, open, name, devise, sales, soldItems);
 	}
 
 	public MarketInfos setName(String name) {
@@ -116,9 +121,24 @@ public class MarketInfos {
 		return ais;
 	}
 
-	public void resetStats() throws MarketException {
+	public void resetStats() throws APBuyException {
 		this.sales = 0;
 		this.soldItems = 0;
 		this.save();
+	}
+
+	public void save(SQLDatabase db) {
+		try {
+			db.getConnection()
+					.prepareStatement("REPLACE INTO "
+							+ Datamaster.getAPBuy_MarketsTableName(db instanceof SQLiteDatabase)
+							+ " (owner, open, name, devise, sales, solditems, material , subid ) VALUES " + "('"
+							+ marketOwner + "', '" + (open ? 1 : 0) + "', " + (name == null ? "NULL" : "'" + name + "'")
+							+ ", " + (devise == null ? "NULL" : "'" + devise + "'") + ", " + sales + ", " + soldItems
+							+ ", '" + Material.CHEST.toString() + "', " + 0 + ");")
+					.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

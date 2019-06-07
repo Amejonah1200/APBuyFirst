@@ -25,6 +25,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import ap.apb.AIS;
 import ap.apb.APBuy;
+import ap.apb.APBuyException;
 import ap.apb.Translator;
 import ap.apb.Utils;
 import ap.apb.anvilgui.AnvilGUI;
@@ -35,6 +36,7 @@ import ap.apb.anvilgui.mc1_8.AnvilGUI_v1_8_R3;
 import ap.apb.apbuy.BuyManager;
 import ap.apb.apbuy.itoomel.Itoomel;
 import ap.apb.apbuy.itoomel.ItoomelPrime;
+import ap.apb.datamaster.Database;
 
 public class MarketHandler implements Listener {
 
@@ -46,6 +48,11 @@ public class MarketHandler implements Listener {
 	public HashMap<Player, List<ItemStack>> onItemInput = new HashMap<>();
 	public static Market adminshop = null;
 	public boolean settedAdminShop = false;
+	private Database database;
+
+	public MarketHandler(Database database) {
+		this.database = database;
+	}
 
 	public void openMainMenu(Player p) {
 		try {
@@ -260,7 +267,7 @@ public class MarketHandler implements Listener {
 					for (int i = 0; i < 54; i++) {
 						inv.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
 					}
-					MarketInfos m = APBuy.database.getMarketInfos(p.getUniqueId().toString());
+					MarketInfos m = database.getMarketInfos(p.getUniqueId().toString());
 					// - Status 10
 					inv.setItem(10,
 							m.isOpen()
@@ -417,7 +424,7 @@ public class MarketHandler implements Listener {
 																.toIS());
 
 										// - Getting all Markets to display
-										List<CategoryInfos> catinfoss = APBuy.database
+										List<CategoryInfos> catinfoss = database
 												.getAllCategoryInfosFromMarket(p.getUniqueId().toString());
 										int size = catinfoss.size();
 										int pages = ((size - (size % 28)) / 28);
@@ -525,7 +532,7 @@ public class MarketHandler implements Listener {
 																			"menu.inv.mymarket.editor.delete.desc"),
 																	40))
 															.toIS());
-									List<CategoryInfos> catinfoss = APBuy.database
+									List<CategoryInfos> catinfoss = database
 											.getAllCategoryInfosFromMarket(p.getUniqueId().toString());
 									// - Getting all Markets to display
 									int size = catinfoss.size();
@@ -684,8 +691,7 @@ public class MarketHandler implements Listener {
 										s = uuids.get(count).toString() + ".yml";
 										inv2.setItem(10 + i1 * 9 + i2,
 												APBuy.tagger.setNBTTag("Market", s,
-														APBuy.database
-																.getMarketInfos(s.replaceAll(Pattern.quote(".yml"), ""))
+														database.getMarketInfos(s.replaceAll(Pattern.quote(".yml"), ""))
 																.getMarketAIS().toIS()));
 										count++;
 									}
@@ -743,14 +749,14 @@ public class MarketHandler implements Listener {
 		}
 	}
 
-	public List<UUID> getTopMarkets() throws MarketException {
-		List<UUID> uuids = APBuy.database.loadAllOnlineMarkets();
+	public List<UUID> getTopMarkets() throws APBuyException {
+		List<UUID> uuids = database.loadAllOnlineMarkets();
 		uuids.sort(new Comparator<UUID>() {
 			@Override
 			public int compare(UUID o1, UUID o2) {
 				try {
 					return compareByUUID(o1.toString(), o2.toString());
-				} catch (MarketException e) {
+				} catch (APBuyException e) {
 					return 0;
 				}
 			}
@@ -818,7 +824,13 @@ public class MarketHandler implements Listener {
 										.addLineToLore(Translator.translate("menu.inv.iteminput.info.right"))
 										.addLineToLore(Translator.translate("menu.inv.iteminput.info.drop")).toIS());
 						// - Getting all Markets to display
-						List<MarketItem> miss = APBuy.database.getMarketItemsFromMarket(p.getUniqueId().toString());
+						List<MarketItem> miss;
+						try {
+							miss = database.getMarketItemsFromMarket(p.getUniqueId().toString());
+						} catch (APBuyException e) {
+							e.printStackTrace();
+							miss = new ArrayList<>();
+						}
 						Iterator<MarketItem> iterator = miss.iterator();
 						while (iterator.hasNext()) {
 							String s = iterator.next().getCatName();
@@ -1015,17 +1027,17 @@ public class MarketHandler implements Listener {
 	}
 
 	// public Market getMarketByPlayer(OfflinePlayer offlinePlayer) throws
-	// MarketException {
+	// APBuyException {
 	// try {
 	// // return
 	// // this.getMarketByFile(this.getPlayerMarketFile(offlinePlayer));
-	// return APBuy.database.loadByUUID(offlinePlayer.getUniqueId().toString());
-	// } catch (MarketException e) {
+	// return database.loadByUUID(offlinePlayer.getUniqueId().toString());
+	// } catch (APBuyException e) {
 	// return this.createNewMarketForP(offlinePlayer);
 	// }
 	// }
 
-	public Market createNewMarketForP(String uuid) throws MarketException {
+	public Market createNewMarketForP(String uuid) throws APBuyException {
 		Market market = new Market(uuid, false);
 		market.saveMarketInfos();
 		return market;
@@ -1165,7 +1177,7 @@ public class MarketHandler implements Listener {
 						this.openInvToP("MyMarket:Editor:Add", p);
 					} else if (menu.startsWith("MyMarket:ItemEditor:Add")) {
 						MarketItem mis = creatingIS.get(p);
-						if (APBuy.database.getMarketItemByIS(p.getUniqueId().toString(), e.getCurrentItem()) != null) {
+						if (database.getMarketItemByIS(p.getUniqueId().toString(), e.getCurrentItem()) != null) {
 							p.sendMessage(Translator.translate("click.aregistered"));
 							return;
 						} else {
@@ -1192,8 +1204,7 @@ public class MarketHandler implements Listener {
 							openAdminShopInv("AddCat", p);
 						} else if (onMarketVisualiser.get(p)[0].contains("AddItem")) {
 							MarketItem mis = creatingIS.get(p);
-							if (APBuy.database.getMarketItemByIS(p.getUniqueId().toString(),
-									e.getCurrentItem()) != null) {
+							if (database.getMarketItemByIS(p.getUniqueId().toString(), e.getCurrentItem()) != null) {
 								p.sendMessage(Translator.translate("click.aregistered"));
 								return;
 							} else {
@@ -1236,7 +1247,7 @@ public class MarketHandler implements Listener {
 							// e.getCurrentItem())) {
 							// PMLoc.remove(p);
 							// openMarketVisualiserToPlayer("Main",
-							// APBuy.database.getTopMarketsUUIDs(1).get(0).toString(),
+							// database.getTopMarketsUUIDs(1).get(0).toString(),
 							// p);
 							// }
 						} else {
@@ -1268,7 +1279,7 @@ public class MarketHandler implements Listener {
 				} else if (menu == "MyMarket:Main") {
 					switch (e.getSlot()) {
 					case 10:
-						MarketInfos m = APBuy.database.getMarketInfos(p.getUniqueId().toString());
+						MarketInfos m = database.getMarketInfos(p.getUniqueId().toString());
 						m.setOpen(!m.isOpen());
 						m.save();
 						this.openInvToP("MyMarket:Main", p);
@@ -1312,7 +1323,7 @@ public class MarketHandler implements Listener {
 								if (new Market(p.getUniqueId().toString(), false)
 										.getMarketItemsByCat(APBuy.tagger.getNBTTagString("Cat", e.getCurrentItem()))
 										.isEmpty()) {
-									APBuy.database.removeCategory(p.getUniqueId().toString(),
+									database.removeCategory(p.getUniqueId().toString(),
 											APBuy.tagger.getNBTTagString("Cat", e.getCurrentItem()));
 									this.openInvToP(PMLoc.get(p), p);
 									reopenMarketToWhoSee(p.getUniqueId().toString());
@@ -1339,7 +1350,7 @@ public class MarketHandler implements Listener {
 					case 50:
 						CategoryInfos c = creatingCat.get(p);
 						if (c.getName() != null) {
-							if (!APBuy.database.hasCategoryInfos(p.getUniqueId().toString(), c.getName())) {
+							if (!database.hasCategoryInfos(p.getUniqueId().toString(), c.getName())) {
 								new CategoryInfos(p.getUniqueId().toString(), c.getName(), c.getMat(), c.getSubid(),
 										c.getDesc()).save();
 								creatingCat.remove(p);
@@ -1439,9 +1450,9 @@ public class MarketHandler implements Listener {
 							if ((10 <= i && i <= 16) || (19 <= i && i <= 25) || (28 <= i && i <= 34)
 									|| (37 <= i && i <= 43)) {
 								if (e.getClickedInventory().getContents()[i] != null) {
-									if (APBuy.database.hasMarketItem(p.getUniqueId().toString(),
+									if (database.hasMarketItem(p.getUniqueId().toString(),
 											e.getClickedInventory().getContents()[i])) {
-										mis = APBuy.database.getMarketItemByIS(p.getUniqueId().toString(),
+										mis = database.getMarketItemByIS(p.getUniqueId().toString(),
 												e.getClickedInventory().getContents()[i]);
 										mis.setAmmount(mis.getAmmount()
 												+ e.getClickedInventory().getContents()[i].getAmount());
@@ -1499,7 +1510,7 @@ public class MarketHandler implements Listener {
 											p.sendMessage(Translator.translate("click.catforgetitems"));
 											return;
 										} else {
-											APBuy.database.removeItem(p.getUniqueId().toString(), is.getIs());
+											database.removeItem(p.getUniqueId().toString(), is.getIs());
 											// this.getMarketByPlayer(p).removeItemInCat(
 											// menu.endsWith(":Opened")
 											// ? menu.substring(0, menu.length()
@@ -1949,7 +1960,7 @@ public class MarketHandler implements Listener {
 						if (onMarketVisualiser.get(p)[1] == "AdminShop") {
 							if (p.hasPermission("apb.mod.adminshop")) {
 								if (e.getClick() == ClickType.CONTROL_DROP) {
-									APBuy.database.removeItem("AdminShop", APBuy.tagger.removeNBTTag("ToBuy",
+									database.removeItem("AdminShop", APBuy.tagger.removeNBTTag("ToBuy",
 											new AIS(e.getCurrentItem()).removeLatestLore(2).toIS()));
 									openMarketVisualiserToPlayer(onMarketVisualiser.get(p)[0], "AdminShop", p);
 									return;
@@ -1994,7 +2005,7 @@ public class MarketHandler implements Listener {
 									p.sendMessage(Translator.translate("itemdepot.trans.doing",
 											new Object[] { Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName() }));
 									ItemDepot.getInstance().transferMarketToItemDepot(uuid);
-									APBuy.database.deleteMarket(UUID.fromString(uuid));
+									database.deleteMarket(UUID.fromString(uuid));
 									Itoomel.getInstance().removeMarket(uuid);
 									p.sendMessage(Translator.translate("itemdepot.trans.done",
 											new Object[] { Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName() }));
@@ -2002,7 +2013,7 @@ public class MarketHandler implements Listener {
 								break;
 							case 28:
 								if (p.hasPermission("apb.mod.*") || p.hasPermission("apb.mod.status")) {
-									APBuy.database.getMarketInfos((String) onMarketVisualiser.get(p)[1]).setOpen(
+									database.getMarketInfos((String) onMarketVisualiser.get(p)[1]).setOpen(
 											e.getCurrentItem().getItemMeta().getDisplayName().contains("geschlossen"))
 											.save();
 									openMarketVisualiserToPlayer("Main", ((String) onMarketVisualiser.get(p)[1]), p);
@@ -2010,14 +2021,13 @@ public class MarketHandler implements Listener {
 								break;
 							case 30:
 								if (p.hasPermission("apb.mod.*") || p.hasPermission("apb.mod.reset")) {
-									APBuy.database.getMarketInfos((String) onMarketVisualiser.get(p)[1]).resetStats();
+									database.getMarketInfos((String) onMarketVisualiser.get(p)[1]).resetStats();
 									openMarketVisualiserToPlayer("Main", ((String) onMarketVisualiser.get(p)[1]), p);
 								}
 								break;
 							case 32:
 								if (p.hasPermission("apb.mod.*") || p.hasPermission("apb.mod.delete")) {
-									APBuy.database
-											.deleteMarket(UUID.fromString(((String) onMarketVisualiser.get(p)[1])));
+									database.deleteMarket(UUID.fromString(((String) onMarketVisualiser.get(p)[1])));
 									ItoomelPrime.removeMarketFromItoomel(
 											UUID.fromString(((String) onMarketVisualiser.get(p)[1])));
 									ItoomelPrime.reopenItoomelToEveryone();
@@ -2030,47 +2040,58 @@ public class MarketHandler implements Listener {
 								openMarketVisualiserToPlayer("InvisSee", ((String) onMarketVisualiser.get(p)[1]), p);
 								break;
 							}
-						} catch (MarketException e1) {
+						} catch (APBuyException e1) {
 							switch (e1.getErrorCause()) {
-							case NOTFOUND:
+							case NOTFOUND_MARKET:
 								p.sendMessage(Translator.translate("click.notfoundmarket"));
 								break;
-							case CATNOTFOUND:
+							case NOTFOUND_CAT:
 								p.sendMessage(Translator.translate("click.notfoundcat"));
 								break;
+							case SQL:
+								p.sendMessage("§cEs gab ein Fehler beim abfragen bei der Datenbank (SQL Fehler).");
+								break;
 							default:
+							case NPE:
+								e1.printStackTrace();
+								System.out.println("Player: " + p.getName() + " (" + p.getUniqueId().toString() + ")");
+								System.out.println("Slot: " + e.getSlot());
 								break;
 							}
 							this.removeFromAll(p);
-							p.closeInventory();
+							p.sendMessage(Translator.translate("dev.error"));
 							p.sendMessage("§cError Code: " + Utils.addToFix(e1));
 						}
 					}
 
 				}
 			}
-		} catch (
-
-		MarketException e1) {
+		} catch (APBuyException e1) {
 			switch (e1.getErrorCause()) {
-			case CATNOTFOUND:
+			case NOTFOUND_MARKET:
 				p.sendMessage(Translator.translate("click.notfoundmarket"));
 				this.removeFromAll(p);
 				p.closeInventory();
 				return;
-			case LOAD:
+			case SQL:
+				p.sendMessage("§cEs gab ein Fehler beim abfragen bei der Datenbank (SQL Fehler).");
 				break;
-			case MIS:
-				break;
-			case NOTFOUND:
+			case NOTFOUND_CAT:
 				p.sendMessage(Translator.translate("click.notfoundcat"));
 				this.removeFromAll(p);
 				p.closeInventory();
 				this.openInvToP("Markets", p);
 				return;
-			case NULL:
+			case NPE:
+				e1.printStackTrace();
+				System.out.println("Player: " + p.getName() + " (" + p.getUniqueId().toString() + ")");
+				System.out.println("Slot: " + e.getSlot());
+				p.closeInventory();
+				this.removeFromAll(p);
+				p.sendMessage(Translator.translate("dev.error"));
+				p.sendMessage("§cError Code: " + Utils.addToFix(e1));
 				break;
-			case SAVE:
+			default:
 				break;
 			}
 			this.removeFromAll(p);
@@ -2652,31 +2673,30 @@ public class MarketHandler implements Listener {
 		} catch (Exception e1) {
 			e1.printStackTrace();
 			System.out.println("Player: " + p.getName() + " (" + p.getUniqueId().toString() + ")");
-			p.closeInventory();
 			this.removeFromAll(p);
 			p.sendMessage(Translator.translate("dev.error"));
 			p.sendMessage("§cError Code: " + Utils.addToFix(e1));
 		}
 	}
 
-	// public Market getMarketByPlayerName(String string) throws MarketException
+	// public Market getMarketByPlayerName(String string) throws APBuyException
 	// {
 	// String uuid = Utils.getUuid(string);
 	// if (uuid != "error") {
-	// return APBuy.database.loadByUUID(uuid);
+	// return database.loadByUUID(uuid);
 	// }
 	// return null;
 	// }
 
-	public boolean hasMarketByUUID(String uuid) {
-		return APBuy.database.hasPlayerMarketByUUID(uuid);
+	public boolean hasMarketByUUID(String uuid) throws APBuyException {
+		return database.hasPlayerMarketByUUID(uuid);
 	}
 
-	public List<UUID> getAllMarketsOnline() throws MarketException {
-		return APBuy.database.loadAllOnlineMarkets();
+	public List<UUID> getAllMarketsOnline() throws APBuyException {
+		return database.loadAllOnlineMarkets();
 	}
 
-	// public Market getMarketByUUID(String s) throws MarketException {
+	// public Market getMarketByUUID(String s) throws APBuyException {
 	// if (s == "AdminShop") {
 	// return adminshop;
 	// }
@@ -2684,12 +2704,12 @@ public class MarketHandler implements Listener {
 	// // return
 	// //
 	// this.getMarketByFile(this.getPlayerMarketFile(Bukkit.getOfflinePlayer(UUID.fromString(s))));
-	// return APBuy.database.loadByUUID(s);
+	// return database.loadByUUID(s);
 	// }
-	// throw new MarketException(ErrorCause.NOTFOUND);
+	// throw new APBuyException(ErrorCause.NOTFOUND);
 	// }
 
-	public void reopenMarketToWhoSee(String uuid) {
+	public void reopenMarketToWhoSee(String uuid) throws APBuyException {
 		if (hasMarketByUUID(uuid)) {
 			for (Player p : onMarketVisualiser.keySet()) {
 				if (onMarketVisualiser.get(p)[1].equalsIgnoreCase(uuid)) {
@@ -2709,7 +2729,7 @@ public class MarketHandler implements Listener {
 		}
 	}
 
-	public void reopenMarketsToEveryone() {
+	public void reopenMarketsToEveryone() throws APBuyException {
 		for (Player p : onMarketVisualiser.keySet()) {
 			if (!BuyManager.isBuying(p)) {
 				if (hasMarketByUUID(onMarketVisualiser.get(p)[1])) {
@@ -2723,18 +2743,18 @@ public class MarketHandler implements Listener {
 		}
 	}
 
-	public int compareByUUID(String arg0, String arg1) throws MarketException {
+	public int compareByUUID(String arg0, String arg1) throws APBuyException {
 		Long[] m1 = getMarketByUUIDSalesnSoldItms(arg0);
 		Long[] m2 = getMarketByUUIDSalesnSoldItms(arg1);
 		return m1[0] == m2[0] ? Long.compare(m1[1], m2[1]) : Long.compare(m1[0], m2[0]);
 	}
 
-	public Long[] getMarketByUUIDSalesnSoldItms(String s) throws MarketException {
-		MarketInfos m = APBuy.database.getMarketInfos(s);
+	public Long[] getMarketByUUIDSalesnSoldItms(String s) throws APBuyException {
+		MarketInfos m = database.getMarketInfos(s);
 		return new Long[] { m.getSales(), m.getSoldItems() };
 	}
 
-	public void createAdminShopWhenNotExist() throws MarketException {
+	public void createAdminShopWhenNotExist() throws APBuyException {
 		if (hasMarketByUUID("AdminShop")) {
 			// adminshop = APBuy.getMarketHandler().getMarketByFile(new
 			// File("plugins/APBuy/Markets/Adminshop.yml"));

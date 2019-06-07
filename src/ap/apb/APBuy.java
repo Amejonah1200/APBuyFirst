@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,16 +20,13 @@ import ap.apb.anvilgui.mc1_12.AnvilGUI_v1_12_R1;
 import ap.apb.anvilgui.mc1_8.AnvilGUI_v1_8_R1;
 import ap.apb.anvilgui.mc1_8.AnvilGUI_v1_8_R2;
 import ap.apb.anvilgui.mc1_8.AnvilGUI_v1_8_R3;
-import ap.apb.apbuy.itoomel.ICats;
 import ap.apb.apbuy.itoomel.Itoomel;
 import ap.apb.apbuy.itoomel.ItoomelCat;
 import ap.apb.apbuy.markets.ItemDepot;
 import ap.apb.apbuy.markets.MarketHandler;
 import ap.apb.cmds.APBCmd;
 import ap.apb.cmds.ItoomelCmd;
-import ap.apb.datamaster.Database;
-import ap.apb.datamaster.SQLDatabase;
-import ap.apb.datamaster.SQLiteDatabase;
+import ap.apb.datamaster.Datamaster;
 import ap.apb.nbttager.NBTTager;
 import ap.apb.nbttager.mc1_12.NBTTager_v1_12_R1;
 import ap.apb.nbttager.mc1_8.NBTTager_v1_8_R1;
@@ -39,68 +35,52 @@ import ap.apb.nbttager.mc1_8.NBTTager_v1_8_R3;
 
 public class APBuy extends JavaPlugin {
 
-	private File PlayerMarketFolder = new File("plugins/APBuy/Markets");
 	public static final String VERSION = "v0.6b";
-	private File PlayerMarketStats = new File("plugins/APBuy/MarketStats.yml");
-	private File STnErrors = new File("plugins/APBuy/STnErrors");
-	private HashMap<String, File> playerToMarket = new HashMap<>();
-	private BukkitTask Itoomeltask;
-	public static APBuy plugin;
-	public static NBTTager tagger;
-	private static boolean removeGen = false;
-	public static EcoHandler ecohandler;
-	private static boolean generalStop = false;
-	private boolean needSetup = false;
-	private boolean autoCreate = true;
-	private List<ItoomelCat> icatslist = new ArrayList<>();
-	private MarketHandler marketHandler;
+
 	public static Translator translator = null;
-	public static Translator defaulttranslator = null;
 	public static boolean german = true;
-	public static boolean customtrans = false;
-	public static Database database;
+	public static NBTTager tagger;
 	public static Itoomel itoomel;
 	public static ItemDepot itemDepot;
+	public static APBuy plugin;
+	public static EcoHandler ecohandler;
+	public static boolean genStopByPlugin = false;
+	private static boolean removeGen = false;
+	private static boolean generalStop = false;
+	public static StopCause stopCause = StopCause.NONE;
+	private static Datamaster datamaster;
+
+	private File PlayerMarketFolder = new File("plugins/APBuy/Markets");
+	private File PlayerMarketStats = new File("plugins/APBuy/MarketStats.yml");
+	private File STnErrors = new File("plugins/APBuy/STnErrors");
+	private BukkitTask Itoomeltask;
+	private MarketHandler marketHandler;
+	private boolean autoCreate = true;
+	private List<ItoomelCat> icatslist = new ArrayList<>();
+	private HashMap<String, File> playerToMarket = new HashMap<>();
 
 	@Override
 	public void onEnable() {
 		plugin = this;
-		itemDepot = new ItemDepot();
 		if (!setupNBTTager()) {
 			System.err.println("[APBuy] Wrong version!");
 			Bukkit.getPluginManager().disablePlugin(this);
 			return;
 		}
-		database = new SQLiteDatabase();
-		if (database instanceof SQLDatabase) {
-			((SQLDatabase) database).connect();
-		}
+		datamaster = new Datamaster(this);
+		itemDepot = new ItemDepot(datamaster.getDatabase());
 		if (this.getConfig().get("german") == null) {
 			this.getConfig().set("german", german);
 			this.saveConfig();
 		} else {
 			german = this.getConfig().getBoolean("german");
 		}
-		if (this.getConfig().get("customtrans") == null) {
-			this.getConfig().set("customtrans", customtrans);
-			this.saveConfig();
+		if (german) {
+			translator = Translator.createTranslatorDE();
 		} else {
-			customtrans = this.getConfig().getBoolean("customtrans");
+			translator = Translator.createTranslatorEN();
 		}
-		if (customtrans) {
-			if (german) {
-				defaulttranslator = Translator.createTranslatorDE();
-			} else {
-				defaulttranslator = Translator.createTranslatorEN();
-			}
-		} else {
-			if (german) {
-				translator = Translator.createTranslatorDE();
-			} else {
-				translator = Translator.createTranslatorEN();
-			}
-		}
-		this.setMarketHandler(new MarketHandler());
+		this.setMarketHandler(new MarketHandler(datamaster.getDatabase()));
 		if (this.getConfig().get("AutoCreateAccount") == null) {
 			this.getConfig().set("AutoCreateAccount", autoCreate);
 			this.saveConfig();
@@ -111,15 +91,11 @@ public class APBuy extends JavaPlugin {
 		if (EcoHandler.isEcoInstalled()) {
 			ecohandler = new EcoHandler();
 			EcoHandler.setupEconomy();
+		} else {
+			System.err.println("[APBuy] Vault ist isn't installed or enabled!");
+			Bukkit.getPluginManager().disablePlugin(this);
+			return;
 		}
-		// Future vvvvvvvvvvvvvv
-		// if (isLatest()) {
-		// System.out.println("[APBuy] APBuy is on the latest version.");
-		// } else {
-		// System.out.println("[APBuy] You musst send \"/apb update\" to
-		// configure.");
-		// }
-		// BanManager.onEnable();
 		STnErrors.mkdirs();
 		PlayerMarketFolder.mkdirs();
 		try {
@@ -133,11 +109,12 @@ public class APBuy extends JavaPlugin {
 		} catch (IOException e) {
 		}
 		this.saveConfig();
-		getCommand("apb").setExecutor(new APBCmd());
+		APBCmd apbcmd = new APBCmd();
+		getCommand("apb").setExecutor(apbcmd);
 		getCommand("itoomel").setExecutor(new ItoomelCmd());
 		Bukkit.getPluginManager().registerEvents(APBuy.getMarketHandler(), this);
 		Bukkit.getPluginManager().registerEvents(itemDepot, this);
-		// Bukkit.getPluginManager().registerEvents(new ItoomelPrime(), this);
+		Bukkit.getPluginManager().registerEvents(apbcmd, this);
 		if (autoCreate && (!generalStop)) {
 			Bukkit.getPluginManager().registerEvents(new Listener() {
 				@EventHandler
@@ -146,51 +123,49 @@ public class APBuy extends JavaPlugin {
 				}
 			}, this);
 		}
-		ICats icats = new ICats();
-		icatslist.clear();
-		icatslist.add(icats.new ICatFeaturedBB());
-		icatslist.add(icats.new ICatOres());
-		icatslist.add(icats.new ICatBattle());
-		icatslist.add(icats.new ICatSpawnEggs());
-		icatslist.add(icats.new ICatArmor());
-		icatslist.add(icats.new ICatDiaTools());
-		icatslist.add(icats.new ICatIronTools());
-		icatslist.add(icats.new ICatGoldTools());
-		icatslist.add(icats.new ICatStoneTools());
-		icatslist.add(icats.new ICatWoodenTools());
-		icatslist.add(icats.new ICatTools());
-		icatslist.add(icats.new ICatNether());
-		icatslist.add(icats.new ICatEnchantedBooks());
-		icatslist.add(icats.new ICatDye());
-		icatslist.add(icats.new ICatPotions());
-		icatslist.add(icats.new ICatFood());
-		icatslist.add(icats.new ICatBrewing());
-		icatslist.add(icats.new ICatRedstone());
-		ItoomelCat icat = new ItoomelCat("§7Other stuff", Material.CHEST,
-				"Hier wird alles sein was nicht einsortiert werden konnte.") {
-			@Override
-			public ItoomelCat registerMats() {
-				List<Material> mats = new ArrayList<>();
-				for (ItoomelCat icat2 : icatslist) {
-					mats.addAll(icat2.getCatMats().keySet());
-				}
-				for (Material mat : Material.values()) {
-					if (!mats.contains(mat)) {
-						this.addMat(mat);
-					}
-				}
-				return this;
-			}
-		};
-		icat.registerMats();
-		icatslist.add(icat);
+
+		// ICats icats = new ICats();
+		// icatslist.clear();
+		// icatslist.add(icats.new ICatFeaturedBB());
+		// icatslist.add(icats.new ICatOres());
+		// icatslist.add(icats.new ICatBattle());
+		// icatslist.add(icats.new ICatSpawnEggs());
+		// icatslist.add(icats.new ICatArmor());
+		// icatslist.add(icats.new ICatDiaTools());
+		// icatslist.add(icats.new ICatIronTools());
+		// icatslist.add(icats.new ICatGoldTools());
+		// icatslist.add(icats.new ICatStoneTools());
+		// icatslist.add(icats.new ICatWoodenTools());
+		// icatslist.add(icats.new ICatTools());
+		// icatslist.add(icats.new ICatNether());
+		// icatslist.add(icats.new ICatEnchantedBooks());
+		// icatslist.add(icats.new ICatDye());
+		// icatslist.add(icats.new ICatPotions());
+		// icatslist.add(icats.new ICatFood());
+		// icatslist.add(icats.new ICatBrewing());
+		// icatslist.add(icats.new ICatRedstone());
+		// ItoomelCat icat = new ItoomelCat("§7Other stuff", Material.CHEST,
+		// "Hier wird alles sein was nicht einsortiert werden konnte.") {
+		// @Override
+		// public ItoomelCat registerMats() {
+		// List<Material> mats = new ArrayList<>();
+		// for (ItoomelCat icat2 : icatslist) {
+		// mats.addAll(icat2.getCatMats().keySet());
+		// }
+		// for (Material mat : Material.values()) {
+		// if (!mats.contains(mat)) {
+		// this.addMat(mat);
+		// }
+		// }
+		// return this;
+		// }
+		// };
+		// icat.registerMats();
+		// icatslist.add(icat);
+
 		System.out.println("[APB] Starting Itoomel...");
-		generalStop = true;
-		removeGen = false;
 		itoomel = new Itoomel();
-		generalStop = false;
 		Bukkit.getPluginManager().registerEvents(itoomel, this);
-		// Bukkit.getScheduler().runTask(this, new ItoomelTask());
 		try {
 			APBuy.getMarketHandler().createAdminShopWhenNotExist();
 		} catch (Exception e) {
@@ -201,12 +176,14 @@ public class APBuy extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		if (database instanceof SQLDatabase) {
-			((SQLDatabase) database).disconnect();
-		}
+		APBuy.datamaster.disconnect();
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			APBuy.getMarketHandler().removeFromAll(p);
 		}
+	}
+
+	public static Datamaster getDatamaster() {
+		return datamaster;
 	}
 
 	public static boolean hasPlayerModPerms(Player p) {
@@ -331,14 +308,6 @@ public class APBuy extends JavaPlugin {
 		generalStop = generalStoa;
 	}
 
-	public boolean isNeedSetup() {
-		return this.needSetup;
-	}
-
-	public void setNeedSetup(boolean needSetup) {
-		this.needSetup = needSetup;
-	}
-
 	public boolean isAutoCreate() {
 		return this.autoCreate;
 	}
@@ -359,8 +328,8 @@ public class APBuy extends JavaPlugin {
 		return german;
 	}
 
-	public static boolean isCustomtrans() {
-		return customtrans;
+	public enum StopCause {
+		NONE, DATABASE, TRANSFERINGDB
 	}
 
 }

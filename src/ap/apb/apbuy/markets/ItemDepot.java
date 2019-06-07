@@ -17,12 +17,19 @@ import org.bukkit.inventory.ItemStack;
 
 import ap.apb.AIS;
 import ap.apb.APBuy;
+import ap.apb.APBuyException;
 import ap.apb.Translator;
 import ap.apb.Utils;
+import ap.apb.datamaster.Database;
 
 public class ItemDepot implements Listener {
 
 	private HashMap<Player, Integer> whoOpened = new HashMap<>();
+	private Database database;
+
+	public ItemDepot(Database db) {
+		this.database = db;
+	}
 
 	public void openItemDepot(Player p, int page) {
 		Inventory depotInv = Bukkit.createInventory(null, 54, "§0§lA§3§lP§r§8Buy - ItemDepot");
@@ -48,7 +55,7 @@ public class ItemDepot implements Listener {
 			@Override
 			public void run() {
 				try {
-					HashMap<ItemStack, String[]> hmDepot = APBuy.database
+					HashMap<ItemStack, String[]> hmDepot = database
 							.getItemsFromItemDepot(p.getUniqueId().toString());
 					List<ItemStack> iss = new ArrayList<>();
 					iss.addAll(hmDepot.keySet());
@@ -111,7 +118,7 @@ public class ItemDepot implements Listener {
 	}
 
 	@EventHandler
-	public void onClick(InventoryClickEvent e) {
+	public void onClick(InventoryClickEvent e) throws APBuyException {
 		if (whoOpened.containsKey(e.getWhoClicked())) {
 			e.setCancelled(true);
 			if (e.getClickedInventory() == e.getView().getTopInventory()) {
@@ -124,13 +131,13 @@ public class ItemDepot implements Listener {
 					case LEFT:
 						ItemStack pureItemstack = APBuy.tagger.removeNBTTag("Depot",
 								new AIS(e.getCurrentItem().clone()).removeLatestLore(2).toIS());
-						String[] itemData = APBuy.database
+						String[] itemData = database
 								.getItemDataFromDepot(e.getWhoClicked().getUniqueId().toString(), pureItemstack);
 						int place = Utils.getPlaceForIS((Player) e.getWhoClicked(),
 								Long.parseLong(itemData[1]) > 64 ? 64 : Long.parseLong(itemData[1]), pureItemstack);
 						if (place != 0) {
 							Utils.addItemToPlayer((Player) e.getWhoClicked(), pureItemstack, place);
-							APBuy.database.saveMisToItemDepot(itemData[0], e.getWhoClicked().getUniqueId().toString(),
+							database.saveMisToItemDepot(itemData[0], e.getWhoClicked().getUniqueId().toString(),
 									pureItemstack, Long.parseLong(itemData[1]) - place);
 							openItemDepot((Player) e.getWhoClicked(), whoOpened.get(e.getWhoClicked()));
 						} else {
@@ -140,13 +147,13 @@ public class ItemDepot implements Listener {
 					case MIDDLE:
 						ItemStack pureItemstack1 = APBuy.tagger.removeNBTTag("Depot",
 								new AIS(e.getCurrentItem().clone()).removeLatestLore(2).toIS());
-						String[] itemData1 = APBuy.database
+						String[] itemData1 = database
 								.getItemDataFromDepot(e.getWhoClicked().getUniqueId().toString(), pureItemstack1);
 						int place1 = Utils.getPlaceForIS((Player) e.getWhoClicked(), Long.parseLong(itemData1[1]),
 								pureItemstack1);
 						if (place1 != 0) {
 							Utils.addItemToPlayer((Player) e.getWhoClicked(), pureItemstack1, place1);
-							APBuy.database.saveMisToItemDepot(itemData1[0], e.getWhoClicked().getUniqueId().toString(),
+							database.saveMisToItemDepot(itemData1[0], e.getWhoClicked().getUniqueId().toString(),
 									pureItemstack1, Long.parseLong(itemData1[1]) - place1);
 							openItemDepot((Player) e.getWhoClicked(), whoOpened.get(e.getWhoClicked()));
 						} else {
@@ -166,24 +173,24 @@ public class ItemDepot implements Listener {
 		whoOpened.remove(e.getPlayer());
 	}
 
-	public boolean hasItemDepot(Player player) {
-		return APBuy.database.getItemsFromItemDepot(player.getUniqueId().toString()).size() != 0;
+	public boolean hasItemDepot(Player player) throws APBuyException {
+		return database.getItemsFromItemDepot(player.getUniqueId().toString()).size() != 0;
 	}
 
 	public static ItemDepot getInstance() {
 		return APBuy.itemDepot;
 	}
 
-	public void transferMarketToItemDepot(String uuid) {
+	public void transferMarketToItemDepot(String uuid) throws APBuyException {
 		Market m = new Market(uuid, true);
 		HashMap<ItemStack, String[]> toSave = mergeList(uuid, m.getMarketItems());
 		for (ItemStack is : toSave.keySet()) {
-			APBuy.database.saveMisToItemDepot(toSave.get(is)[0], uuid, is, Long.parseLong(toSave.get(is)[1]));
+			database.saveMisToItemDepot(toSave.get(is)[0], uuid, is, Long.parseLong(toSave.get(is)[1]));
 		}
 	}
 
-	public HashMap<ItemStack, String[]> mergeList(String uuid, List<MarketItem> misToTransfer) {
-		HashMap<ItemStack, String[]> hmDepot = APBuy.database.getItemsFromItemDepot(uuid);
+	public HashMap<ItemStack, String[]> mergeList(String uuid, List<MarketItem> misToTransfer) throws APBuyException {
+		HashMap<ItemStack, String[]> hmDepot = database.getItemsFromItemDepot(uuid);
 		String[] tempData;
 		for (MarketItem mis : misToTransfer) {
 			if (hmDepot.containsKey(mis.getIs())) {

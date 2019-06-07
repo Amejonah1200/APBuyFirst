@@ -47,7 +47,7 @@ permissions:
       description: Allows Moderation, change the status of a market.
    apb.mod.open:
       description: Allows Moderation, see Markets when they are closed.
-   apb.mod.itemdepot
+   apb.mod.itemdepot:
       description: Transfer a Market to the ItemDepot, and delete it after.
    apb.mod.genstop:
       description: Allows Moderation, Generall stopping..
