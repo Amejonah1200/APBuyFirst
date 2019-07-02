@@ -1,15 +1,16 @@
 package ap.apb.apbuy.markets;
 
-import ap.apb.AIS;
-import ap.apb.Utils;
-import ap.apb.apbuy.itoomel.ItoomelPrime;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import ap.apb.AIS;
+import ap.apb.Utils;
+import ap.apb.apbuy.itoomel.ItoomelPrime;
 
 public class CategoryTemplate {
 

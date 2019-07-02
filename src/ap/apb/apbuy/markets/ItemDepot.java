@@ -1,7 +1,10 @@
 package ap.apb.apbuy.markets;
 
-import ap.apb.*;
-import ap.apb.datamaster.Database;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -12,10 +15,12 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import ap.apb.AIS;
+import ap.apb.APBuy;
+import ap.apb.APBuyException;
+import ap.apb.Translator;
+import ap.apb.Utils;
+import ap.apb.datamaster.Database;
 
 public class ItemDepot implements Listener {
 
@@ -27,17 +32,17 @@ public class ItemDepot implements Listener {
 	}
 
 	public void openItemDepot(Player p, int page) {
-		Inventory depotInv = Bukkit.createInventory(null, 54, "ï¿½0ï¿½lAï¿½3ï¿½lPï¿½rï¿½8Buy - ItemDepot");
+		Inventory depotInv = Bukkit.createInventory(null, 54, "§0§lA§3§lP§r§8Buy - ItemDepot");
 		for (int i = 0; i < 54; i++) {
 			if ((10 <= i && i <= 16) || (19 <= i && i <= 25) || (28 <= i && i <= 34) || (37 <= i && i <= 43)
 					|| (i == 49)) {
 				continue;
 			}
-			depotInv.setItem(i, new AIS("ï¿½a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
+			depotInv.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
 		}
 		for (int i1 = 0; i1 < 4; i1++) {
 			for (int i2 = 0; i2 < 7; i2++) {
-				depotInv.setItem(10 + i1 * 9 + i2, new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+				depotInv.setItem(10 + i1 * 9 + i2, new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 			}
 		}
 		depotInv.setItem(31, new AIS(Translator.translate("menu.openerror1"), 1, Material.PAPER)
@@ -69,7 +74,7 @@ public class ItemDepot implements Listener {
 								}
 								depotInv.setItem(10 + i1 * 9 + i2, APBuy.tagger.setNBTTag("Depot", true,
 										new AIS(iss.get(count).clone()).addLineToLore("")
-												.addLineToLore("ï¿½7Stored Amount: " + hmDepot.get(iss.get(count))[1])
+												.addLineToLore("§7Stored Amount: " + hmDepot.get(iss.get(count))[1])
 												.toIS()));
 								count++;
 							}
@@ -82,20 +87,20 @@ public class ItemDepot implements Listener {
 					if ((pages > 0) && (pages != pagea) && (size - 28 * (pagea + 1) != 0)) {
 						depotInv.setItem(53,
 								APBuy.tagger.setNBTTag("ToPage", pagea + 1,
-										new AIS("ï¿½7" + Translator.translate("menu.page.next") + " " + (pagea + 1), 1,
+										new AIS("§7" + Translator.translate("menu.page.next") + " " + (pagea + 1), 1,
 												Material.PAPER).toIS()));
 					}
 					if (pagea > 0) {
 						depotInv.setItem(45,
 								APBuy.tagger
 										.setNBTTag("ToPage", pagea - 1,
-												new AIS("ï¿½7" + (pagea - 1) + " "
+												new AIS("§7" + (pagea - 1) + " "
 														+ Translator.translate("menu.page.previous"), 1, Material.PAPER)
 																.toIS()));
 					}
 
 					if (depotInv.getItem(31).getType() == Material.PAPER) {
-						depotInv.setItem(31, new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+						depotInv.setItem(31, new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 					}
 					whoOpened.remove(p);
 					p.openInventory(depotInv);
@@ -106,7 +111,7 @@ public class ItemDepot implements Listener {
 					System.out.println("Player: " + p.getName() + " (" + p.getUniqueId().toString() + ")");
 					p.closeInventory();
 					p.sendMessage(Translator.translate("dev.error"));
-					p.sendMessage("ï¿½cError Code: " + Utils.addToFix(e1));
+					p.sendMessage("§cError Code: " + Utils.addToFix(e1));
 				}
 			}
 		});
@@ -136,7 +141,7 @@ public class ItemDepot implements Listener {
 									pureItemstack, Long.parseLong(itemData[1]) - place);
 							openItemDepot((Player) e.getWhoClicked(), whoOpened.get(e.getWhoClicked()));
 						} else {
-							e.getWhoClicked().sendMessage("ï¿½cDu hast nicht genï¿½gend Platz in deinem Inventar!");
+							e.getWhoClicked().sendMessage("§cDu hast nicht genügend Platz in deinem Inventar!");
 						}
 						break;
 					case MIDDLE:
@@ -152,7 +157,7 @@ public class ItemDepot implements Listener {
 									pureItemstack1, Long.parseLong(itemData1[1]) - place1);
 							openItemDepot((Player) e.getWhoClicked(), whoOpened.get(e.getWhoClicked()));
 						} else {
-							e.getWhoClicked().sendMessage("ï¿½cDu hast nicht genï¿½gend Platz in deinem Inventar!");
+							e.getWhoClicked().sendMessage("§cDu hast nicht genügend Platz in deinem Inventar!");
 						}
 						break;
 					default:

@@ -1,9 +1,9 @@
 package ap.apb.apbuy.itoomel;
 
-import org.bukkit.Material;
-
 import java.util.HashMap;
 import java.util.Set;
+
+import org.bukkit.Material;
 
 public abstract class ItoomelCat {
 	private String name;

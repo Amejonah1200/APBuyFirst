@@ -1,5 +1,10 @@
 package ap.apb.apbuy.markets;
 
+import java.sql.SQLException;
+
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+
 import ap.apb.AIS;
 import ap.apb.APBuy;
 import ap.apb.APBuyException;
@@ -7,10 +12,6 @@ import ap.apb.Utils;
 import ap.apb.datamaster.Datamaster;
 import ap.apb.datamaster.SQLDatabase;
 import ap.apb.datamaster.SQLiteDatabase;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-
-import java.sql.SQLException;
 
 public class CategoryInfos {
 

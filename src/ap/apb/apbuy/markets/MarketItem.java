@@ -1,5 +1,11 @@
 package ap.apb.apbuy.markets;
 
+import java.sql.SQLException;
+import java.util.UUID;
+
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+
 import ap.apb.AIS;
 import ap.apb.APBuy;
 import ap.apb.APBuyException;
@@ -7,11 +13,6 @@ import ap.apb.Utils;
 import ap.apb.datamaster.Datamaster;
 import ap.apb.datamaster.SQLDatabase;
 import ap.apb.datamaster.SQLiteDatabase;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
-
-import java.sql.SQLException;
-import java.util.UUID;
 
 public class MarketItem {
 
@@ -108,9 +109,9 @@ public class MarketItem {
 
 	public AIS getAISToShow() {
 		return new AIS(this.getIs() == null ? new ItemStack(Material.CHEST) : this.getIs().clone()).addLineToLore("")
-				.addLineToLore("ï¿½7Preis ï¿½8\\ï¿½7 " + this.getSellAmmount() + " ï¿½8:ï¿½6 " + this.getPrice())
-				.addLineToLore("ï¿½7Items im Lagerï¿½8: "
-						+ (this.getAmmount() == 0 ? "ï¿½cKeins mehr da!" : "ï¿½6" + this.getAmmount()));
+				.addLineToLore("§7Preis §8\\§7 " + this.getSellAmmount() + " §8:§6 " + this.getPrice())
+				.addLineToLore("§7Items im Lager§8: "
+						+ (this.getAmmount() == 0 ? "§cKeins mehr da!" : "§6" + this.getAmmount()));
 
 	}
 

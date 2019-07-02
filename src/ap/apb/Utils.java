@@ -1,15 +1,14 @@
 package ap.apb;
 
-import com.google.gson.JsonParser;
-import org.apache.commons.io.IOUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Constructor;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -19,7 +18,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.IOUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+
+import com.google.gson.JsonParser;
+
 public class Utils {
+
+	private static FileWriter fw;
+	private static BufferedWriter bw;
 
 	/**
 	 * Breaks a string into a list of pieces that will fit a specified width.
@@ -119,28 +130,6 @@ public class Utils {
 		return (int) (lengxD > ammount ? ammount : lengxD);
 	}
 
-	public static void stackInv(Player player) {
-		HashMap<ItemStack, Integer> hmis = new HashMap<>();
-		ItemStack tempis;
-		for (ItemStack is : player.getInventory().getContents()) {
-			if (is != null) {
-				if (is.getType() != Material.AIR) {
-					tempis = is.clone();
-					tempis.setAmount(1);
-					if (hmis.containsKey(is)) {
-						hmis.put(tempis, hmis.get(tempis) + is.getAmount());
-					} else {
-						hmis.put(tempis, is.getAmount());
-					}
-				}
-			}
-		}
-		player.getInventory().setContents(new ItemStack[36]);
-		for (ItemStack is : hmis.keySet()) {
-			addItemToPlayer(player, is, hmis.get(is));
-		}
-	}
-
 	public static int addItemToPlayer(Player target, ItemStack is, int toGive) {
 		ItemStack[] iss = target.getInventory().getContents();
 		ItemStack temp = is.clone();
@@ -212,9 +201,9 @@ public class Utils {
 
 	public static List<String> createListFromStringToWidthPlusEffect(String string, int nbchars) {
 		String[] ss = wrapFormattedStringToWidth(string, nbchars).split("\n");
-		ss[0] = "ï¿½7" + ss[0];
+		ss[0] = "§7" + ss[0];
 		for (int i = 1; i < ss.length; i++) {
-			ss[i] = "ï¿½8" + ss[i];
+			ss[i] = "§8" + ss[i];
 		}
 		return Arrays.asList(ss);
 	}
@@ -334,32 +323,29 @@ public class Utils {
 				nb++;
 				file = new File(APBuy.plugin.getSTnErrors() + "/STnError" + nb + ".txt");
 			}
-			FileWriter fw = null;
-			BufferedWriter bw;
 			try {
 				fw = new FileWriter(APBuy.plugin.getSTnErrors() + "/STnError" + nb + ".txt");
-				bw = new BufferedWriter(fw);
-				try {
-					bw.write(e.getClass().getName().toString());
-					bw.newLine();
-					bw.write(e.getMessage() == null ? "null" : e.getMessage().toString());
-					bw.newLine();
-					bw.write(e.getLocalizedMessage() == null ? "null" : e.getLocalizedMessage().toString());
-					bw.newLine();
-
-					for (StackTraceElement ste : e.getStackTrace()) {
-						bw.write("   at " + ste.toString());
-						bw.newLine();
-					}
-					bw.close();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-				return nb;
 			} catch (IOException e1) {
 				e1.printStackTrace();
-				return -1;
 			}
+			bw = new BufferedWriter(fw);
+			try {
+				bw.write(e.getClass().getName().toString());
+				bw.newLine();
+				bw.write(e.getMessage() == null ? "null" : e.getMessage().toString());
+				bw.newLine();
+				bw.write(e.getLocalizedMessage() == null ? "null" : e.getLocalizedMessage().toString());
+				bw.newLine();
+
+				for (StackTraceElement ste : e.getStackTrace()) {
+					bw.write("   at " + ste.toString());
+					bw.newLine();
+				}
+				bw.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			return nb;
 		}
 		return i;
 	}

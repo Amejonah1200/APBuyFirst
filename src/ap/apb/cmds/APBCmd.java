@@ -1,13 +1,11 @@
 package ap.apb.cmds;
 
-import ap.apb.APBuy;
-import ap.apb.APBuy.StopCause;
-import ap.apb.APBuyException;
-import ap.apb.APBuyException.ErrorCause;
-import ap.apb.Translator;
-import ap.apb.Utils;
-import ap.apb.apbuy.markets.Market;
-import ap.apb.apbuy.markets.MarketHandler;
+import java.io.File;
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.List;
+import java.util.regex.Pattern;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -20,11 +18,14 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.DecimalFormat;
-import java.util.List;
-import java.util.regex.Pattern;
+import ap.apb.APBuy;
+import ap.apb.APBuy.StopCause;
+import ap.apb.APBuyException;
+import ap.apb.APBuyException.ErrorCause;
+import ap.apb.Translator;
+import ap.apb.Utils;
+import ap.apb.apbuy.markets.Market;
+import ap.apb.apbuy.markets.MarketHandler;
 
 public class APBCmd implements CommandExecutor, Listener {
 
@@ -39,16 +40,16 @@ public class APBCmd implements CommandExecutor, Listener {
 			try {
 				if (APBuy.genStopByPlugin && (!((p.hasPermission("apb.dev.rl") || p.hasPermission("apb.dev.db"))
 						&& ((args.length == 4) || (args.length == 1))))) {
-					p.sendMessage("ï¿½cKeiner kann aktuell APBuy oder Itoomel verwenden!");
+					p.sendMessage("§cKeiner kann aktuell APBuy oder Itoomel verwenden!");
 					if ((p.hasPermission("apb.dev.rl") || p.hasPermission("apb.dev.db"))
 							&& (APBuy.stopCause == StopCause.DATABASE)) {
-						p.sendMessage("ï¿½cDu kannst nur diese Commands als Dev benutzen:");
+						p.sendMessage("§cDu kannst nur diese Commands als Dev benutzen:");
 						if (p.hasPermission("apb.dev.rl")) {
-							p.sendMessage("ï¿½c/apb rl");
+							p.sendMessage("§c/apb rl");
 						}
 						if (p.hasPermission("apb.dev.db")) {
-							p.sendMessage("ï¿½c/apb dev setdb mysql [true/false]");
-							p.sendMessage("ï¿½c/apb dev setdb sqlite [true/false]");
+							p.sendMessage("§c/apb dev setdb mysql [true/false]");
+							p.sendMessage("§c/apb dev setdb sqlite [true/false]");
 						}
 					}
 					return true;
@@ -63,11 +64,11 @@ public class APBCmd implements CommandExecutor, Listener {
 								switch (args[2].toLowerCase()) {
 								case "sqlite":
 									if (APBuy.stopCause == StopCause.TRANSFERINGDB) {
-										p.sendMessage("ï¿½7Es wird gerade schon transferiert...");
+										p.sendMessage("§7Es wird gerade schon transferiert...");
 										return true;
 									}
 									if (APBuy.getDatamaster().isSqlite()) {
-										p.sendMessage("ï¿½cEs wird schon SQLite verwendet.");
+										p.sendMessage("§cEs wird schon SQLite verwendet.");
 										return true;
 									}
 									if (args[3].equalsIgnoreCase("true")) {
@@ -75,116 +76,116 @@ public class APBCmd implements CommandExecutor, Listener {
 											@Override
 											public void run() {
 												p.sendMessage(
-														"ï¿½7Es wird die Datenbank auf SQLite gesetzt und dabei wird alles vom alte MySQL Datenbank importiert.");
+														"§7Es wird die Datenbank auf SQLite gesetzt und dabei wird alles vom alte MySQL Datenbank importiert.");
 												APBuy.stopCause = StopCause.TRANSFERINGDB;
 
 												if (APBuy.getDatamaster().setDBToSQLite(true)) {
-													p.sendMessage("ï¿½aErfolgreich geï¿½ndert.");
+													p.sendMessage("§aErfolgreich geändert.");
 													APBuy.stopCause = StopCause.NONE;
 													APBuy.genStopByPlugin = false;
 												} else {
-													p.sendMessage("ï¿½cEs gab einen Fehler...");
+													p.sendMessage("§cEs gab einen Fehler...");
 												}
 											}
 										}.runTask(APBuy.plugin);
 									} else if (args[3].equalsIgnoreCase("false")) {
-										p.sendMessage("ï¿½7Es wird die Datenbank auf SQLite gesetzt");
+										p.sendMessage("§7Es wird die Datenbank auf SQLite gesetzt");
 										if (APBuy.getDatamaster().setDBToSQLite(false)) {
-											p.sendMessage("ï¿½aErfolgreich geï¿½ndert.");
+											p.sendMessage("§aErfolgreich geändert.");
 											APBuy.stopCause = StopCause.NONE;
 											APBuy.genStopByPlugin = false;
 										} else {
-											p.sendMessage("ï¿½cEs gab einen Fehler...");
+											p.sendMessage("§cEs gab einen Fehler...");
 										}
 									} else {
-										p.sendMessage("ï¿½cSyntax: /apb dev setdb sqlite [true/false]");
+										p.sendMessage("§cSyntax: /apb dev setdb sqlite [true/false]");
 									}
 									break;
 								case "mysql":
 									if (APBuy.stopCause == StopCause.TRANSFERINGDB) {
-										p.sendMessage("ï¿½7Es wird gerade schon transferiert...");
+										p.sendMessage("§7Es wird gerade schon transferiert...");
 										return true;
 									}
 									if (args[3].equalsIgnoreCase("true")) {
 										if (dbConfigurator != null) {
-											p.sendMessage("ï¿½cDer Spieler ï¿½6" + dbConfigurator.getName()
-													+ " ï¿½cist schon gerade am ï¿½ndern... Bitte warten.");
-											p.sendMessage("ï¿½7Wenn er aufhï¿½ren soll, muss er oder disconnecten,"
+											p.sendMessage("§cDer Spieler §6" + dbConfigurator.getName()
+													+ " §cist schon gerade am ändern... Bitte warten.");
+											p.sendMessage("§7Wenn er aufhören soll, muss er oder disconnecten,"
 													+ " oder \"@cancel\" in den CHat schreiben.");
 											return true;
 										}
 										dbArgs[0] = "true";
 										progress = 1;
 										dbConfigurator = p;
-										p.sendMessage("ï¿½7Bitte sende den Hoster in den Chat.");
+										p.sendMessage("§7Bitte sende den Hoster in den Chat.");
 									} else if (args[3].equalsIgnoreCase("false")) {
 										if (dbConfigurator != null) {
-											p.sendMessage("ï¿½cDer Spieler ï¿½6" + dbConfigurator.getName()
-													+ " ï¿½cist schon gerade am ï¿½ndern... Bitte warten.");
-											p.sendMessage("ï¿½7Wenn er aufhï¿½ren soll, muss er oder disconnecten,"
+											p.sendMessage("§cDer Spieler §6" + dbConfigurator.getName()
+													+ " §cist schon gerade am ändern... Bitte warten.");
+											p.sendMessage("§7Wenn er aufhören soll, muss er oder disconnecten,"
 													+ " oder \"@cancel\" in den CHat schreiben.");
 											return true;
 										}
 										dbArgs[0] = "false";
 										progress = 1;
 										dbConfigurator = p;
-										p.sendMessage("ï¿½7Bitte sende den Hoster in den Chat.");
+										p.sendMessage("§7Bitte sende den Hoster in den Chat.");
 									} else {
-										p.sendMessage("ï¿½cSyntax: /apb dev setdb sqlite [true/false]");
+										p.sendMessage("§cSyntax: /apb dev setdb sqlite [true/false]");
 									}
 									break;
 								default:
-									p.sendMessage("ï¿½cEs gibt nur 2 Datenbanken: \"sqlite\" und \"mysql\".");
+									p.sendMessage("§cEs gibt nur 2 Datenbanken: \"sqlite\" und \"mysql\".");
 									break;
 								}
 							} else {
-								p.sendMessage("ï¿½cDu kannst nur [/apb rl] ausfï¿½hren.");
+								p.sendMessage("§cDu kannst nur [/apb rl] ausführen.");
 							}
 							return true;
 						} else {
 							if (p.hasPermission("apb.dev.db")) {
-								p.sendMessage("ï¿½cDu kannst nur diese Commands als Dev benutzen:");
-								p.sendMessage("ï¿½c/apb dev setdb mysql [true/false]");
-								p.sendMessage("ï¿½c/apb dev setdb sqlite [true/false]");
+								p.sendMessage("§cDu kannst nur diese Commands als Dev benutzen:");
+								p.sendMessage("§c/apb dev setdb mysql [true/false]");
+								p.sendMessage("§c/apb dev setdb sqlite [true/false]");
 							} else {
-								p.sendMessage("ï¿½cDu kannst nur [/apb rl] ausfï¿½hren.");
+								p.sendMessage("§cDu kannst nur [/apb rl] ausführen.");
 								return true;
 							}
 						}
 					} else if (args[0].equalsIgnoreCase("rl")) {
 						if (p.hasPermission("apb.dev.rl")) {
 							if (APBuy.stopCause == StopCause.TRANSFERINGDB) {
-								p.sendMessage("ï¿½7Es wird gerade transferiert, du kannst jetzt keinen Reload machen...");
+								p.sendMessage("§7Es wird gerade transferiert, du kannst jetzt keinen Reload machen...");
 								return true;
 							} else {
 								// TODO Reload Cmd
 							}
 						} else {
-							p.sendMessage("ï¿½cDu kannst nur diese Commands als Dev benutzen:");
-							p.sendMessage("ï¿½c/apb dev setdb mysql [true/false]");
-							p.sendMessage("ï¿½c/apb dev setdb sqlite [true/false]");
+							p.sendMessage("§cDu kannst nur diese Commands als Dev benutzen:");
+							p.sendMessage("§c/apb dev setdb mysql [true/false]");
+							p.sendMessage("§c/apb dev setdb sqlite [true/false]");
 						}
 					} else {
-						p.sendMessage("ï¿½cDu kannst nur diese Commands als Dev benutzen:");
+						p.sendMessage("§cDu kannst nur diese Commands als Dev benutzen:");
 						if (p.hasPermission("apb.dev.rl")) {
-							p.sendMessage("ï¿½c/apb rl");
+							p.sendMessage("§c/apb rl");
 						}
 						if (p.hasPermission("apb.dev.db")) {
-							p.sendMessage("ï¿½c/apb dev setdb mysql [true/false]");
-							p.sendMessage("ï¿½c/apb dev setdb sqlite [true/false]");
+							p.sendMessage("§c/apb dev setdb mysql [true/false]");
+							p.sendMessage("§c/apb dev setdb sqlite [true/false]");
 						}
 					}
 					return true;
 				} else {
 					if (APBuy.genStopByPlugin) {
 						if ((p.hasPermission("apb.dev.rl") || p.hasPermission("apb.dev.db"))) {
-							p.sendMessage("ï¿½cDu kannst nur diese Commands als Dev benutzen:");
+							p.sendMessage("§cDu kannst nur diese Commands als Dev benutzen:");
 							if (p.hasPermission("apb.dev.rl")) {
-								p.sendMessage("ï¿½c/apb rl");
+								p.sendMessage("§c/apb rl");
 							}
 							if (p.hasPermission("apb.dev.db")) {
-								p.sendMessage("ï¿½c/apb dev setdb mysql [true/false]");
-								p.sendMessage("ï¿½c/apb dev setdb sqlite [true/false]");
+								p.sendMessage("§c/apb dev setdb mysql [true/false]");
+								p.sendMessage("§c/apb dev setdb sqlite [true/false]");
 							}
 							return true;
 						}
@@ -208,30 +209,30 @@ public class APBCmd implements CommandExecutor, Listener {
 								switch (args[2].toLowerCase()) {
 								case "de":
 									if (APBuy.isGerman()) {
-										p.sendMessage("ï¿½c[APBuy] Es wird bereits in Deutsch ï¿½bersetzt.");
+										p.sendMessage("§c[APBuy] Es wird bereits in Deutsch übersetzt.");
 									} else {
-										p.sendMessage("ï¿½7[APBuy] ï¿½bersetze in Deutsch...");
+										p.sendMessage("§7[APBuy] Übersetze in Deutsch...");
 										APBuy.plugin.getConfig().set("german", true);
 										APBuy.plugin.saveConfig();
 										APBuy.translator = Translator.createTranslatorDE();
-										p.sendMessage("ï¿½a[APBuy] Erfolgreich in Deutsch ï¿½bersetzt.");
+										p.sendMessage("§a[APBuy] Erfolgreich in Deutsch übersetzt.");
 										APBuy.german = true;
 									}
 									break;
 								case "en":
 									if (!APBuy.isGerman()) {
-										p.sendMessage("ï¿½c[APBuy] Already translating in English.");
+										p.sendMessage("§c[APBuy] Already translating in English.");
 									} else {
-										p.sendMessage("ï¿½7[APBuy] Translating in English...");
+										p.sendMessage("§7[APBuy] Translating in English...");
 										APBuy.plugin.getConfig().set("german", false);
 										APBuy.plugin.saveConfig();
 										APBuy.translator = Translator.createTranslatorEN();
-										p.sendMessage("ï¿½a[APBuy] Successfully translated in English.");
+										p.sendMessage("§a[APBuy] Successfully translated in English.");
 										APBuy.german = false;
 									}
 									break;
 								default:
-									p.sendMessage("ï¿½7[APBuy] Syntax: /apb trans set [de/en]");
+									p.sendMessage("§7[APBuy] Syntax: /apb trans set [de/en]");
 									break;
 								}
 								break;
@@ -249,9 +250,9 @@ public class APBCmd implements CommandExecutor, Listener {
 										APBuy.getMarketHandler();
 										MarketHandler.adminshop.setOpen(true);
 										MarketHandler.adminshop.saveMarketInfos();
-										p.sendMessage("ï¿½7[APBuy] Der AdminShop wurde geï¿½ffnet.");
+										p.sendMessage("§7[APBuy] Der AdminShop wurde geöffnet.");
 									} else {
-										p.sendMessage("ï¿½7[APBuy] Der AdminShop ist schon geï¿½ffnet.");
+										p.sendMessage("§7[APBuy] Der AdminShop ist schon geöffnet.");
 									}
 								} else if (args[1].equalsIgnoreCase("close")) {
 									APBuy.getMarketHandler();
@@ -259,23 +260,23 @@ public class APBCmd implements CommandExecutor, Listener {
 										APBuy.getMarketHandler();
 										MarketHandler.adminshop.setOpen(false);
 										MarketHandler.adminshop.saveMarketInfos();
-										p.sendMessage("ï¿½7[APBuy] Der AdminShop wurde geschlossen.");
+										p.sendMessage("§7[APBuy] Der AdminShop wurde geschlossen.");
 									} else {
-										p.sendMessage("ï¿½7[APBuy] Der AdminShop ist schon geschlossen.");
+										p.sendMessage("§7[APBuy] Der AdminShop ist schon geschlossen.");
 									}
 								} else {
-									p.sendMessage("ï¿½c[APBuy] Hier sind die richtigen Cmds:");
+									p.sendMessage("§c[APBuy] Hier sind die richtigen Cmds:");
 									p.sendMessage(" - /apb adminshop open");
 									p.sendMessage(" - /apb adminshop close");
 									return true;
 								}
 							} else {
-								p.sendMessage("ï¿½c[APBuy] Hier sind die richtigen Cmds:");
+								p.sendMessage("§c[APBuy] Hier sind die richtigen Cmds:");
 								p.sendMessage(" - /apb adminshop open");
 								p.sendMessage(" - /apb adminshop close");
 							}
 						} else {
-							p.sendMessage("ï¿½c[APBuy] Du hast leider keine Rechte dazu!");
+							p.sendMessage("§c[APBuy] Du hast leider keine Rechte dazu!");
 							return true;
 						}
 						break;
@@ -299,9 +300,9 @@ public class APBCmd implements CommandExecutor, Listener {
 												i++;
 											}
 										}
-										p.sendMessage("ï¿½7[APBuy] Es wurden " + i + " Errors gelï¿½scht!");
+										p.sendMessage("§7[APBuy] Es wurden " + i + " Errors gelöscht!");
 									} else {
-										p.sendMessage("ï¿½c[APBuy] Ungï¿½ltiger Befehl!");
+										p.sendMessage("§c[APBuy] Ungültiger Befehl!");
 										return true;
 									}
 								} else if (args[1].equalsIgnoreCase("getallst")) {
@@ -312,36 +313,36 @@ public class APBCmd implements CommandExecutor, Listener {
 											@Override
 											public void run() {
 												if (APBuy.plugin.getSTnErrors().listFiles().length != 0) {
-													p.sendMessage("ï¿½7[APBuy] Es werden "
+													p.sendMessage("§7[APBuy] Es werden "
 															+ APBuy.plugin.getSTnErrors().listFiles().length
 															+ " Errors hochgeladen...");
 													try {
-														p.sendMessage("ï¿½7[APBuy] Hier der link: https://hastebin.com/"
+														p.sendMessage("§7[APBuy] Hier der link: https://hastebin.com/"
 																+ Utils.newHaste(
 																		String.join("\n", Utils.getAllErrors())));
 													} catch (IOException e) {
-														p.sendMessage("ï¿½c[APBuy] Es gab ein Error beim upload: "
+														p.sendMessage("§c[APBuy] Es gab ein Error beim upload: "
 																+ e.getMessage());
 													}
 												} else {
-													p.sendMessage("ï¿½7[APBuy] Es gibt keine Errors.");
+													p.sendMessage("§7[APBuy] Es gibt keine Errors.");
 												}
 											}
 										});
 										return true;
 									} else {
-										p.sendMessage("ï¿½c[APBuy] Ungï¿½ltiger Befehl!");
+										p.sendMessage("§c[APBuy] Ungültiger Befehl!");
 										return true;
 									}
 								} else if (args[1].equalsIgnoreCase("countst")) {
 									if (p.hasPermission("apb.dev.*") || p.hasPermission("apb.dev.st")
 											|| p.hasPermission("apb.*") || p.hasPermission("*")
 											|| p.getName().equals("Amejonah1200")) {
-										p.sendMessage("ï¿½7Es gibt " + APBuy.plugin.getSTnErrors().listFiles().length
+										p.sendMessage("§7Es gibt " + APBuy.plugin.getSTnErrors().listFiles().length
 												+ " Errors.");
 										return true;
 									} else {
-										p.sendMessage("ï¿½c[APBuy] Ungï¿½ltiger Befehl!");
+										p.sendMessage("§c[APBuy] Ungültiger Befehl!");
 										return true;
 									}
 								} else if (args[1].equalsIgnoreCase("rl")) {
@@ -359,14 +360,14 @@ public class APBCmd implements CommandExecutor, Listener {
 										} else {
 											APBuy.translator = Translator.createTranslatorEN();
 										}
-										p.sendMessage("ï¿½7[APBuy] Config reloaded.");
+										p.sendMessage("§7[APBuy] Config reloaded.");
 										return true;
 									} else {
-										p.sendMessage("ï¿½c[APBuy] Ungï¿½ltiger Befehl!");
+										p.sendMessage("§c[APBuy] Ungültiger Befehl!");
 										return true;
 									}
 								} else {
-									p.sendMessage("ï¿½c[APBuy] Ungï¿½ltiger Befehl!");
+									p.sendMessage("§c[APBuy] Ungültiger Befehl!");
 									return true;
 								}
 							} else if (args.length == 3) {
@@ -388,30 +389,30 @@ public class APBCmd implements CommandExecutor, Listener {
 												}
 											}
 										}
-										p.sendMessage("ï¿½7[APBuy] Es wurden " + i + " Errors gelï¿½scht!");
+										p.sendMessage("§7[APBuy] Es wurden " + i + " Errors gelöscht!");
 									} else if (args[1].equalsIgnoreCase("getst")) {
 										Bukkit.getScheduler().runTask(APBuy.plugin, new Runnable() {
 											@Override
 											public void run() {
 												List<String> l = Utils.getErrors(args[2]);
 												if (!l.isEmpty()) {
-													p.sendMessage("ï¿½7[APBuy] Es werden Errors hochgeladen...");
+													p.sendMessage("§7[APBuy] Es werden Errors hochgeladen...");
 													try {
-														p.sendMessage("ï¿½7[APBuy] Hier der link: https://hastebin.com/"
+														p.sendMessage("§7[APBuy] Hier der link: https://hastebin.com/"
 																+ Utils.newHaste(String.join("\n", l)));
 													} catch (IOException e) {
-														p.sendMessage("ï¿½c[APBuy] Es gab ein Error beim upload: "
+														p.sendMessage("§c[APBuy] Es gab ein Error beim upload: "
 																+ e.getMessage());
 													}
 												} else {
-													p.sendMessage("ï¿½7[APBuy] Es gibt keine Errors.");
+													p.sendMessage("§7[APBuy] Es gibt keine Errors.");
 												}
 											}
 										});
 										return true;
 									}
 								} else {
-									p.sendMessage("ï¿½c[APBuy] Ungï¿½ltiger Befehl!");
+									p.sendMessage("§c[APBuy] Ungültiger Befehl!");
 									return true;
 								}
 							} else if (args.length == 4) {
@@ -419,11 +420,11 @@ public class APBCmd implements CommandExecutor, Listener {
 									switch (args[2].toLowerCase()) {
 									case "sqlite":
 										if (APBuy.stopCause == StopCause.TRANSFERINGDB) {
-											p.sendMessage("ï¿½7Es wird gerade schon transferiert...");
+											p.sendMessage("§7Es wird gerade schon transferiert...");
 											return true;
 										}
 										if (APBuy.getDatamaster().isSqlite()) {
-											p.sendMessage("ï¿½cEs wird schon SQLite verwendet.");
+											p.sendMessage("§cEs wird schon SQLite verwendet.");
 											return true;
 
 										}
@@ -432,11 +433,11 @@ public class APBCmd implements CommandExecutor, Listener {
 												@Override
 												public void run() {
 													p.sendMessage(
-															"ï¿½7Es wird die Datenbank auf SQLite gesetzt und dabei wird alles vom alte MySQL Datenbank importiert.");
+															"§7Es wird die Datenbank auf SQLite gesetzt und dabei wird alles vom alte MySQL Datenbank importiert.");
 
 													APBuy.stopCause = StopCause.TRANSFERINGDB;
 													if (APBuy.getDatamaster().setDBToSQLite(true)) {
-														p.sendMessage("ï¿½aErfolgreich geï¿½ndert.");
+														p.sendMessage("§aErfolgreich geändert.");
 													} else {
 
 													}
@@ -445,57 +446,57 @@ public class APBCmd implements CommandExecutor, Listener {
 												}
 											}.runTask(APBuy.plugin);
 										} else if (args[3].equalsIgnoreCase("false")) {
-											p.sendMessage("ï¿½7Es wird die Datenbank auf SQLite gesetzt");
+											p.sendMessage("§7Es wird die Datenbank auf SQLite gesetzt");
 											APBuy.getDatamaster().setDBToSQLite(false);
-											p.sendMessage("ï¿½aErfolgreich geï¿½ndert.");
+											p.sendMessage("§aErfolgreich geändert.");
 										} else {
-											p.sendMessage("ï¿½cSyntax: /apb dev setdb sqlite [true/false]");
+											p.sendMessage("§cSyntax: /apb dev setdb sqlite [true/false]");
 										}
 										break;
 									case "mysql":
 										if (APBuy.stopCause == StopCause.TRANSFERINGDB) {
-											p.sendMessage("ï¿½7Es wird gerade schon transferiert...");
+											p.sendMessage("§7Es wird gerade schon transferiert...");
 											return true;
 										}
 										if (args[3].equalsIgnoreCase("true")) {
 											if (dbConfigurator != null) {
-												p.sendMessage("ï¿½cDer Spieler ï¿½6" + dbConfigurator.getName()
-														+ " ï¿½cist schon gerade am ï¿½ndern... Bitte warten.");
-												p.sendMessage("ï¿½7Wenn er aufhï¿½ren soll, muss er oder disconnecten,"
+												p.sendMessage("§cDer Spieler §6" + dbConfigurator.getName()
+														+ " §cist schon gerade am ändern... Bitte warten.");
+												p.sendMessage("§7Wenn er aufhören soll, muss er oder disconnecten,"
 														+ " oder \"@cancel\" in den CHat schreiben.");
 												return true;
 											}
 											dbArgs[0] = "true";
 											progress = 1;
 											dbConfigurator = p;
-											p.sendMessage("ï¿½7Bitte sende den Hoster in den Chat.");
+											p.sendMessage("§7Bitte sende den Hoster in den Chat.");
 										} else if (args[3].equalsIgnoreCase("false")) {
 											if (dbConfigurator != null) {
-												p.sendMessage("ï¿½cDer Spieler ï¿½6" + dbConfigurator.getName()
-														+ " ï¿½cist schon gerade am ï¿½ndern... Bitte warten.");
-												p.sendMessage("ï¿½7Wenn er aufhï¿½ren soll, muss er oder disconnecten,"
+												p.sendMessage("§cDer Spieler §6" + dbConfigurator.getName()
+														+ " §cist schon gerade am ändern... Bitte warten.");
+												p.sendMessage("§7Wenn er aufhören soll, muss er oder disconnecten,"
 														+ " oder \"@cancel\" in den CHat schreiben.");
 												return true;
 											}
 											dbArgs[0] = "false";
 											progress = 1;
 											dbConfigurator = p;
-											p.sendMessage("ï¿½7Bitte sende den Hoster in den Chat.");
+											p.sendMessage("§7Bitte sende den Hoster in den Chat.");
 										} else {
-											p.sendMessage("ï¿½cSyntax: /apb dev setdb sqlite [true/false]");
+											p.sendMessage("§cSyntax: /apb dev setdb sqlite [true/false]");
 										}
 										break;
 									default:
-										p.sendMessage("ï¿½cEs gibt nur 2 Datenbanken: \"sqlite\" und \"mysql\".");
+										p.sendMessage("§cEs gibt nur 2 Datenbanken: \"sqlite\" und \"mysql\".");
 										break;
 									}
 								} else {
-									p.sendMessage("ï¿½c[APBuy] Ungï¿½ltiger Befehl!");
+									p.sendMessage("§c[APBuy] Ungültiger Befehl!");
 								}
 								return true;
 							}
 						} else {
-							p.sendMessage("ï¿½c[APBuy] Ungï¿½ltiger Befehl!");
+							p.sendMessage("§c[APBuy] Ungültiger Befehl!");
 							return true;
 						}
 						break;
@@ -509,21 +510,21 @@ public class APBCmd implements CommandExecutor, Listener {
 							// }
 							// }
 							if (args.length != 3) {
-								p.sendMessage("ï¿½c[APBuy] Hier sind die richtigen Commands:");
-								p.sendMessage("ï¿½c  /apb open name <Spielername>");
-								p.sendMessage("ï¿½c  /apb open uuid <UUID>");
+								p.sendMessage("§c[APBuy] Hier sind die richtigen Commands:");
+								p.sendMessage("§c  /apb open name <Spielername>");
+								p.sendMessage("§c  /apb open uuid <UUID>");
 								return true;
 							}
 							if (args[1].equalsIgnoreCase("name")) {
 								String uuid = Utils.getUuid(args[2]);
 								if (uuid == "error") {
 									p.sendMessage(
-											"ï¿½c[APBuy] Es gab einen Fehler bei der suche, bitte benutze [/apb open uuid <UUID>] um nach der UUID zu suchen, ist schneller und effektiver.");
+											"§c[APBuy] Es gab einen Fehler bei der suche, bitte benutze [/apb open uuid <UUID>] um nach der UUID zu suchen, ist schneller und effektiver.");
 									return true;
 								} else if (uuid == "invalid name") {
 									p.sendMessage(
-											"ï¿½c[APBuy] Dieser Spieler ist nicht in der Mojang Datenbank zu finden,");
-									p.sendMessage("ï¿½cist er Premium? Ist der Name richtig geschrieben?");
+											"§c[APBuy] Dieser Spieler ist nicht in der Mojang Datenbank zu finden,");
+									p.sendMessage("§cist er Premium? Ist der Name richtig geschrieben?");
 									return true;
 								}
 								if (APBuy.getMarketHandler().hasMarketByUUID(uuid)) {
@@ -532,11 +533,11 @@ public class APBCmd implements CommandExecutor, Listener {
 										APBuy.getMarketHandler().openMarketVisualiserToPlayer("Main", uuid, p);
 										return true;
 									} else {
-										p.sendMessage("ï¿½c[APBuy] Sein Market ist geschlossen!");
+										p.sendMessage("§c[APBuy] Sein Market ist geschlossen!");
 										return true;
 									}
 								} else {
-									p.sendMessage("ï¿½c[APBuy] Dieser Spieler besitzt keinen Market!");
+									p.sendMessage("§c[APBuy] Dieser Spieler besitzt keinen Market!");
 									return true;
 								}
 							} else if (args[1].equalsIgnoreCase("uuid")) {
@@ -546,21 +547,21 @@ public class APBCmd implements CommandExecutor, Listener {
 										APBuy.getMarketHandler().openMarketVisualiserToPlayer("Main", args[2], p);
 										return true;
 									} else {
-										p.sendMessage("ï¿½cSein Market ist geschlossen!");
+										p.sendMessage("§cSein Market ist geschlossen!");
 										return true;
 									}
 								} else {
-									p.sendMessage("ï¿½cDieser Spieler besitzt keinen Market!");
+									p.sendMessage("§cDieser Spieler besitzt keinen Market!");
 									return true;
 								}
 							} else {
-								p.sendMessage("ï¿½c[APBuy] Hier sind die richtigen Commands:");
-								p.sendMessage("ï¿½c  /apb open name <Spielername>");
-								p.sendMessage("ï¿½c  /apb open uuid <UUID>");
+								p.sendMessage("§c[APBuy] Hier sind die richtigen Commands:");
+								p.sendMessage("§c  /apb open name <Spielername>");
+								p.sendMessage("§c  /apb open uuid <UUID>");
 								return true;
 							}
 						} else {
-							p.sendMessage("ï¿½c[APBuy] Dafï¿½r hast du keine Rechte!");
+							p.sendMessage("§c[APBuy] Dafür hast du keine Rechte!");
 							return true;
 						}
 					case "setname":
@@ -576,16 +577,16 @@ public class APBCmd implements CommandExecutor, Listener {
 								new Market(p.getUniqueId().toString(), true)
 										.setName(String.join(" ", args).substring(8)).saveMarketInfos();
 								;
-								p.sendMessage("ï¿½a[APBuy] Gesetzter Name: ï¿½b" + ChatColor.ITALIC + ChatColor
+								p.sendMessage("§a[APBuy] Gesetzter Name: §b" + ChatColor.ITALIC + ChatColor
 										.translateAlternateColorCodes('&', String.join(" ", args).substring(8)));
 								return true;
 							} else {
-								p.sendMessage("ï¿½c[APBuy] Das richtige Command:");
-								p.sendMessage("ï¿½c  /apb setName <Name>");
+								p.sendMessage("§c[APBuy] Das richtige Command:");
+								p.sendMessage("§c  /apb setName <Name>");
 								return true;
 							}
 						} else {
-							p.sendMessage("ï¿½c[APBuy] Dafï¿½r hast du keine Rechte!");
+							p.sendMessage("§c[APBuy] Dafür hast du keine Rechte!");
 							return true;
 						}
 					case "setdevise":
@@ -601,16 +602,16 @@ public class APBCmd implements CommandExecutor, Listener {
 								new Market(p.getUniqueId().toString(), true)
 										.setDevise(String.join(" ", args).substring(10)).saveMarketInfos();
 								;
-								p.sendMessage("ï¿½a[APBuy] Gesetze Devise: ï¿½b" + ChatColor
+								p.sendMessage("§a[APBuy] Gesetze Devise: §b" + ChatColor
 										.translateAlternateColorCodes('&', String.join(" ", args).substring(10)));
 								return true;
 							} else {
-								p.sendMessage("ï¿½c[APBuy] Das richtige Command:");
-								p.sendMessage("ï¿½c  /apb setDevise <Devise>");
+								p.sendMessage("§c[APBuy] Das richtige Command:");
+								p.sendMessage("§c  /apb setDevise <Devise>");
 								return true;
 							}
 						} else {
-							p.sendMessage("ï¿½c[APBuy] Dafï¿½r hast du keine Rechte!");
+							p.sendMessage("§c[APBuy] Dafür hast du keine Rechte!");
 							return true;
 						}
 					case "resetname":
@@ -625,15 +626,15 @@ public class APBCmd implements CommandExecutor, Listener {
 							if (args.length == 1) {
 								new Market(p.getUniqueId().toString(), true).setName(null).saveMarketInfos();
 								;
-								p.sendMessage("ï¿½a[APBuy] Name zurï¿½ckgesetzt.");
+								p.sendMessage("§a[APBuy] Name zurückgesetzt.");
 								return true;
 							} else {
-								p.sendMessage("ï¿½c[APBuy] Das richtige Command:");
-								p.sendMessage("ï¿½c  /apb resetName");
+								p.sendMessage("§c[APBuy] Das richtige Command:");
+								p.sendMessage("§c  /apb resetName");
 								return true;
 							}
 						} else {
-							p.sendMessage("ï¿½c[APBuy] Dafï¿½r hast du keine Rechte!");
+							p.sendMessage("§c[APBuy] Dafür hast du keine Rechte!");
 							return true;
 						}
 					case "resetdevise":
@@ -647,19 +648,19 @@ public class APBCmd implements CommandExecutor, Listener {
 							// }
 							if (args.length == 1) {
 								new Market(p.getUniqueId().toString(), true).setDevise(null).saveMarketInfos();
-								p.sendMessage("ï¿½a[APBuy] Devise zurï¿½ckgesetzt.");
+								p.sendMessage("§a[APBuy] Devise zurückgesetzt.");
 								return true;
 							} else {
-								p.sendMessage("ï¿½c[APBuy] Das richtige Command:");
-								p.sendMessage("ï¿½c  /apb resetDevise");
+								p.sendMessage("§c[APBuy] Das richtige Command:");
+								p.sendMessage("§c  /apb resetDevise");
 								return true;
 							}
 						} else {
-							p.sendMessage("ï¿½c[APBuy] Dafï¿½r hast du keine Rechte!");
+							p.sendMessage("§c[APBuy] Dafür hast du keine Rechte!");
 							return true;
 						}
 					default:
-						p.sendMessage("ï¿½c[APBuy] Ungï¿½ltiger Befehl!");
+						p.sendMessage("§c[APBuy] Ungültiger Befehl!");
 						return true;
 					}
 
@@ -671,7 +672,7 @@ public class APBCmd implements CommandExecutor, Listener {
 					if (args.length >= 3) {
 						if (args[0].equalsIgnoreCase("open")) {
 							if (args[1].equalsIgnoreCase("uuid")) {
-								p.sendMessage("ï¿½c[APBuy] Dieser Spieler besitzt keinen Market, die Richtige UUID?");
+								p.sendMessage("§c[APBuy] Dieser Spieler besitzt keinen Market, die Richtige UUID?");
 							}
 						}
 					}
@@ -680,17 +681,17 @@ public class APBCmd implements CommandExecutor, Listener {
 					APBuy.getMarketHandler().removeFromAll(p);
 					System.out.println("Player: " + p.getName() + " (" + p.getUniqueId().toString() + ")");
 					p.sendMessage(Translator.translate("dev.error"));
-					p.sendMessage("ï¿½cFehler code: " + Utils.addToFix(e));
+					p.sendMessage("§cFehler code: " + Utils.addToFix(e));
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				APBuy.getMarketHandler().removeFromAll(p);
 				System.out.println("Player: " + p.getName() + " (" + p.getUniqueId().toString() + ")");
 				p.sendMessage(Translator.translate("dev.error"));
-				p.sendMessage("ï¿½cFehler code: " + Utils.addToFix(e));
+				p.sendMessage("§cFehler code: " + Utils.addToFix(e));
 			}
 		} else {
-			arg0.sendMessage("ï¿½c[APBuy] Es kann nur ein Spieler senden.");
+			arg0.sendMessage("§c[APBuy] Es kann nur ein Spieler senden.");
 		}
 		return true;
 
@@ -717,22 +718,22 @@ public class APBCmd implements CommandExecutor, Listener {
 			case 1:
 				dbArgs[1] = e.getMessage();
 				progress++;
-				e.getPlayer().sendMessage("ï¿½7Bitte sende jetzt den Port.");
+				e.getPlayer().sendMessage("§7Bitte sende jetzt den Port.");
 				break;
 			case 2:
 				dbArgs[2] = e.getMessage();
 				progress++;
-				e.getPlayer().sendMessage("ï¿½7Bitte sende jetzt den Datenbank Namen.");
+				e.getPlayer().sendMessage("§7Bitte sende jetzt den Datenbank Namen.");
 				break;
 			case 3:
 				dbArgs[3] = e.getMessage();
 				progress++;
-				e.getPlayer().sendMessage("ï¿½7Bitte sende jetzt den Username.");
+				e.getPlayer().sendMessage("§7Bitte sende jetzt den Username.");
 				break;
 			case 4:
 				dbArgs[4] = e.getMessage();
 				progress++;
-				e.getPlayer().sendMessage("ï¿½7Bitte sende jetzt den Passwort Namen.");
+				e.getPlayer().sendMessage("§7Bitte sende jetzt den Passwort Namen.");
 				break;
 			case 5:
 				if (dbArgs[0].equalsIgnoreCase("true")) {
@@ -740,12 +741,12 @@ public class APBCmd implements CommandExecutor, Listener {
 
 						@Override
 						public void run() {
-							e.getPlayer().sendMessage("ï¿½7Die Datenbank auf MySQL gesetzt und dabei "
+							e.getPlayer().sendMessage("§7Die Datenbank auf MySQL gesetzt und dabei "
 									+ "wird alles vom alten Datenbank importiert und ersetzt.");
 							APBuy.stopCause = StopCause.TRANSFERINGDB;
 							if (APBuy.getDatamaster().setDBToMySQL(true, dbArgs[1], dbArgs[2], dbArgs[3], dbArgs[4],
 									e.getMessage())) {
-								e.getPlayer().sendMessage("ï¿½aErfolgreich geï¿½ndert.");
+								e.getPlayer().sendMessage("§aErfolgreich geändert.");
 								APBuy.plugin.getConfig().set("MySQLConfig.host", dbArgs[1]);
 								APBuy.plugin.getConfig().set("MySQLConfig.port", dbArgs[2]);
 								APBuy.plugin.getConfig().set("MySQLConfig.database", dbArgs[3]);
@@ -756,7 +757,7 @@ public class APBCmd implements CommandExecutor, Listener {
 								APBuy.stopCause = StopCause.NONE;
 								APBuy.genStopByPlugin = false;
 							} else {
-								e.getPlayer().sendMessage("ï¿½cEs gab einen Fehler, sind die Daten"
+								e.getPlayer().sendMessage("§cEs gab einen Fehler, sind die Daten"
 										+ " alle korrekt? Bitte versuche es noch einmal.");
 								APBuy.stopCause = StopCause.DATABASE;
 							}
@@ -766,10 +767,10 @@ public class APBCmd implements CommandExecutor, Listener {
 						}
 					}.runTask(APBuy.plugin);
 				} else {
-					e.getPlayer().sendMessage("ï¿½7Die Datenbank auf SQLite gesetzt...");
+					e.getPlayer().sendMessage("§7Die Datenbank auf SQLite gesetzt...");
 					if (APBuy.getDatamaster().setDBToMySQL(false, dbArgs[1], dbArgs[2], dbArgs[3], dbArgs[4],
 							e.getMessage())) {
-						e.getPlayer().sendMessage("ï¿½aErfolgreich geï¿½ndert.");
+						e.getPlayer().sendMessage("§aErfolgreich geändert.");
 						APBuy.plugin.getConfig().set("MySQLConfig.host", dbArgs[1]);
 						APBuy.plugin.getConfig().set("MySQLConfig.port", dbArgs[2]);
 						APBuy.plugin.getConfig().set("MySQLConfig.database", dbArgs[3]);
@@ -780,7 +781,7 @@ public class APBCmd implements CommandExecutor, Listener {
 						APBuy.stopCause = StopCause.NONE;
 						APBuy.genStopByPlugin = false;
 					} else {
-						e.getPlayer().sendMessage("ï¿½cEs gab einen Fehler, sind die Daten "
+						e.getPlayer().sendMessage("§cEs gab einen Fehler, sind die Daten "
 								+ "alle korrekt? Bitte versuche es noch einmal.");
 						APBuy.stopCause = StopCause.DATABASE;
 					}

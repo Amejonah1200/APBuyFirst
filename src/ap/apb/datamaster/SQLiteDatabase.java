@@ -1,10 +1,10 @@
 package ap.apb.datamaster;
 
-import ap.apb.APBuy;
-
 import java.io.File;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
+import ap.apb.APBuy;
 
 public class SQLiteDatabase extends SQLDatabase {
 

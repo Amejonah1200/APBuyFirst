@@ -1,8 +1,9 @@
 package ap.apb.nbttager.mc1_8;
 
-import ap.apb.nbttager.NBTTager;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import ap.apb.nbttager.NBTTager;
 
 public class NBTTager_v1_8_R1 implements NBTTager {
 

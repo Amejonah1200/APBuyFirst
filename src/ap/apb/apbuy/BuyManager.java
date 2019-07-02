@@ -1,20 +1,25 @@
 package ap.apb.apbuy;
 
-import ap.apb.*;
-import ap.apb.apbuy.itoomel.Itoomel;
-import ap.apb.apbuy.itoomel.ItoomelPrime;
-import ap.apb.apbuy.markets.Market;
-import ap.apb.apbuy.markets.MarketItem;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
+import ap.apb.AIS;
+import ap.apb.APBuy;
+import ap.apb.APBuyException;
+import ap.apb.Translator;
+import ap.apb.Utils;
+import ap.apb.apbuy.itoomel.Itoomel;
+import ap.apb.apbuy.itoomel.ItoomelPrime;
+import ap.apb.apbuy.markets.Market;
+import ap.apb.apbuy.markets.MarketItem;
 
 public class BuyManager {
 
@@ -111,17 +116,17 @@ public class BuyManager {
 		try {
 			Inventory inv = Bukkit.createInventory(null, 54, Translator.translate("menu.title.buymanager"));
 			for (int i = 0; i < 54; i++) {
-				inv.setItem(i, new AIS("ï¿½a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
+				inv.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
 			}
 			inv.setItem(4, this.getMarketItem().getAISToShow().removeLatestLore(1).toIS());
-			inv.setItem(10, new AIS("ï¿½4-64", 1, (short) 14, Material.STAINED_GLASS_PANE).toIS());
-			inv.setItem(11, new AIS("ï¿½4-16", 1, (short) 1, Material.STAINED_GLASS_PANE).toIS());
-			inv.setItem(12, new AIS("ï¿½4-1", 1, (short) 1, Material.STAINED_GLASS_PANE).toIS());
+			inv.setItem(10, new AIS("§4-64", 1, (short) 14, Material.STAINED_GLASS_PANE).toIS());
+			inv.setItem(11, new AIS("§4-16", 1, (short) 1, Material.STAINED_GLASS_PANE).toIS());
+			inv.setItem(12, new AIS("§4-1", 1, (short) 1, Material.STAINED_GLASS_PANE).toIS());
 			inv.setItem(13, new AIS(Translator.translate("buymanager.buypackets", new Object[] { this.getWantToBuy() }),
 					1, this.getMarketItem().getIs().getType()).toIS());
-			inv.setItem(14, new AIS("ï¿½4+1", 1, (short) 5, Material.STAINED_GLASS_PANE).toIS());
-			inv.setItem(15, new AIS("ï¿½4+16", 1, (short) 5, Material.STAINED_GLASS_PANE).toIS());
-			inv.setItem(16, new AIS("ï¿½4+64", 1, (short) 13, Material.STAINED_GLASS_PANE).toIS());
+			inv.setItem(14, new AIS("§4+1", 1, (short) 5, Material.STAINED_GLASS_PANE).toIS());
+			inv.setItem(15, new AIS("§4+16", 1, (short) 5, Material.STAINED_GLASS_PANE).toIS());
+			inv.setItem(16, new AIS("§4+64", 1, (short) 13, Material.STAINED_GLASS_PANE).toIS());
 
 			inv.setItem(28,
 					(this.getMarketItem().isBuyable()) && (this.getMarketItem().getMarketuuid() == "AdminShop")
@@ -129,15 +134,15 @@ public class BuyManager {
 							: this.getMarketItem().getAISToShow().toIS());
 
 			inv.setItem(34,
-					new AIS("ï¿½7Dein Konto: ï¿½6" + APBuy.ecohandler.getPlayerBalance(this.getBuyer()), 1, Material.PAPER)
+					new AIS("§7Dein Konto: §6" + APBuy.ecohandler.getPlayerBalance(this.getBuyer()), 1, Material.PAPER)
 							.toIS());
 
 			inv.setItem(40,
 					new AIS(this.getMarketItem().getIs().clone()).addLineToLore("")
 							.addLineToLore(Translator.translate("buymanager.summary")).addLineToLore("")
-							.addLineToLore(Translator.translate("buymanager.tobuy") + ": ï¿½6"
+							.addLineToLore(Translator.translate("buymanager.tobuy") + ": §6"
 									+ (this.getMarketItem().getSellAmmount() * this.getWantToBuy()))
-							.addLineToLore(Translator.translate("buymanager.price") + ": ï¿½6" + this.deductPrice())
+							.addLineToLore(Translator.translate("buymanager.price") + ": §6" + this.deductPrice())
 							.toIS().clone());
 
 			inv.setItem(48, new AIS(Translator.translate("buymanager.cancel"), 1, (short) 14, Material.WOOL).toIS());
@@ -153,7 +158,7 @@ public class BuyManager {
 			this.getBuyer().closeInventory();
 			APBuy.getMarketHandler().removeFromAll(this.getBuyer());
 			this.getBuyer().sendMessage(Translator.translate("dev.error"));
-			this.getBuyer().sendMessage("ï¿½cError Code: " + Utils.addToFix(e1));
+			this.getBuyer().sendMessage("§cError Code: " + Utils.addToFix(e1));
 		}
 	}
 
@@ -221,7 +226,7 @@ public class BuyManager {
 							return;
 						}
 						if (this.getMarketItem().isBuyable()) {
-							this.getBuyer().sendMessage("ï¿½aUuuff, ja. Kannst du!");
+							this.getBuyer().sendMessage("§aUuuff, ja. Kannst du!");
 							if (m.has(this.getMarketItem(), this.getWantToBuy())
 									|| this.getMarket().equalsIgnoreCase("AdminShop")) {
 								this.prozessBuy();
@@ -313,7 +318,7 @@ public class BuyManager {
 			this.getBuyer().closeInventory();
 			APBuy.getMarketHandler().removeFromAll(this.getBuyer());
 			this.getBuyer().sendMessage(Translator.translate("dev.error"));
-			this.getBuyer().sendMessage("ï¿½cError Code: " + Utils.addToFix(e1));
+			this.getBuyer().sendMessage("§cError Code: " + Utils.addToFix(e1));
 		}
 		System.out.println("post-Canceling");
 	}
@@ -371,14 +376,14 @@ public class BuyManager {
 				} else {
 					this.getBuyer().sendMessage(Translator.translate("buymanager.error1"));
 					this.getBuyer().sendMessage(Translator.translate("buymanager.error2") + ":");
-					this.getBuyer().sendMessage("ï¿½4   Error Code : " + sh);
-					this.getBuyer().sendMessage("ï¿½4   " + Translator.translate("buymanager.buyer") + " : "
+					this.getBuyer().sendMessage("§4   Error Code : " + sh);
+					this.getBuyer().sendMessage("§4   " + Translator.translate("buymanager.buyer") + " : "
 							+ this.getBuyer().getName().toString());
-					this.getBuyer().sendMessage("ï¿½4              " + this.getBuyer().getUniqueId().toString());
+					this.getBuyer().sendMessage("§4              " + this.getBuyer().getUniqueId().toString());
 					if ((this.getMarket() != "AdminShop") && (this.getMarket() != null)) {
 						this.getBuyer().sendMessage(
-								"ï¿½4   " + Translator.translate("buymanager.seller") + " : " + m.getMarketOwner());
-						this.getBuyer().sendMessage("ï¿½4                  " + m.getMarketOwner());
+								"§4   " + Translator.translate("buymanager.seller") + " : " + m.getMarketOwner());
+						this.getBuyer().sendMessage("§4                  " + m.getMarketOwner());
 					}
 					this.cancel();
 				}
@@ -392,7 +397,7 @@ public class BuyManager {
 					"Player: " + this.getBuyer().getName() + " (" + this.getBuyer().getUniqueId().toString() + ")");
 			APBuy.getMarketHandler().removeFromAll(this.getBuyer());
 			this.getBuyer().sendMessage(Translator.translate("dev.error"));
-			this.getBuyer().sendMessage("ï¿½cError Code: " + Utils.addToFix(e1));
+			this.getBuyer().sendMessage("§cError Code: " + Utils.addToFix(e1));
 			this.cancel();
 		}
 	}
@@ -415,7 +420,7 @@ public class BuyManager {
 			this.getBuyer().closeInventory();
 			APBuy.getMarketHandler().removeFromAll(this.getBuyer());
 			this.getBuyer().sendMessage(Translator.translate("dev.error"));
-			this.getBuyer().sendMessage("ï¿½cError Code: " + Utils.addToFix(e1));
+			this.getBuyer().sendMessage("§cError Code: " + Utils.addToFix(e1));
 			Utils.addToFix(e1);
 			this.cancel();
 		}
