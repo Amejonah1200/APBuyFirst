@@ -1,18 +1,17 @@
 package ap.apb.apbuy.markets;
 
-import java.sql.SQLException;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-
 import ap.apb.AIS;
 import ap.apb.APBuy;
 import ap.apb.APBuyException;
 import ap.apb.datamaster.Datamaster;
 import ap.apb.datamaster.SQLDatabase;
 import ap.apb.datamaster.SQLiteDatabase;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+
+import java.sql.SQLException;
+import java.util.UUID;
 
 public class MarketInfos {
 
@@ -104,18 +103,18 @@ public class MarketInfos {
 		if (devise == null) {
 			if (name != null) {
 				ais.setName(ChatColor.translateAlternateColorCodes('&', name));
-				ais.addLineToLore("").addLineToLore("§r§6" + shopname + "'s Market.");
+				ais.addLineToLore("").addLineToLore("ï¿½rï¿½6" + shopname + "'s Market.");
 			} else {
-				ais.setName("§r§6" + shopname + "'s Market.");
+				ais.setName("ï¿½rï¿½6" + shopname + "'s Market.");
 			}
 		} else {
 			devise = ChatColor.translateAlternateColorCodes('&', devise);
 			if (name != null) {
 				ais.setName(ChatColor.translateAlternateColorCodes('&', name));
-				ais.addLineToLore("§r§6" + shopname + "'s Market.").addLineToLore("").addLineToLore("§b" + devise);
+				ais.addLineToLore("ï¿½rï¿½6" + shopname + "'s Market.").addLineToLore("").addLineToLore("ï¿½b" + devise);
 			} else {
-				ais.setName("§r§6" + shopname + "'s Market.");
-				ais.addLineToLore("").addLineToLore("§b" + devise);
+				ais.setName("ï¿½rï¿½6" + shopname + "'s Market.");
+				ais.addLineToLore("").addLineToLore("ï¿½b" + devise);
 			}
 		}
 		return ais;

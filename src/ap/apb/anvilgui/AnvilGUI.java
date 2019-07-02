@@ -1,9 +1,8 @@
 package ap.apb.anvilgui;
 
+import ap.apb.anvilgui.AnvilGUIObj.AnvilSlot;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import ap.apb.anvilgui.AnvilGUIObj.AnvilSlot;
 
 public interface AnvilGUI {
     public class AnvilClickEvent {

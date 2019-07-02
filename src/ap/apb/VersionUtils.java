@@ -4,9 +4,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+@SuppressWarnings("deprecation")
 public class VersionUtils {
 
-	@SuppressWarnings("deprecation")
 	public static ItemStack getItemInMainHand(Player player) {
 		return isVersion1_12() ? player.getInventory().getItemInMainHand() : player.getInventory().getItemInHand();
 	}

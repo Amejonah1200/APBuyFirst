@@ -1,13 +1,12 @@
 package ap.apb.datamaster;
 
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import ap.apb.APBuy;
 import ap.apb.VersionUtils;
 import ap.apb.apbuy.markets.CategoryInfos;
 import ap.apb.apbuy.markets.MarketInfos;
 import ap.apb.apbuy.markets.MarketItem;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class Datamaster {
 

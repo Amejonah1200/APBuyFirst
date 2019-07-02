@@ -1,16 +1,15 @@
 package ap.apb.datamaster;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
-
 import ap.apb.APBuyException;
 import ap.apb.apbuy.markets.CategoryInfos;
 import ap.apb.apbuy.markets.MarketInfos;
 import ap.apb.apbuy.markets.MarketItem;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 public abstract interface Database {
 

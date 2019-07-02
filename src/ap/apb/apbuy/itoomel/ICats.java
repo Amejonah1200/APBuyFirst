@@ -1,9 +1,8 @@
 package ap.apb.apbuy.itoomel;
 
-import org.bukkit.Material;
-
 import ap.apb.APBuy;
 import ap.apb.Translator;
+import org.bukkit.Material;
 
 public class ICats {
 	public class ICatFeaturedBB extends ItoomelCat {
@@ -250,7 +249,7 @@ public class ICats {
 
 	public class ICatSpawnEggs extends ItoomelCat {
 		public ICatSpawnEggs() {
-			super("§6Spawn Eggs", Material.MONSTER_EGG, "Hier kannst du dir Spawneggs besorgen.");
+			super("ï¿½6Spawn Eggs", Material.MONSTER_EGG, "Hier kannst du dir Spawneggs besorgen.");
 			this.registerMats();
 		}
 
@@ -264,7 +263,7 @@ public class ICats {
 
 	public class ICatEnchantedBooks extends ItoomelCat {
 		public ICatEnchantedBooks() {
-			super("§6Verzauberte Bücher", Material.ENCHANTED_BOOK, "Hier kannst du dir verzauberte Bücher besorgen.");
+			super("ï¿½6Verzauberte Bï¿½cher", Material.ENCHANTED_BOOK, "Hier kannst du dir verzauberte Bï¿½cher besorgen.");
 			this.registerMats();
 		}
 
@@ -277,7 +276,7 @@ public class ICats {
 
 	public class ICatPotions extends ItoomelCat {
 		public ICatPotions() {
-			super("§6Tränke", Material.POTION, "Hier kannst du dir Tränke besorgen.");
+			super("ï¿½6Trï¿½nke", Material.POTION, "Hier kannst du dir Trï¿½nke besorgen.");
 			this.registerMats();
 		}
 

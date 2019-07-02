@@ -1,10 +1,9 @@
 package ap.apb.anvilgui.mc1_12;
 
-import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
-
 import ap.apb.anvilgui.AnvilGUIObj;
 import net.minecraft.server.v1_12_R1.EntityHuman;
+import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 
 public class AnvilGUI_v1_12_R1 extends AnvilGUIObj {
 

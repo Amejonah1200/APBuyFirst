@@ -1,11 +1,10 @@
 package ap.apb;
 
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
-
-import net.milkbowl.vault.economy.Economy;
 
 public class EcoHandler {
 

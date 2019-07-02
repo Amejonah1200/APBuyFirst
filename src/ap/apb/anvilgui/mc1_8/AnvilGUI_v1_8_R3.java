@@ -1,9 +1,8 @@
 package ap.apb.anvilgui.mc1_8;
- 
-import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
 
 import ap.apb.anvilgui.AnvilGUIObj;
+import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 
 public class AnvilGUI_v1_8_R3 extends AnvilGUIObj {
     public AnvilGUI_v1_8_R3(Player player, AnvilClickEventHandler anvilClickEventHandler) {

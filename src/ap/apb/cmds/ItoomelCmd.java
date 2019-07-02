@@ -1,17 +1,16 @@
 package ap.apb.cmds;
 
-import org.bukkit.Material;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import ap.apb.APBuy;
 import ap.apb.Utils;
 import ap.apb.VersionUtils;
 import ap.apb.apbuy.itoomel.Itoomel;
 import ap.apb.apbuy.itoomel.ItoomelNavigation;
 import ap.apb.apbuy.itoomel.ItoomelNavigation.ItoomelMenu;
+import org.bukkit.Material;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class ItoomelCmd implements CommandExecutor {
 
@@ -22,7 +21,7 @@ public class ItoomelCmd implements CommandExecutor {
 				Player p = (Player) arg0;
 				if (APBuy.isGeneralStop()) {
 					p.sendMessage(
-							"§cAktuel kann niemand Itoomel öffnen. Bitte kontakiere die Mods, wenn Fragen offen sind!");
+							"ï¿½cAktuel kann niemand Itoomel ï¿½ffnen. Bitte kontakiere die Mods, wenn Fragen offen sind!");
 					return true;
 				}
 				// if (BanManager.isNowBanned((Player) p)) {
@@ -37,7 +36,7 @@ public class ItoomelCmd implements CommandExecutor {
 						// ItoomelPrime.openItoomel("Main", p, Material.AIR, 0);
 						Itoomel.getInstance().openNav(new ItoomelNavigation(ItoomelMenu.ALL_ITEMS, p));
 					} else {
-						p.sendMessage("§c[Itoomel] Dafür hast du keine Rechte!");
+						p.sendMessage("ï¿½c[Itoomel] Dafï¿½r hast du keine Rechte!");
 					}
 				} else if (arg3.length == 1) {
 					if (p.hasPermission("apb.itoomel")) {
@@ -53,28 +52,28 @@ public class ItoomelCmd implements CommandExecutor {
 															VersionUtils.getItemInMainHand(p).getType().toString() },
 													p);
 								} else {
-									p.sendMessage("§cBitte halte einen Item in der Hand.");
+									p.sendMessage("ï¿½cBitte halte einen Item in der Hand.");
 								}
 							} else {
-								p.sendMessage("§cBitte halte einen Item in der Hand.");
+								p.sendMessage("ï¿½cBitte halte einen Item in der Hand.");
 							}
 
 						} else {
-							p.sendMessage("§cEs gibt nur 2 Itoomel-Commands:");
-							p.sendMessage("§c   /itoomel");
-							p.sendMessage("§c   /itoomel search");
+							p.sendMessage("ï¿½cEs gibt nur 2 Itoomel-Commands:");
+							p.sendMessage("ï¿½c   /itoomel");
+							p.sendMessage("ï¿½c   /itoomel search");
 						}
 
 					} else {
-						p.sendMessage("§c[Itoomel] Dafür hast du keine Rechte!");
+						p.sendMessage("ï¿½c[Itoomel] Dafï¿½r hast du keine Rechte!");
 					}
 				} else {
 					if (p.hasPermission("apb.itoomel")) {
-						p.sendMessage("§cEs gibt nur 2 Itoomel-Commands:");
-						p.sendMessage("§c   /itoomel");
-						p.sendMessage("§c   /itoomel search");
+						p.sendMessage("ï¿½cEs gibt nur 2 Itoomel-Commands:");
+						p.sendMessage("ï¿½c   /itoomel");
+						p.sendMessage("ï¿½c   /itoomel search");
 					} else {
-						p.sendMessage("§c[Itoomel] Dafür hast du keine Rechte!");
+						p.sendMessage("ï¿½c[Itoomel] Dafï¿½r hast du keine Rechte!");
 					}
 				}
 
@@ -85,8 +84,8 @@ public class ItoomelCmd implements CommandExecutor {
 				APBuy.getMarketHandler().removeFromAll((Player) arg0);
 				System.out.println("Player: " + arg0.getName() + " (" + ((Player) arg0).getUniqueId().toString() + ")");
 			}
-			arg0.sendMessage("§cEin Fehler ist aufgetreten, bitte kontaktiere einen Dev.");
-			arg0.sendMessage("§cFehler code: " + Utils.addToFix(e));
+			arg0.sendMessage("ï¿½cEin Fehler ist aufgetreten, bitte kontaktiere einen Dev.");
+			arg0.sendMessage("ï¿½cFehler code: " + Utils.addToFix(e));
 		}
 		return true;
 	}

@@ -1,13 +1,15 @@
 package ap.apb.apbuy.markets;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
-import java.util.regex.Pattern;
-
+import ap.apb.*;
+import ap.apb.anvilgui.AnvilGUI;
+import ap.apb.anvilgui.AnvilGUI.AnvilClickEvent;
+import ap.apb.anvilgui.AnvilGUI.AnvilClickEventHandler;
+import ap.apb.anvilgui.AnvilGUIObj.AnvilSlot;
+import ap.apb.anvilgui.mc1_8.AnvilGUI_v1_8_R3;
+import ap.apb.apbuy.BuyManager;
+import ap.apb.apbuy.itoomel.Itoomel;
+import ap.apb.apbuy.itoomel.ItoomelPrime;
+import ap.apb.datamaster.Database;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -23,20 +25,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import ap.apb.AIS;
-import ap.apb.APBuy;
-import ap.apb.APBuyException;
-import ap.apb.Translator;
-import ap.apb.Utils;
-import ap.apb.anvilgui.AnvilGUI;
-import ap.apb.anvilgui.AnvilGUI.AnvilClickEvent;
-import ap.apb.anvilgui.AnvilGUI.AnvilClickEventHandler;
-import ap.apb.anvilgui.AnvilGUIObj.AnvilSlot;
-import ap.apb.anvilgui.mc1_8.AnvilGUI_v1_8_R3;
-import ap.apb.apbuy.BuyManager;
-import ap.apb.apbuy.itoomel.Itoomel;
-import ap.apb.apbuy.itoomel.ItoomelPrime;
-import ap.apb.datamaster.Database;
+import java.util.*;
+import java.util.regex.Pattern;
 
 public class MarketHandler implements Listener {
 
@@ -58,29 +48,29 @@ public class MarketHandler implements Listener {
 		try {
 			Inventory inv = Bukkit.createInventory(null, 27, Translator.translate("menu.title.mainmenu"));
 			for (int i = 0; i < 27; i++) {
-				inv.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
+				inv.setItem(i, new AIS("ï¿½a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
 			}
 
 			if (!p.hasPermission("apb.mymarket.edit")) {
-				inv.setItem(4, new AIS("§3§lMy Market", 1, Material.BARRIER).addToLore(Utils
+				inv.setItem(4, new AIS("ï¿½3ï¿½lMy Market", 1, Material.BARRIER).addToLore(Utils
 						.createListFromStringToWidth(Translator.translate("menu.inv.mainmenu.norightsmymarket"), 25))
 						.toIS());
 			} else {
-				inv.setItem(4, new AIS("§3§lMy Market", 1, Material.CHEST)
+				inv.setItem(4, new AIS("ï¿½3ï¿½lMy Market", 1, Material.CHEST)
 						.addLineToLore(Translator.translate("menu.inv.mainmenu.hereismymarket")).toIS());
 			}
 			if (!p.hasPermission("apb.markets.search")) {
-				inv.setItem(10, new AIS("§3Markets", 1, Material.BARRIER).addToLore(Utils
+				inv.setItem(10, new AIS("ï¿½3Markets", 1, Material.BARRIER).addToLore(Utils
 						.createListFromStringToWidth(Translator.translate("menu.inv.mainmenu.norightsmarkets"), 25))
 						.toIS());
 			} else {
-				inv.setItem(10, new AIS("§3Markets", 1, Material.BOOK).addToLore(
+				inv.setItem(10, new AIS("ï¿½3Markets", 1, Material.BOOK).addToLore(
 						Utils.createListFromStringToWidth(Translator.translate("menu.inv.mainmenu.hereismarkets"), 30))
 						.toIS());
 			}
 			if (p.hasPermission("apb.markets.search")) {
 				// - Top Market of The week 16
-				ItemStack is3 = new AIS("§3Top Market", Material.NETHER_STAR)
+				ItemStack is3 = new AIS("ï¿½3Top Market", Material.NETHER_STAR)
 						.addLineToLore(Translator.translate("menu.inv.mainmenu.hereistopmarket")).toIS();
 				inv.setItem(16,
 						YamlConfiguration.loadConfiguration(APBuy.plugin.getPlayerMarketStats())
@@ -91,35 +81,35 @@ public class MarketHandler implements Listener {
 														.getString("TopMarket"),
 												is3));
 			} else {
-				inv.setItem(16, new AIS("§3Top Market", 1, Material.BARRIER).addToLore(Utils
+				inv.setItem(16, new AIS("ï¿½3Top Market", 1, Material.BARRIER).addToLore(Utils
 						.createListFromStringToWidth(Translator.translate("menu.inv.mainmenu.norightstopmarket"), 30))
 						.toIS());
 			}
 			// // - Help 16
 			// ItemStack is4 = new ItemStack(Material.PAPER);
 			// ItemMeta m4 = is4.getItemMeta();
-			// m4.setDisplayName("§3Help");
+			// m4.setDisplayName("ï¿½3Help");
 			// List<String> s4 = new ArrayList<>();
-			// s4.add("§r§fHier kannst du Hilfe suchen.");
+			// s4.add("ï¿½rï¿½fHier kannst du Hilfe suchen.");
 			// m4.setLore(s4);
 			// is4.setItemMeta(m4);
 			// inv.setItem(22, is4);
 
 			inv.setItem(23,
-					new AIS("§7Commands", 1, Material.PAPER).addLineToLore("").addToLore(Utils
+					new AIS("ï¿½7Commands", 1, Material.PAPER).addLineToLore("").addToLore(Utils
 							.createListFromStringToWidth(Translator.translate("menu.inv.mainmenu.hereiscommands"), 40))
 							.toIS());
 			inv.setItem(21, new AIS(
 					adminshop != null
 							? adminshop.isOpen()
-									? "§6AdminShop (§a" + Translator.translate("menu.inv.mainmenu.open") + "§6)"
-									: "§6AdminShop (§c" + Translator.translate("menu.inv.mainmenu.close") + "§6)"
-							: "§6AdminShop (§c" + Translator.translate("menu.inv.mainmenu.close") + "§6)",
+									? "ï¿½6AdminShop (ï¿½a" + Translator.translate("menu.inv.mainmenu.open") + "ï¿½6)"
+									: "ï¿½6AdminShop (ï¿½c" + Translator.translate("menu.inv.mainmenu.close") + "ï¿½6)"
+							: "ï¿½6AdminShop (ï¿½c" + Translator.translate("menu.inv.mainmenu.close") + "ï¿½6)",
 					1, Material.INK_SACK).setDamage((short) (adminshop != null ? adminshop.isOpen() ? 2 : 1 : 1))
 							.addLineToLore("").addLineToLore(Translator.translate("menu.inv.mainmenu.hereisadminshop"))
 							.toIS());
 			// if(settedAdminShop) {
-			// inv.setItem(22, new AIS("§", 1, ));
+			// inv.setItem(22, new AIS("ï¿½", 1, ));
 			// }
 
 			p.openInventory(inv);
@@ -130,7 +120,7 @@ public class MarketHandler implements Listener {
 			p.closeInventory();
 			this.removeFromAll(p);
 			p.sendMessage(Translator.translate("dev.error"));
-			p.sendMessage("§cError Code: " + Utils.addToFix(e));
+			p.sendMessage("ï¿½cError Code: " + Utils.addToFix(e));
 		}
 	}
 
@@ -141,16 +131,16 @@ public class MarketHandler implements Listener {
 				return;
 			}
 			if (menu.equalsIgnoreCase("cmds")) {
-				Inventory inv = Bukkit.createInventory(null, 27, "§0§lA§3§lP§r§8Buy - Cmds");
+				Inventory inv = Bukkit.createInventory(null, 27, "ï¿½0ï¿½lAï¿½3ï¿½lPï¿½rï¿½8Buy - Cmds");
 				for (int i = 0; i < 27; i++) {
-					inv.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
+					inv.setItem(i, new AIS("ï¿½a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
 				}
 				inv.setItem(22, new AIS(Translator.translate("menu.back"), 1, Material.BARRIER).toIS());
 
 				if (p.hasPermission("apb.*") || p.hasPermission("apb.mymarket.*")
 						|| p.hasPermission("apb.mymarket.edit") || p.hasPermission("apb.mymarket.setdevise")
 						|| p.hasPermission("apb.mymarket.setname")) {
-					AIS ais = new AIS("§7MyMarket", Material.PAPER);
+					AIS ais = new AIS("ï¿½7MyMarket", Material.PAPER);
 					ais.addLineToLore("");
 					if (p.hasPermission("apb.*") || p.hasPermission("apb.mymarket.*")
 							|| p.hasPermission("apb.mymarket.edit")) {
@@ -159,13 +149,13 @@ public class MarketHandler implements Listener {
 					}
 					if (p.hasPermission("apb.*") || p.hasPermission("apb.mymarket.*")
 							|| p.hasPermission("apb.mymarket.setname")) {
-						ais.addLineToLore("§7- [/apb setname <Name>]")
+						ais.addLineToLore("ï¿½7- [/apb setname <Name>]")
 								.addToLore(Utils.createListFromStringToWidthPlusEffect(
 										Translator.translate("menu.inv.cmds.mymarket.name"), 30));
 					}
 					if (p.hasPermission("apb.*") || p.hasPermission("apb.mymarket.*")
 							|| p.hasPermission("apb.mymarket.setdevise")) {
-						ais.addLineToLore("§7- [/apb setdevise <Devise>]")
+						ais.addLineToLore("ï¿½7- [/apb setdevise <Devise>]")
 								.addToLore(Utils.createListFromStringToWidthPlusEffect(
 										Translator.translate("menu.inv.cmds.mymarket.devise"), 30));
 					}
@@ -176,17 +166,17 @@ public class MarketHandler implements Listener {
 				}
 				if (p.hasPermission("apb.*") || p.hasPermission("apb.markets.*") || p.hasPermission("apb.markets.buy")
 						|| p.hasPermission("apb.markets.search")) {
-					AIS ais = new AIS("§7Markets", Material.PAPER);
+					AIS ais = new AIS("ï¿½7Markets", Material.PAPER);
 					ais.addLineToLore("");
 					if (p.hasPermission("apb.*") || p.hasPermission("apb.mymarket.*")
 							|| p.hasPermission("apb.markets.search")) {
 						ais.addLineToLore(Translator.translate("menu.inv.cmds.markets.search.topic"))
-								.addLineToLore("§7- [/apb open name <Spielername>]")
+								.addLineToLore("ï¿½7- [/apb open name <Spielername>]")
 								.addToLore(Utils.createListFromStringToWidthPlusEffect(
-										"§8   " + Translator.translate("menu.inv.cmds.markets.search.name"), 30))
-								.addLineToLore("§7- [/apb open uuid <UUID>]")
+										"ï¿½8   " + Translator.translate("menu.inv.cmds.markets.search.name"), 30))
+								.addLineToLore("ï¿½7- [/apb open uuid <UUID>]")
 								.addToLore(Utils.createListFromStringToWidth(
-										"§8   " + Translator.translate("menu.inv.cmds.markets.search.uuid"), 30));
+										"ï¿½8   " + Translator.translate("menu.inv.cmds.markets.search.uuid"), 30));
 					}
 					if (p.hasPermission("apb.*") || p.hasPermission("apb.mymarket.*")
 							|| p.hasPermission("apb.markets.buy")) {
@@ -199,15 +189,15 @@ public class MarketHandler implements Listener {
 				}
 
 				if (p.hasPermission("apb.*") || p.hasPermission("apb.itoomel")) {
-					AIS ais = new AIS("§7Itoomel", Material.PAPER);
+					AIS ais = new AIS("ï¿½7Itoomel", Material.PAPER);
 					ais.addLineToLore("");
 					if (p.hasPermission("apb.*") || p.hasPermission("apb.itoomel")) {
-						ais.addLineToLore("§7Du kannst Itoomel benutzen.");
+						ais.addLineToLore("ï¿½7Du kannst Itoomel benutzen.");
 					}
 					inv.setItem(14, ais.toIS());
 				} else {
 					inv.setItem(14,
-							new AIS("§cDu hast keine Itoomel-Rechte.", 1, (short) 7, Material.STAINED_GLASS_PANE)
+							new AIS("ï¿½cDu hast keine Itoomel-Rechte.", 1, (short) 7, Material.STAINED_GLASS_PANE)
 									.toIS());
 				}
 
@@ -217,7 +207,7 @@ public class MarketHandler implements Listener {
 						|| p.hasPermission("apb.mod.invissee") || p.hasPermission("apb.mod.adminshop")
 				// || p.hasPermission("apb.mod.itemdepot")
 				) {
-					AIS ais = new AIS("§7Mod", Material.PAPER);
+					AIS ais = new AIS("ï¿½7Mod", Material.PAPER);
 					ais.addLineToLore("");
 					if (p.hasPermission("apb.*") || p.hasPermission("apb.mod.*") || p.hasPermission("apb.mod.delete")) {
 						ais.addLineToLore(Translator.translate("menu.inv.cmds.mod.delete"));
@@ -244,10 +234,10 @@ public class MarketHandler implements Listener {
 					if (p.hasPermission("apb.*") || p.hasPermission("apb.mod.*")
 							|| p.hasPermission("apb.mod.adminshop")) {
 						ais.addLineToLore(Translator.translate("menu.inv.cmds.mod.adminshop.edit"))
-								.addLineToLore("§7- [/apb adminshop open]")
-								.addLineToLore("§8    " + Translator.translate("menu.inv.cmds.mod.adminshop.open"))
-								.addLineToLore("§7- [/apb adminshop close]")
-								.addLineToLore("§8    " + Translator.translate("menu.inv.cmds.mod.adminshop.close"));
+								.addLineToLore("ï¿½7- [/apb adminshop open]")
+								.addLineToLore("ï¿½8    " + Translator.translate("menu.inv.cmds.mod.adminshop.open"))
+								.addLineToLore("ï¿½7- [/apb adminshop close]")
+								.addLineToLore("ï¿½8    " + Translator.translate("menu.inv.cmds.mod.adminshop.close"));
 					}
 					inv.setItem(16, ais.toIS());
 				} else {
@@ -263,9 +253,9 @@ public class MarketHandler implements Listener {
 			case "MyMarket":
 				switch (menu.split(Pattern.quote(":"))[1]) {
 				case "Main":
-					Inventory inv = Bukkit.createInventory(null, 54, "§0§lA§3§lP§r§8Buy - My Market");
+					Inventory inv = Bukkit.createInventory(null, 54, "ï¿½0ï¿½lAï¿½3ï¿½lPï¿½rï¿½8Buy - My Market");
 					for (int i = 0; i < 54; i++) {
-						inv.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
+						inv.setItem(i, new AIS("ï¿½a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
 					}
 					MarketInfos m = database.getMarketInfos(p.getUniqueId().toString());
 					// - Status 10
@@ -291,17 +281,17 @@ public class MarketHandler implements Listener {
 					ItemMeta nNdmeta = nameNdevise.getItemMeta();
 					nNdmeta.setDisplayName(Translator.translate("menu.inv.mymarket.main.nnd.title"));
 					List<String> nNdlist = new ArrayList<>();
-					nNdlist.add(Translator.translate("menu.inv.mymarket.main.nnd.name") + ": §6" + (m.getName() == null
+					nNdlist.add(Translator.translate("menu.inv.mymarket.main.nnd.name") + ": ï¿½6" + (m.getName() == null
 							? Translator.translate("menu.inv.mymarket.main.nnd.notset") : m.getName()));
 					nNdlist.add(
-							Translator.translate("menu.inv.mymarket.main.nnd.devise") + ": §6" + (m.getDevise() == null
+							Translator.translate("menu.inv.mymarket.main.nnd.devise") + ": ï¿½6" + (m.getDevise() == null
 									? Translator.translate("menu.inv.mymarket.main.nnd.notset") : m.getDevise()));
 					nNdlist.add("");
 					nNdlist.add(Translator.translate("menu.inv.mymarket.main.nnd.howto") + ":");
-					nNdlist.add("§8   /mr setName <MarketName>");
-					nNdlist.add("§8   /mr setDevise <MarketDevise>");
-					nNdlist.add("§8   /mr resetName");
-					nNdlist.add("§8   /mr resetDevise");
+					nNdlist.add("ï¿½8   /mr setName <MarketName>");
+					nNdlist.add("ï¿½8   /mr setDevise <MarketDevise>");
+					nNdlist.add("ï¿½8   /mr resetName");
+					nNdlist.add("ï¿½8   /mr resetDevise");
 					nNdmeta.setLore(nNdlist);
 					nameNdevise.setItemMeta(nNdmeta);
 					inv.setItem(16, nameNdevise);
@@ -310,7 +300,7 @@ public class MarketHandler implements Listener {
 					inv.setItem(12,
 							new AIS(Material.CHEST).addLineToLore("")
 									.addLineToLore(Translator.translate("menu.inv.mymarket.main.mymarket"))
-									.setName("§7My Market").toIS());
+									.setName("ï¿½7My Market").toIS());
 
 					// - Back Button 49
 					inv.setItem(49, new AIS(Translator.translate("menu.back"), 1, Material.BARRIER).toIS());
@@ -324,7 +314,7 @@ public class MarketHandler implements Listener {
 
 					if (ItemDepot.getInstance().hasItemDepot(p)) {
 						inv.setItem(28,
-								new AIS(Material.CHEST).setName("§7Item Depot").addLineToLore("")
+								new AIS(Material.CHEST).setName("ï¿½7Item Depot").addLineToLore("")
 										.addToLore(Utils.createListFromStringToWidth(
 												Translator.translate("menu.inv.mymarket.main.itemdepot.desc"), 40))
 										.toIS());
@@ -334,11 +324,11 @@ public class MarketHandler implements Listener {
 					PMLoc.put(p, "MyMarket:Main");
 					break;
 				case "Editor":
-					Inventory inv1 = Bukkit.createInventory(null, 54, "§0§lA§3§lP§r§8Buy - Editor");
+					Inventory inv1 = Bukkit.createInventory(null, 54, "ï¿½0ï¿½lAï¿½3ï¿½lPï¿½rï¿½8Buy - Editor");
 					if (menu.split(Pattern.quote(":")).length == 3) {
 						if (menu.split(Pattern.quote(":"))[2].contains("Add")) {
 							for (int i = 0; i < 54; i++) {
-								inv1.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
+								inv1.setItem(i, new AIS("ï¿½a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
 							}
 							boolean hasItem = false;
 							for (ItemStack stack : p.getInventory().getContents()) {
@@ -387,12 +377,12 @@ public class MarketHandler implements Listener {
 										|| (37 <= i && i <= 43) || (i == 49)) {
 									continue;
 								}
-								inv1.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
+								inv1.setItem(i, new AIS("ï¿½a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
 							}
 							for (int i1 = 0; i1 < 4; i1++) {
 								for (int i2 = 0; i2 < 7; i2++) {
 									inv1.setItem(10 + i1 * 9 + i2,
-											new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+											new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 								}
 							}
 							inv1.setItem(31, new AIS(Translator.translate("menu.openerror1"), 1, Material.PAPER)
@@ -455,7 +445,7 @@ public class MarketHandler implements Listener {
 												&& (size - 28 * (PMLocPage.get(p) + 1) != 0)) {
 											inv1.setItem(53,
 													APBuy.tagger.setNBTTag("ToPage", PMLocPage.get(p) + 1,
-															new AIS("§7" + Translator.translate("menu.page.next") + " "
+															new AIS("ï¿½7" + Translator.translate("menu.page.next") + " "
 																	+ (PMLocPage.get(p) + 1), 1, Material.PAPER)
 																			.toIS()));
 										}
@@ -464,7 +454,7 @@ public class MarketHandler implements Listener {
 													APBuy.tagger
 															.setNBTTag("ToPage",
 																	PMLocPage.get(p) - 1, new AIS(
-																			"§7" + (PMLocPage.get(p) - 1) + " "
+																			"ï¿½7" + (PMLocPage.get(p) - 1) + " "
 																					+ Translator.translate(
 																							"menu.page.previous"),
 																			1, Material.PAPER).toIS()));
@@ -472,7 +462,7 @@ public class MarketHandler implements Listener {
 
 										if (inv1.getItem(31).getType() == Material.PAPER) {
 											inv1.setItem(31,
-													new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+													new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 										}
 										PMLoc.put(p, "MyMarket:Editor:Opened");
 										p.openInventory(inv1);
@@ -485,7 +475,7 @@ public class MarketHandler implements Listener {
 										p.closeInventory();
 										APBuy.getMarketHandler().removeFromAll(p);
 										p.sendMessage(Translator.translate("dev.error"));
-										p.sendMessage("§cError Code: " + Utils.addToFix(e));
+										p.sendMessage("ï¿½cError Code: " + Utils.addToFix(e));
 									}
 								}
 							});
@@ -497,12 +487,12 @@ public class MarketHandler implements Listener {
 									|| (37 <= i && i <= 43) || (i == 49)) {
 								continue;
 							}
-							inv1.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
+							inv1.setItem(i, new AIS("ï¿½a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
 						}
 						for (int i1 = 0; i1 < 4; i1++) {
 							for (int i2 = 0; i2 < 7; i2++) {
 								inv1.setItem(10 + i1 * 9 + i2,
-										new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+										new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 							}
 						}
 						inv1.setItem(31, new AIS(Translator.translate("menu.openerror1"), 1, Material.PAPER)
@@ -565,7 +555,7 @@ public class MarketHandler implements Listener {
 										inv1.setItem(53,
 												APBuy.tagger
 														.setNBTTag("ToPage", PMLocPage.get(p) + 1,
-																new AIS("§7" + Translator.translate("menu.page.next")
+																new AIS("ï¿½7" + Translator.translate("menu.page.next")
 																		+ " " + (PMLocPage.get(p) + 1), 1,
 																		Material.PAPER).toIS()));
 									}
@@ -574,14 +564,14 @@ public class MarketHandler implements Listener {
 												APBuy.tagger
 														.setNBTTag("ToPage",
 																PMLocPage.get(p) - 1, new AIS(
-																		"§7" + (PMLocPage.get(p) - 1) + " "
+																		"ï¿½7" + (PMLocPage.get(p) - 1) + " "
 																				+ Translator.translate(
 																						"menu.page.previous"),
 																		1, Material.PAPER).toIS()));
 									}
 									if (inv1.getItem(31).getType() == Material.PAPER) {
 										inv1.setItem(31,
-												new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+												new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 									}
 									PMLoc.put(p, "MyMarket:Editor:Opened");
 									p.openInventory(inv1);
@@ -594,7 +584,7 @@ public class MarketHandler implements Listener {
 									p.closeInventory();
 									APBuy.getMarketHandler().removeFromAll(p);
 									p.sendMessage(Translator.translate("dev.error"));
-									p.sendMessage("§cDas hier dem Dev sagen : " + Utils.addToFix(e));
+									p.sendMessage("ï¿½cDas hier dem Dev sagen : " + Utils.addToFix(e));
 								}
 							}
 						});
@@ -603,13 +593,13 @@ public class MarketHandler implements Listener {
 				case "ItemInput":
 					List<ItemStack> iss = onItemInput.get(p);
 					onItemInput.remove(p);
-					Inventory inv2 = Bukkit.createInventory(null, 54, "§0§lA§3§lP§r§8Buy - Editor");
+					Inventory inv2 = Bukkit.createInventory(null, 54, "ï¿½0ï¿½lAï¿½3ï¿½lPï¿½rï¿½8Buy - Editor");
 					for (int i = 0; i < 54; i++) {
 						if ((10 <= i && i <= 16) || (19 <= i && i <= 25) || (28 <= i && i <= 34) || (37 <= i && i <= 43)
 								|| (i == 49)) {
 							continue;
 						}
-						inv2.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
+						inv2.setItem(i, new AIS("ï¿½a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
 					}
 
 					// - Back Button 49
@@ -651,17 +641,17 @@ public class MarketHandler implements Listener {
 				}
 				break;
 			case "Markets":
-				Inventory inv2 = Bukkit.createInventory(null, 54, "§0§lA§3§lP§r§8Buy - Top Markets");
+				Inventory inv2 = Bukkit.createInventory(null, 54, "ï¿½0ï¿½lAï¿½3ï¿½lPï¿½rï¿½8Buy - Top Markets");
 				for (int i = 0; i < 54; i++) {
 					if ((10 <= i && i <= 16) || (19 <= i && i <= 25) || (28 <= i && i <= 34) || (37 <= i && i <= 43)
 							|| (i == 49)) {
 						continue;
 					}
-					inv2.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
+					inv2.setItem(i, new AIS("ï¿½a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
 				}
 				for (int i1 = 0; i1 < 4; i1++) {
 					for (int i2 = 0; i2 < 7; i2++) {
-						inv2.setItem(10 + i1 * 9 + i2, new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+						inv2.setItem(10 + i1 * 9 + i2, new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 					}
 				}
 				inv2.setItem(31, new AIS(Translator.translate("menu.openerror1"), 1, Material.PAPER)
@@ -704,7 +694,7 @@ public class MarketHandler implements Listener {
 							if ((pages > 0) && (pages != PMLocPage.get(p))
 									&& (size - 28 * (PMLocPage.get(p) + 1) != 0)) {
 								inv2.setItem(53, APBuy.tagger.setNBTTag("ToPage", PMLocPage.get(p) + 1, new AIS(
-										"§7" + Translator.translate("menu.page.next") + " " + (PMLocPage.get(p) + 1), 1,
+										"ï¿½7" + Translator.translate("menu.page.next") + " " + (PMLocPage.get(p) + 1), 1,
 										Material.PAPER).toIS()));
 							}
 							if (PMLocPage.get(p) > 0) {
@@ -713,13 +703,13 @@ public class MarketHandler implements Listener {
 												.setNBTTag("ToPage",
 														PMLocPage.get(p)
 																- 1,
-														new AIS("§7" + (PMLocPage.get(p) - 1) + " "
+														new AIS("ï¿½7" + (PMLocPage.get(p) - 1) + " "
 																+ Translator.translate("menu.page.previous"), 1,
 																Material.PAPER).toIS()));
 							}
 
 							if (inv2.getItem(31).getType() == Material.PAPER) {
-								inv2.setItem(31, new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+								inv2.setItem(31, new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 							}
 							PMLoc.put(p, "Markets:Opened");
 							p.openInventory(inv2);
@@ -731,7 +721,7 @@ public class MarketHandler implements Listener {
 							p.closeInventory();
 							APBuy.getMarketHandler().removeFromAll(p);
 							p.sendMessage(Translator.translate("dev.error"));
-							p.sendMessage("§cError Code: " + Utils.addToFix(e));
+							p.sendMessage("ï¿½cError Code: " + Utils.addToFix(e));
 						}
 					}
 
@@ -745,7 +735,7 @@ public class MarketHandler implements Listener {
 			p.closeInventory();
 			this.removeFromAll(p);
 			p.sendMessage(Translator.translate("dev.error"));
-			p.sendMessage("§cError Code: " + Utils.addToFix(e));
+			p.sendMessage("ï¿½cError Code: " + Utils.addToFix(e));
 		}
 	}
 
@@ -786,18 +776,18 @@ public class MarketHandler implements Listener {
 		try {
 			switch (menu) {
 			case "Main":
-				Inventory MainInv = Bukkit.createInventory(null, 54, "§0§lA§3§lP§r§8Buy - My Market");
+				Inventory MainInv = Bukkit.createInventory(null, 54, "ï¿½0ï¿½lAï¿½3ï¿½lPï¿½rï¿½8Buy - My Market");
 				for (int i = 0; i < 54; i++) {
 					if ((10 <= i && i <= 16) || (19 <= i && i <= 25) || (28 <= i && i <= 34) || (37 <= i && i <= 43)
 							|| (i == 49)) {
 						continue;
 					}
-					MainInv.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
+					MainInv.setItem(i, new AIS("ï¿½a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
 				}
 				for (int i1 = 0; i1 < 4; i1++) {
 					for (int i2 = 0; i2 < 7; i2++) {
 						MainInv.setItem(10 + i1 * 9 + i2,
-								new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+								new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 					}
 				}
 				MainInv.setItem(31, new AIS(Translator.translate("menu.openerror1"), 1, Material.PAPER)
@@ -868,7 +858,7 @@ public class MarketHandler implements Listener {
 
 						if ((pages > 0) && (pages != PMLocPage.get(p)) && (size - 28 * (PMLocPage.get(p) + 1) != 0)) {
 							MainInv.setItem(53, APBuy.tagger.setNBTTag("ToPage", PMLocPage.get(p) + 1, new AIS(
-									"§7" + Translator.translate("menu.page.next") + " " + (PMLocPage.get(p) + 1), 1,
+									"ï¿½7" + Translator.translate("menu.page.next") + " " + (PMLocPage.get(p) + 1), 1,
 									Material.PAPER).toIS()));
 						}
 						if (PMLocPage.get(p) > 0) {
@@ -877,13 +867,13 @@ public class MarketHandler implements Listener {
 											.setNBTTag("ToPage",
 													PMLocPage.get(p)
 															- 1,
-													new AIS("§7" + (PMLocPage.get(p) - 1) + " "
+													new AIS("ï¿½7" + (PMLocPage.get(p) - 1) + " "
 															+ Translator.translate("menu.page.previous"), 1,
 															Material.PAPER).toIS()));
 						}
 
 						if (MainInv.getItem(31).getType() == Material.PAPER) {
-							MainInv.setItem(31, new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+							MainInv.setItem(31, new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 						}
 						PMLoc.put(p, "MyMarket:ItemEditor:Main:" + Cat + ":Opened");
 						p.openInventory(MainInv);
@@ -892,9 +882,9 @@ public class MarketHandler implements Listener {
 				});
 				break;
 			case "Add":
-				Inventory AddInv = Bukkit.createInventory(null, 54, "§0§lA§3§lP§r§8Buy - My Market");
+				Inventory AddInv = Bukkit.createInventory(null, 54, "ï¿½0ï¿½lAï¿½3ï¿½lPï¿½rï¿½8Buy - My Market");
 				for (int i = 0; i < 54; i++) {
-					AddInv.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
+					AddInv.setItem(i, new AIS("ï¿½a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
 				}
 				AddInv.setItem(40,
 						creatingIS.get(p).getIs() == null
@@ -902,9 +892,9 @@ public class MarketHandler implements Listener {
 										.addLineToLore("")
 										.addLineToLore(Translator.translate("menu.inv.items.noitem.desc")).toIS()
 								: creatingIS.get(p).getIs());
-				AddInv.setItem(10, new AIS("§c-1000$", 1, (short) 14, Material.STAINED_GLASS_PANE).toIS());
-				AddInv.setItem(11, new AIS("§c-100$", 1, (short) 1, Material.STAINED_GLASS_PANE).toIS());
-				AddInv.setItem(12, new AIS("§e-10$", 1, (short) 1, Material.STAINED_GLASS_PANE).toIS());
+				AddInv.setItem(10, new AIS("ï¿½c-1000$", 1, (short) 14, Material.STAINED_GLASS_PANE).toIS());
+				AddInv.setItem(11, new AIS("ï¿½c-100$", 1, (short) 1, Material.STAINED_GLASS_PANE).toIS());
+				AddInv.setItem(12, new AIS("ï¿½e-10$", 1, (short) 1, Material.STAINED_GLASS_PANE).toIS());
 				AddInv.setItem(13,
 						new AIS(Translator.translate("menu.inv.items.price") + ": " + creatingIS.get(p).getPrice(), 1,
 								(creatingIS.get(p).getIs() == null ? Material.CHEST
@@ -912,21 +902,21 @@ public class MarketHandler implements Listener {
 												.setDamage(creatingIS.get(p).getIs() == null ? 0
 														: creatingIS.get(p).getIs().getDurability())
 												.toIS());
-				AddInv.setItem(14, new AIS("§a+10$", 1, (short) 5, Material.STAINED_GLASS_PANE).toIS());
-				AddInv.setItem(15, new AIS("§2+100$", 1, (short) 5, Material.STAINED_GLASS_PANE).toIS());
-				AddInv.setItem(16, new AIS("§2+1000$", 1, (short) 13, Material.STAINED_GLASS_PANE).toIS());
-				AddInv.setItem(19, new AIS("§c-64", 1, (short) 14, Material.STAINED_GLASS_PANE).toIS());
-				AddInv.setItem(20, new AIS("§c-16", 1, (short) 1, Material.STAINED_GLASS_PANE).toIS());
-				AddInv.setItem(21, new AIS("§e-1", 1, (short) 1, Material.STAINED_GLASS_PANE).toIS());
+				AddInv.setItem(14, new AIS("ï¿½a+10$", 1, (short) 5, Material.STAINED_GLASS_PANE).toIS());
+				AddInv.setItem(15, new AIS("ï¿½2+100$", 1, (short) 5, Material.STAINED_GLASS_PANE).toIS());
+				AddInv.setItem(16, new AIS("ï¿½2+1000$", 1, (short) 13, Material.STAINED_GLASS_PANE).toIS());
+				AddInv.setItem(19, new AIS("ï¿½c-64", 1, (short) 14, Material.STAINED_GLASS_PANE).toIS());
+				AddInv.setItem(20, new AIS("ï¿½c-16", 1, (short) 1, Material.STAINED_GLASS_PANE).toIS());
+				AddInv.setItem(21, new AIS("ï¿½e-1", 1, (short) 1, Material.STAINED_GLASS_PANE).toIS());
 				AddInv.setItem(22, new AIS(
 						Translator.translate("menu.inv.items.ppersell") + ": " + creatingIS.get(p).getSellAmmount(), 1,
 						(creatingIS.get(p).getIs() == null ? Material.CHEST : creatingIS.get(p).getIs().getType()))
 								.setDamage(creatingIS.get(p).getIs() == null ? 0
 										: creatingIS.get(p).getIs().getDurability())
 								.toIS());
-				AddInv.setItem(23, new AIS("§a+1", 1, (short) 5, Material.STAINED_GLASS_PANE).toIS());
-				AddInv.setItem(24, new AIS("§2+16", 1, (short) 5, Material.STAINED_GLASS_PANE).toIS());
-				AddInv.setItem(25, new AIS("§2+64", 1, (short) 13, Material.STAINED_GLASS_PANE).toIS());
+				AddInv.setItem(23, new AIS("ï¿½a+1", 1, (short) 5, Material.STAINED_GLASS_PANE).toIS());
+				AddInv.setItem(24, new AIS("ï¿½2+16", 1, (short) 5, Material.STAINED_GLASS_PANE).toIS());
+				AddInv.setItem(25, new AIS("ï¿½2+64", 1, (short) 13, Material.STAINED_GLASS_PANE).toIS());
 				AddInv.setItem(29,
 						new AIS(Translator.translate("menu.inv.items.info.title"), 1, (short) 2, Material.INK_SACK)
 								.addLineToLore("").addToLore(Utils.createListFromStringToWidth(
@@ -953,14 +943,14 @@ public class MarketHandler implements Listener {
 				break;
 			default:
 				if (menu.startsWith("MyMarket:ItemEditor:Add")) {
-					Inventory AddInv1 = Bukkit.createInventory(null, 54, "§0§lA§3§lP§r§8Buy - My Market");
+					Inventory AddInv1 = Bukkit.createInventory(null, 54, "ï¿½0ï¿½lAï¿½3ï¿½lPï¿½rï¿½8Buy - My Market");
 					for (int i = 0; i < 54; i++) {
-						AddInv1.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
+						AddInv1.setItem(i, new AIS("ï¿½a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
 					}
 					AddInv1.setItem(40, creatingIS.get(p).getIs());
-					AddInv1.setItem(10, new AIS("§c-1000$", 1, (short) 14, Material.STAINED_GLASS_PANE).toIS());
-					AddInv1.setItem(11, new AIS("§c-100$", 1, (short) 1, Material.STAINED_GLASS_PANE).toIS());
-					AddInv1.setItem(12, new AIS("§e-10$", 1, (short) 1, Material.STAINED_GLASS_PANE).toIS());
+					AddInv1.setItem(10, new AIS("ï¿½c-1000$", 1, (short) 14, Material.STAINED_GLASS_PANE).toIS());
+					AddInv1.setItem(11, new AIS("ï¿½c-100$", 1, (short) 1, Material.STAINED_GLASS_PANE).toIS());
+					AddInv1.setItem(12, new AIS("ï¿½e-10$", 1, (short) 1, Material.STAINED_GLASS_PANE).toIS());
 					AddInv1.setItem(13,
 							new AIS(Translator.translate("menu.inv.items.price") + ": " + creatingIS.get(p).getPrice(),
 									1,
@@ -970,12 +960,12 @@ public class MarketHandler implements Listener {
 															: creatingIS.get(p).getIs().getMaxStackSize() != 1
 																	? creatingIS.get(p).getIs().getDurability() : 0)
 													.toIS());
-					AddInv1.setItem(14, new AIS("§a+10$", 1, (short) 5, Material.STAINED_GLASS_PANE).toIS());
-					AddInv1.setItem(15, new AIS("§2+100$", 1, (short) 5, Material.STAINED_GLASS_PANE).toIS());
-					AddInv1.setItem(16, new AIS("§2+1000$", 1, (short) 13, Material.STAINED_GLASS_PANE).toIS());
-					AddInv1.setItem(19, new AIS("§c-64", 1, (short) 14, Material.STAINED_GLASS_PANE).toIS());
-					AddInv1.setItem(20, new AIS("§c-16", 1, (short) 1, Material.STAINED_GLASS_PANE).toIS());
-					AddInv1.setItem(21, new AIS("§e-1", 1, (short) 1, Material.STAINED_GLASS_PANE).toIS());
+					AddInv1.setItem(14, new AIS("ï¿½a+10$", 1, (short) 5, Material.STAINED_GLASS_PANE).toIS());
+					AddInv1.setItem(15, new AIS("ï¿½2+100$", 1, (short) 5, Material.STAINED_GLASS_PANE).toIS());
+					AddInv1.setItem(16, new AIS("ï¿½2+1000$", 1, (short) 13, Material.STAINED_GLASS_PANE).toIS());
+					AddInv1.setItem(19, new AIS("ï¿½c-64", 1, (short) 14, Material.STAINED_GLASS_PANE).toIS());
+					AddInv1.setItem(20, new AIS("ï¿½c-16", 1, (short) 1, Material.STAINED_GLASS_PANE).toIS());
+					AddInv1.setItem(21, new AIS("ï¿½e-1", 1, (short) 1, Material.STAINED_GLASS_PANE).toIS());
 					AddInv1.setItem(22, new AIS(
 							Translator.translate("menu.inv.items.ppersell") + ": " + creatingIS.get(p).getSellAmmount(),
 							1, creatingIS.get(p).getIs() == null ? Material.CHEST : creatingIS.get(p).getIs().getType())
@@ -983,9 +973,9 @@ public class MarketHandler implements Listener {
 											: creatingIS.get(p).getIs().getMaxStackSize() != 1
 													? creatingIS.get(p).getIs().getDurability() : 0)
 									.toIS());
-					AddInv1.setItem(23, new AIS("§a+1", 1, (short) 5, Material.STAINED_GLASS_PANE).toIS());
-					AddInv1.setItem(24, new AIS("§2+16", 1, (short) 5, Material.STAINED_GLASS_PANE).toIS());
-					AddInv1.setItem(25, new AIS("§2+64", 1, (short) 13, Material.STAINED_GLASS_PANE).toIS());
+					AddInv1.setItem(23, new AIS("ï¿½a+1", 1, (short) 5, Material.STAINED_GLASS_PANE).toIS());
+					AddInv1.setItem(24, new AIS("ï¿½2+16", 1, (short) 5, Material.STAINED_GLASS_PANE).toIS());
+					AddInv1.setItem(25, new AIS("ï¿½2+64", 1, (short) 13, Material.STAINED_GLASS_PANE).toIS());
 
 					AddInv1.setItem(29,
 							new AIS(Translator.translate("menu.inv.items.info.title"), 1, (short) 2, Material.INK_SACK)
@@ -1022,7 +1012,7 @@ public class MarketHandler implements Listener {
 			p.closeInventory();
 			this.removeFromAll(p);
 			p.sendMessage(Translator.translate("dev.error"));
-			p.sendMessage("§cError Code: " + Utils.addToFix(e));
+			p.sendMessage("ï¿½cError Code: " + Utils.addToFix(e));
 		}
 	}
 
@@ -2049,7 +2039,7 @@ public class MarketHandler implements Listener {
 								p.sendMessage(Translator.translate("click.notfoundcat"));
 								break;
 							case SQL:
-								p.sendMessage("§cEs gab ein Fehler beim abfragen bei der Datenbank (SQL Fehler).");
+								p.sendMessage("ï¿½cEs gab ein Fehler beim abfragen bei der Datenbank (SQL Fehler).");
 								break;
 							default:
 							case NPE:
@@ -2060,7 +2050,7 @@ public class MarketHandler implements Listener {
 							}
 							this.removeFromAll(p);
 							p.sendMessage(Translator.translate("dev.error"));
-							p.sendMessage("§cError Code: " + Utils.addToFix(e1));
+							p.sendMessage("ï¿½cError Code: " + Utils.addToFix(e1));
 						}
 					}
 
@@ -2074,7 +2064,7 @@ public class MarketHandler implements Listener {
 				p.closeInventory();
 				return;
 			case SQL:
-				p.sendMessage("§cEs gab ein Fehler beim abfragen bei der Datenbank (SQL Fehler).");
+				p.sendMessage("ï¿½cEs gab ein Fehler beim abfragen bei der Datenbank (SQL Fehler).");
 				break;
 			case NOTFOUND_CAT:
 				p.sendMessage(Translator.translate("click.notfoundcat"));
@@ -2089,7 +2079,7 @@ public class MarketHandler implements Listener {
 				p.closeInventory();
 				this.removeFromAll(p);
 				p.sendMessage(Translator.translate("dev.error"));
-				p.sendMessage("§cError Code: " + Utils.addToFix(e1));
+				p.sendMessage("ï¿½cError Code: " + Utils.addToFix(e1));
 				break;
 			default:
 				break;
@@ -2103,16 +2093,16 @@ public class MarketHandler implements Listener {
 			p.closeInventory();
 			this.removeFromAll(p);
 			p.sendMessage(Translator.translate("dev.error"));
-			p.sendMessage("§cError Code: " + Utils.addToFix(e1));
+			p.sendMessage("ï¿½cError Code: " + Utils.addToFix(e1));
 		}
 	}
 
 	private void openAdminShopInv(String menu, Player p) {
 		if (menu.equalsIgnoreCase("AddCat")) {
 			CategoryInfos cat = creatingCat.get(p);
-			Inventory inv1 = Bukkit.createInventory(null, 54, "§0§lA§3§lP§r§8Buy - AdminShop");
+			Inventory inv1 = Bukkit.createInventory(null, 54, "ï¿½0ï¿½lAï¿½3ï¿½lPï¿½rï¿½8Buy - AdminShop");
 			for (int i = 0; i < 54; i++) {
-				inv1.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
+				inv1.setItem(i, new AIS("ï¿½a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
 			}
 			boolean hasItem = false;
 			for (ItemStack stack : p.getInventory().getContents()) {
@@ -2172,30 +2162,30 @@ public class MarketHandler implements Listener {
 			}
 			MarketItem mis = creatingIS.get(p);
 			creatingIS.remove(p);
-			Inventory AddInv = Bukkit.createInventory(null, 54, "§0§lA§3§lP§r§8Buy - AdminShop");
+			Inventory AddInv = Bukkit.createInventory(null, 54, "ï¿½0ï¿½lAï¿½3ï¿½lPï¿½rï¿½8Buy - AdminShop");
 			for (int i = 0; i < 54; i++) {
-				AddInv.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
+				AddInv.setItem(i, new AIS("ï¿½a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
 			}
 			AddInv.setItem(40, mis.getIs() == null
 					? new AIS(Translator.translate("menu.inv.items.noitem.title"), 1, Material.CHEST).addLineToLore("")
 							.addLineToLore(Translator.translate("menu.inv.items.noitem.desc")).toIS()
 					: mis.getIs());
-			AddInv.setItem(10, new AIS("§c-1000$", 1, (short) 14, Material.STAINED_GLASS_PANE).toIS());
-			AddInv.setItem(11, new AIS("§c-100$", 1, (short) 1, Material.STAINED_GLASS_PANE).toIS());
-			AddInv.setItem(12, new AIS("§e-10$", 1, (short) 1, Material.STAINED_GLASS_PANE).toIS());
+			AddInv.setItem(10, new AIS("ï¿½c-1000$", 1, (short) 14, Material.STAINED_GLASS_PANE).toIS());
+			AddInv.setItem(11, new AIS("ï¿½c-100$", 1, (short) 1, Material.STAINED_GLASS_PANE).toIS());
+			AddInv.setItem(12, new AIS("ï¿½e-10$", 1, (short) 1, Material.STAINED_GLASS_PANE).toIS());
 			AddInv.setItem(13, new AIS(Translator.translate("menu.inv.items.price") + ": " + mis.getPrice(), 1,
 					(mis.getIs() == null ? Material.CHEST : mis.getIs().getType())).toIS());
-			AddInv.setItem(14, new AIS("§a+10$", 1, (short) 5, Material.STAINED_GLASS_PANE).toIS());
-			AddInv.setItem(15, new AIS("§2+100$", 1, (short) 5, Material.STAINED_GLASS_PANE).toIS());
-			AddInv.setItem(16, new AIS("§2+1000$", 1, (short) 13, Material.STAINED_GLASS_PANE).toIS());
-			AddInv.setItem(19, new AIS("§c-64", 1, (short) 14, Material.STAINED_GLASS_PANE).toIS());
-			AddInv.setItem(20, new AIS("§c-16", 1, (short) 1, Material.STAINED_GLASS_PANE).toIS());
-			AddInv.setItem(21, new AIS("§e-1", 1, (short) 1, Material.STAINED_GLASS_PANE).toIS());
+			AddInv.setItem(14, new AIS("ï¿½a+10$", 1, (short) 5, Material.STAINED_GLASS_PANE).toIS());
+			AddInv.setItem(15, new AIS("ï¿½2+100$", 1, (short) 5, Material.STAINED_GLASS_PANE).toIS());
+			AddInv.setItem(16, new AIS("ï¿½2+1000$", 1, (short) 13, Material.STAINED_GLASS_PANE).toIS());
+			AddInv.setItem(19, new AIS("ï¿½c-64", 1, (short) 14, Material.STAINED_GLASS_PANE).toIS());
+			AddInv.setItem(20, new AIS("ï¿½c-16", 1, (short) 1, Material.STAINED_GLASS_PANE).toIS());
+			AddInv.setItem(21, new AIS("ï¿½e-1", 1, (short) 1, Material.STAINED_GLASS_PANE).toIS());
 			AddInv.setItem(22, new AIS(Translator.translate("menu.inv.items.ppersell") + ": " + mis.getSellAmmount(), 1,
 					(mis.getIs() == null ? Material.CHEST : mis.getIs().getType())).toIS());
-			AddInv.setItem(23, new AIS("§a+1", 1, (short) 5, Material.STAINED_GLASS_PANE).toIS());
-			AddInv.setItem(24, new AIS("§2+16", 1, (short) 5, Material.STAINED_GLASS_PANE).toIS());
-			AddInv.setItem(25, new AIS("§2+64", 1, (short) 13, Material.STAINED_GLASS_PANE).toIS());
+			AddInv.setItem(23, new AIS("ï¿½a+1", 1, (short) 5, Material.STAINED_GLASS_PANE).toIS());
+			AddInv.setItem(24, new AIS("ï¿½2+16", 1, (short) 5, Material.STAINED_GLASS_PANE).toIS());
+			AddInv.setItem(25, new AIS("ï¿½2+64", 1, (short) 13, Material.STAINED_GLASS_PANE).toIS());
 			AddInv.setItem(29,
 					new AIS(Translator.translate("menu.inv.items.info.title"), 1, (short) 2, Material.INK_SACK)
 							.addToLore(Utils
@@ -2223,9 +2213,9 @@ public class MarketHandler implements Listener {
 			switch (s.split(":")[0]) {
 			case "Main":
 				if (APBuy.hasPlayerModPerms(p)) {
-					Inventory MVMainInv = Bukkit.createInventory(null, 54, "§0§lA§3§lP§r§8Buy - Markets");
+					Inventory MVMainInv = Bukkit.createInventory(null, 54, "ï¿½0ï¿½lAï¿½3ï¿½lPï¿½rï¿½8Buy - Markets");
 					for (int i = 0; i < 54; i++) {
-						MVMainInv.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
+						MVMainInv.setItem(i, new AIS("ï¿½a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
 					}
 					MVMainInv.setItem(10,
 							new AIS(Translator.translate("menu.inv.marketv.main.marketsee"), 1, Material.CHEST).toIS());
@@ -2350,9 +2340,9 @@ public class MarketHandler implements Listener {
 
 					onMarketVisualiser.put(p, new String[] { "Main", m.getMarketOwner() });
 				} else {
-					Inventory MVMainInv = Bukkit.createInventory(null, 27, "§0§lA§3§lP§r§8Buy - Markets");
+					Inventory MVMainInv = Bukkit.createInventory(null, 27, "ï¿½0ï¿½lAï¿½3ï¿½lPï¿½rï¿½8Buy - Markets");
 					for (int i = 0; i < 27; i++) {
-						MVMainInv.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
+						MVMainInv.setItem(i, new AIS("ï¿½a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
 					}
 					MVMainInv.setItem(10,
 							new AIS(Translator.translate("menu.inv.marketv.main.marketsee"), 1, Material.CHEST).toIS());
@@ -2374,18 +2364,18 @@ public class MarketHandler implements Listener {
 			case "Cats":
 				int page = PMLocPage.get(p);
 				Inventory catsInv = Bukkit.createInventory(null, 54, m.getMarketOwner().equals("AdminShop")
-						? "§0§lA§3§lP§r§8Buy - AdminShop" : "§0§lA§3§lP§r§8Buy - Markets");
+						? "ï¿½0ï¿½lAï¿½3ï¿½lPï¿½rï¿½8Buy - AdminShop" : "ï¿½0ï¿½lAï¿½3ï¿½lPï¿½rï¿½8Buy - Markets");
 				for (int i = 0; i < 54; i++) {
 					if ((10 <= i && i <= 16) || (19 <= i && i <= 25) || (28 <= i && i <= 34) || (37 <= i && i <= 43)
 							|| (i == 49)) {
 						continue;
 					}
-					catsInv.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
+					catsInv.setItem(i, new AIS("ï¿½a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
 				}
 				for (int i1 = 0; i1 < 4; i1++) {
 					for (int i2 = 0; i2 < 7; i2++) {
 						catsInv.setItem(10 + i1 * 9 + i2,
-								new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+								new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 					}
 				}
 				if (p.hasPermission("apb.mod.adminshop") && (m.getMarketOwner().equals("AdminShop"))) {
@@ -2436,7 +2426,7 @@ public class MarketHandler implements Listener {
 							if ((pages > 0) && (pages != PMLocPage.get(p))
 									&& (size - 28 * (PMLocPage.get(p) + 1) != 0)) {
 								catsInv.setItem(53, APBuy.tagger.setNBTTag("ToPage", PMLocPage.get(p) + 1, new AIS(
-										"§7" + Translator.translate("menu.page.next") + " " + (PMLocPage.get(p) + 1), 1,
+										"ï¿½7" + Translator.translate("menu.page.next") + " " + (PMLocPage.get(p) + 1), 1,
 										Material.PAPER).toIS()));
 							}
 							if (PMLocPage.get(p) > 0) {
@@ -2445,13 +2435,13 @@ public class MarketHandler implements Listener {
 												.setNBTTag("ToPage",
 														PMLocPage.get(p)
 																- 1,
-														new AIS("§7" + (PMLocPage.get(p) - 1) + " "
+														new AIS("ï¿½7" + (PMLocPage.get(p) - 1) + " "
 																+ Translator.translate("menu.page.previous"), 1,
 																Material.PAPER).toIS()));
 							}
 
 							if (catsInv.getItem(31).getType() == Material.PAPER) {
-								catsInv.setItem(31, new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+								catsInv.setItem(31, new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 							}
 							onMarketVisualiser.remove(p);
 							PMLocPage.remove(p);
@@ -2465,7 +2455,7 @@ public class MarketHandler implements Listener {
 							p.closeInventory();
 							APBuy.getMarketHandler().removeFromAll(p);
 							p.sendMessage(Translator.translate("dev.error"));
-							p.sendMessage("§cError Code: " + Utils.addToFix(e1));
+							p.sendMessage("ï¿½cError Code: " + Utils.addToFix(e1));
 						}
 					}
 				});
@@ -2474,18 +2464,18 @@ public class MarketHandler implements Listener {
 				int page1 = PMLocPage.get(p);
 				CategoryInfos cat = m.getCatInfosByName(s.replaceFirst("Cat:", ""));
 				Inventory catInv = Bukkit.createInventory(null, 54, m.getMarketOwner().equalsIgnoreCase("AdminShop")
-						? "§0§lA§3§lP§r§8Buy - AdminShop" : "§0§lA§3§lP§r§8Buy - Markets");
+						? "ï¿½0ï¿½lAï¿½3ï¿½lPï¿½rï¿½8Buy - AdminShop" : "ï¿½0ï¿½lAï¿½3ï¿½lPï¿½rï¿½8Buy - Markets");
 				for (int i = 0; i < 54; i++) {
 					if ((10 <= i && i <= 16) || (19 <= i && i <= 25) || (28 <= i && i <= 34) || (37 <= i && i <= 43)
 							|| (i == 49)) {
 						continue;
 					}
-					catInv.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
+					catInv.setItem(i, new AIS("ï¿½a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
 				}
 				for (int i1 = 0; i1 < 4; i1++) {
 					for (int i2 = 0; i2 < 7; i2++) {
 						catInv.setItem(10 + i1 * 9 + i2,
-								new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+								new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 					}
 				}
 				if (p.hasPermission("apb.mod.adminshop") && m.getMarketOwner().equals("AdminShop")) {
@@ -2542,7 +2532,7 @@ public class MarketHandler implements Listener {
 							if ((pages > 0) && (pages != PMLocPage.get(p))
 									&& (size - 28 * (PMLocPage.get(p) + 1) != 0)) {
 								catInv.setItem(53, APBuy.tagger.setNBTTag("ToPage", PMLocPage.get(p) + 1, new AIS(
-										"§7" + Translator.translate("menu.page.next") + " " + (PMLocPage.get(p) + 1), 1,
+										"ï¿½7" + Translator.translate("menu.page.next") + " " + (PMLocPage.get(p) + 1), 1,
 										Material.PAPER).toIS()));
 							}
 							if (PMLocPage.get(p) > 0) {
@@ -2551,13 +2541,13 @@ public class MarketHandler implements Listener {
 												.setNBTTag("ToPage",
 														PMLocPage.get(p)
 																- 1,
-														new AIS("§7" + (PMLocPage.get(p) - 1) + " "
+														new AIS("ï¿½7" + (PMLocPage.get(p) - 1) + " "
 																+ Translator.translate("menu.page.previous"), 1,
 																Material.PAPER).toIS()));
 							}
 
 							if (catInv.getItem(31).getType() == Material.PAPER) {
-								catInv.setItem(31, new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+								catInv.setItem(31, new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 							}
 							p.openInventory(catInv);
 							onMarketVisualiser.put(p, new String[] { "Cat:" + cat.getName(), m.getMarketOwner() });
@@ -2568,25 +2558,25 @@ public class MarketHandler implements Listener {
 							p.closeInventory();
 							APBuy.getMarketHandler().removeFromAll(p);
 							p.sendMessage(Translator.translate("dev.error"));
-							p.sendMessage("§cError Code: " + Utils.addToFix(e1));
+							p.sendMessage("ï¿½cError Code: " + Utils.addToFix(e1));
 						}
 					}
 				});
 				break;
 			case "InvisSee":
 				int page11 = PMLocPage.get(p);
-				Inventory invInvisSee = Bukkit.createInventory(null, 54, "§0§lA§3§lP§r§8Buy - Markets");
+				Inventory invInvisSee = Bukkit.createInventory(null, 54, "ï¿½0ï¿½lAï¿½3ï¿½lPï¿½rï¿½8Buy - Markets");
 				for (int i = 0; i < 54; i++) {
 					if ((10 <= i && i <= 16) || (19 <= i && i <= 25) || (28 <= i && i <= 34) || (37 <= i && i <= 43)
 							|| (i == 49)) {
 						continue;
 					}
-					invInvisSee.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
+					invInvisSee.setItem(i, new AIS("ï¿½a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
 				}
 				for (int i1 = 0; i1 < 4; i1++) {
 					for (int i2 = 0; i2 < 7; i2++) {
 						invInvisSee.setItem(10 + i1 * 9 + i2,
-								new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+								new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 					}
 				}
 				invInvisSee.setItem(31, new AIS(Translator.translate("menu.openerror1"), 1, Material.PAPER)
@@ -2634,7 +2624,7 @@ public class MarketHandler implements Listener {
 										.setItem(53,
 												APBuy.tagger
 														.setNBTTag("ToPage", PMLocPage.get(p) + 1,
-																new AIS("§7" + Translator.translate("menu.page.next")
+																new AIS("ï¿½7" + Translator.translate("menu.page.next")
 																		+ " " + (PMLocPage.get(p) + 1), 1,
 																		Material.PAPER).toIS()));
 							}
@@ -2644,7 +2634,7 @@ public class MarketHandler implements Listener {
 												APBuy.tagger
 														.setNBTTag("ToPage",
 																PMLocPage.get(p) - 1, new AIS(
-																		"§7" + (PMLocPage.get(p) - 1) + " "
+																		"ï¿½7" + (PMLocPage.get(p) - 1) + " "
 																				+ Translator.translate(
 																						"menu.page.previous"),
 																		1, Material.PAPER).toIS()));
@@ -2652,7 +2642,7 @@ public class MarketHandler implements Listener {
 
 							if (invInvisSee.getItem(31).getType() == Material.PAPER) {
 								invInvisSee.setItem(31,
-										new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+										new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 							}
 							p.openInventory(invInvisSee);
 							onMarketVisualiser.put(p, new String[] { "InvisSee",
@@ -2664,7 +2654,7 @@ public class MarketHandler implements Listener {
 							p.closeInventory();
 							APBuy.getMarketHandler().removeFromAll(p);
 							p.sendMessage(Translator.translate("dev.error"));
-							p.sendMessage("§cError Code: " + Utils.addToFix(e1));
+							p.sendMessage("ï¿½cError Code: " + Utils.addToFix(e1));
 						}
 					}
 				});
@@ -2675,7 +2665,7 @@ public class MarketHandler implements Listener {
 			System.out.println("Player: " + p.getName() + " (" + p.getUniqueId().toString() + ")");
 			this.removeFromAll(p);
 			p.sendMessage(Translator.translate("dev.error"));
-			p.sendMessage("§cError Code: " + Utils.addToFix(e1));
+			p.sendMessage("ï¿½cError Code: " + Utils.addToFix(e1));
 		}
 	}
 

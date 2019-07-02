@@ -1,13 +1,12 @@
 package ap.apb.apbuy.itoomel;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
-
+import ap.apb.AIS;
+import ap.apb.APBuy;
+import ap.apb.APBuyException;
+import ap.apb.Utils;
+import ap.apb.apbuy.BuyManager;
+import ap.apb.apbuy.markets.Market;
+import ap.apb.apbuy.markets.MarketItem;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -17,13 +16,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import ap.apb.AIS;
-import ap.apb.APBuy;
-import ap.apb.APBuyException;
-import ap.apb.Utils;
-import ap.apb.apbuy.BuyManager;
-import ap.apb.apbuy.markets.Market;
-import ap.apb.apbuy.markets.MarketItem;
+import java.util.*;
 
 public class ItoomelPrime implements Listener {
 
@@ -60,7 +53,7 @@ public class ItoomelPrime implements Listener {
 									ItoomelPrime.openItoomel("CatSelect", p, e.getCurrentItem().getType(), 0);
 								}
 							} else if (i == 0) {
-								p.sendMessage("§cHmm keine Items drin gefunden, vllt wurde alles gekauft...");
+								p.sendMessage("ï¿½cHmm keine Items drin gefunden, vllt wurde alles gekauft...");
 							} else {
 								APBuy.getMarketHandler().PMLocPage.put(p, 0);
 								ItoomelPrime.openItoomel("CatSelect", p, e.getCurrentItem().getType(), 0);
@@ -209,17 +202,17 @@ public class ItoomelPrime implements Listener {
 		} catch (APBuyException e1) {
 			switch (e1.getErrorCause()) {
 			case NOTFOUND_CAT:
-				p.sendMessage("§cDieser Kategorie wurde nicht gefunden! (Error)");
+				p.sendMessage("ï¿½cDieser Kategorie wurde nicht gefunden! (Error)");
 				APBuy.getMarketHandler().removeFromAll(p);
 				p.closeInventory();
 			case NOTFOUND_MARKET:
-				p.sendMessage("§cDieser Market wurde nicht gefunden! (Error)");
+				p.sendMessage("ï¿½cDieser Market wurde nicht gefunden! (Error)");
 				APBuy.getMarketHandler().removeFromAll(p);
 				p.closeInventory();
 				APBuy.getMarketHandler().openInvToP("Markets", p);
 				return;
 			case SQL:
-				p.sendMessage("§cEs gab ein Fehler bei der DatenBank (SQL Fehler)");
+				p.sendMessage("ï¿½cEs gab ein Fehler bei der DatenBank (SQL Fehler)");
 				Utils.addToFix(e1);
 				APBuy.getMarketHandler().removeFromAll(p);
 				p.closeInventory();
@@ -230,8 +223,8 @@ public class ItoomelPrime implements Listener {
 				System.out.println("Slot: " + e.getSlot());
 				p.closeInventory();
 				APBuy.getMarketHandler().removeFromAll(p);
-				p.sendMessage("§cEin Fehler ist aufgetreten, bitte kontaktiere einen Dev.");
-				p.sendMessage("§c Das hier dem Dev sagen : " + Utils.addToFix(e1));
+				p.sendMessage("ï¿½cEin Fehler ist aufgetreten, bitte kontaktiere einen Dev.");
+				p.sendMessage("ï¿½c Das hier dem Dev sagen : " + Utils.addToFix(e1));
 				break;
 			}
 			APBuy.getMarketHandler().removeFromAll(p);
@@ -242,8 +235,8 @@ public class ItoomelPrime implements Listener {
 			System.out.println("Slot: " + e.getSlot());
 			p.closeInventory();
 			APBuy.getMarketHandler().removeFromAll(p);
-			p.sendMessage("§cEin Fehler ist aufgetreten, bitte kontaktiere einen Dev.");
-			p.sendMessage("§c Das hier dem Dev sagen : " + Utils.addToFix(e1));
+			p.sendMessage("ï¿½cEin Fehler ist aufgetreten, bitte kontaktiere einen Dev.");
+			p.sendMessage("ï¿½c Das hier dem Dev sagen : " + Utils.addToFix(e1));
 		}
 	}
 
@@ -257,27 +250,27 @@ public class ItoomelPrime implements Listener {
 			System.out.println("Page: " + page);
 			p.closeInventory();
 			APBuy.getMarketHandler().removeFromAll(p);
-			p.sendMessage("§cEin Fehler ist aufgetreten, bitte kontaktiere einen Dev.");
-			p.sendMessage("§c Das hier dem Dev sagen : " + Utils.addToFix(e1));
+			p.sendMessage("ï¿½cEin Fehler ist aufgetreten, bitte kontaktiere einen Dev.");
+			p.sendMessage("ï¿½c Das hier dem Dev sagen : " + Utils.addToFix(e1));
 		}
 	}
 
 	public static void openItoomel(String menu, Player p, Material type, int page, int mode) throws APBuyException {
 		if ((menu == "Main") && ((type == Material.AIR) || type == null)) {
 			ItoomelPrime.onItoomel.remove(p);
-			Inventory MainInv = Bukkit.createInventory(null, 54, "§0§lA§3§lP§r§8Buy - Itoomel");
+			Inventory MainInv = Bukkit.createInventory(null, 54, "ï¿½0ï¿½lAï¿½3ï¿½lPï¿½rï¿½8Buy - Itoomel");
 			for (int i = 0; i < 54; i++) {
 				if ((10 <= i && i <= 16) || (19 <= i && i <= 25) || (28 <= i && i <= 34) || (37 <= i && i <= 43)) {
 					continue;
 				}
-				MainInv.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
+				MainInv.setItem(i, new AIS("ï¿½a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
 			}
 			for (int i1 = 0; i1 < 4; i1++) {
 				for (int i2 = 0; i2 < 7; i2++) {
-					MainInv.setItem(10 + i1 * 9 + i2, new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+					MainInv.setItem(10 + i1 * 9 + i2, new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 				}
 			}
-			MainInv.setItem(31, new AIS("§4Loading.. dont touch something.", 1, Material.PAPER).toIS());
+			MainInv.setItem(31, new AIS("ï¿½4Loading.. dont touch something.", 1, Material.PAPER).toIS());
 			p.openInventory(MainInv);
 			ItoomelPrime.onItoomel.put(p, new Object[] { "Main", Material.AIR, mode });
 			Bukkit.getScheduler().runTask(APBuy.plugin, new Runnable() {
@@ -308,13 +301,13 @@ public class ItoomelPrime implements Listener {
 											new AIS(new ItemStack(allMats.get(count).getCatMat()).clone())
 													.addLineToLore("")
 													.addToLore(Utils.createListFromStringToWidth(
-															"§7" + allMats.get(count).getDescription(), 40))
+															"ï¿½7" + allMats.get(count).getDescription(), 40))
 													.addLineToLore("")
-													.addLineToLore("§7Total Items: "
+													.addLineToLore("ï¿½7Total Items: "
 															+ ItoomelPrime.getTotalItems(allMats.get(count)))
-													.addLineToLore("§7Total Markets: "
+													.addLineToLore("ï¿½7Total Markets: "
 															+ ItoomelPrime.getTotalMarkets(allMats.get(count)))
-													.addLineToLore("§7Sold Items: "
+													.addLineToLore("ï¿½7Sold Items: "
 															+ ItoomelPrime.getTotalSoldItems(allMats.get(count)))
 													.setName(allMats.get(count).getName()).toIS()));
 									count++;
@@ -327,15 +320,15 @@ public class ItoomelPrime implements Listener {
 
 						if ((pages > 0) && (pages != page) && (size - 28 * (page + 1) != 0)) {
 							MainInv.setItem(53, APBuy.tagger.setNBTTag("ToPage", page + 1,
-									new AIS("§7Next page --> " + (page + 1), 1, Material.PAPER).toIS()));
+									new AIS("ï¿½7Next page --> " + (page + 1), 1, Material.PAPER).toIS()));
 						}
 						if (page > 0) {
 							MainInv.setItem(45, APBuy.tagger.setNBTTag("ToPage", page - 1,
-									new AIS("§7" + (page - 1) + " <-- Previous page", 1, Material.PAPER).toIS()));
+									new AIS("ï¿½7" + (page - 1) + " <-- Previous page", 1, Material.PAPER).toIS()));
 						}
 
 						if (MainInv.getItem(31).getType() == Material.PAPER) {
-							MainInv.setItem(31, new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+							MainInv.setItem(31, new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 						}
 						p.openInventory(MainInv);
 						ItoomelPrime.onItoomel.remove(p);
@@ -347,8 +340,8 @@ public class ItoomelPrime implements Listener {
 						System.out.println("Menu: " + menu);
 						p.closeInventory();
 						APBuy.getMarketHandler().removeFromAll(p);
-						p.sendMessage("§cEin Fehler ist aufgetreten, bitte kontaktiere einen Dev.");
-						p.sendMessage("§c Das hier dem Dev sagen : " + Utils.addToFix(e1));
+						p.sendMessage("ï¿½cEin Fehler ist aufgetreten, bitte kontaktiere einen Dev.");
+						p.sendMessage("ï¿½c Das hier dem Dev sagen : " + Utils.addToFix(e1));
 					}
 				}
 			});
@@ -356,23 +349,23 @@ public class ItoomelPrime implements Listener {
 
 			ItoomelPrime.onItoomel.remove(p);
 			ItoomelPrime.onItoomel.put(p, new Object[] { "Main", type });
-			Inventory MainInv = Bukkit.createInventory(null, 54, "§0§lA§3§lP§r§8Buy - Itoomel");
+			Inventory MainInv = Bukkit.createInventory(null, 54, "ï¿½0ï¿½lAï¿½3ï¿½lPï¿½rï¿½8Buy - Itoomel");
 			for (int i = 0; i < 54; i++) {
 				if ((10 <= i && i <= 16) || (19 <= i && i <= 25) || (28 <= i && i <= 34) || (37 <= i && i <= 43)) {
 					continue;
 				}
-				MainInv.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
+				MainInv.setItem(i, new AIS("ï¿½a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
 			}
 			for (int i1 = 0; i1 < 4; i1++) {
 				for (int i2 = 0; i2 < 7; i2++) {
-					MainInv.setItem(10 + i1 * 9 + i2, new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+					MainInv.setItem(10 + i1 * 9 + i2, new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 				}
 			}
 
 			// - Back Button 49
-			MainInv.setItem(49, new AIS("§7<-- Back", 1, Material.BARRIER).toIS());
+			MainInv.setItem(49, new AIS("ï¿½7<-- Back", 1, Material.BARRIER).toIS());
 
-			MainInv.setItem(31, new AIS("§4Loading.. dont touch something.", 1, Material.PAPER).toIS());
+			MainInv.setItem(31, new AIS("ï¿½4Loading.. dont touch something.", 1, Material.PAPER).toIS());
 			p.openInventory(MainInv);
 			ItoomelPrime.onItoomel.remove(p);
 			ItoomelPrime.onItoomel.put(p, new Object[] { "Main", type });
@@ -382,14 +375,14 @@ public class ItoomelPrime implements Listener {
 				public void run() {
 					try {
 						// - Back Button 49
-						MainInv.setItem(49, new AIS("§7<-- Back", 1, Material.BARRIER).toIS());
+						MainInv.setItem(49, new AIS("ï¿½7<-- Back", 1, Material.BARRIER).toIS());
 
 						MainInv.setItem(4, new ItemStack(type).clone());
 						// - Getting all Markets to display
 						if (ItoomelPrime.itoomelStandard.get(type) == null) {
 							p.closeInventory();
 							openItoomel("Main", p, null, page);
-							p.sendMessage("§cDieses Item ist nicht mehr auf dem Markt! :/");
+							p.sendMessage("ï¿½cDieses Item ist nicht mehr auf dem Markt! :/");
 							return;
 						}
 						List<String> allMarket = getMarketsUUIDsInItoomelByType(type);
@@ -418,7 +411,7 @@ public class ItoomelPrime implements Listener {
 									MainInv.setItem(10 + i1 * 9 + i2,
 											APBuy.tagger.setNBTTag("Market", allMarket.get(count),
 													m.getMarkeAIS().addLineToLore("")
-															.addLineToLore("§7Items: " + m.getAmmountOfMaterial(type))
+															.addLineToLore("ï¿½7Items: " + m.getAmmountOfMaterial(type))
 															.toIS()));
 									count++;
 								}
@@ -430,15 +423,15 @@ public class ItoomelPrime implements Listener {
 
 						if ((pages > 0) && (pages != page) && (size - 28 * (page + 1) != 0)) {
 							MainInv.setItem(53, APBuy.tagger.setNBTTag("ToPage", page + 1,
-									new AIS("§7Next page --> " + (page + 1), 1, Material.PAPER).toIS()));
+									new AIS("ï¿½7Next page --> " + (page + 1), 1, Material.PAPER).toIS()));
 						}
 						if (page > 0) {
 							MainInv.setItem(45, APBuy.tagger.setNBTTag("ToPage", page - 1,
-									new AIS("§7" + (page - 1) + " <-- Previous page", 1, Material.PAPER).toIS()));
+									new AIS("ï¿½7" + (page - 1) + " <-- Previous page", 1, Material.PAPER).toIS()));
 						}
 
 						if (MainInv.getItem(31).getType() == Material.PAPER) {
-							MainInv.setItem(31, new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+							MainInv.setItem(31, new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 						}
 						p.openInventory(MainInv);
 						ItoomelPrime.onItoomel.remove(p);
@@ -450,28 +443,28 @@ public class ItoomelPrime implements Listener {
 						System.out.println("Menu: " + menu);
 						p.closeInventory();
 						APBuy.getMarketHandler().removeFromAll(p);
-						p.sendMessage("§cEin Fehler ist aufgetreten, bitte kontaktiere einen Dev.");
-						p.sendMessage("§c Das hier dem Dev sagen : " + Utils.addToFix(e1));
+						p.sendMessage("ï¿½cEin Fehler ist aufgetreten, bitte kontaktiere einen Dev.");
+						p.sendMessage("ï¿½c Das hier dem Dev sagen : " + Utils.addToFix(e1));
 					}
 				}
 			});
 		} else if (menu.startsWith("Market:")) {
 			ItoomelPrime.onItoomel.remove(p);
 			ItoomelPrime.onItoomel.put(p, new Object[] { menu, type });
-			Inventory MainInv = Bukkit.createInventory(null, 54, "§0§lA§3§lP§r§8Buy - Itoomel");
+			Inventory MainInv = Bukkit.createInventory(null, 54, "ï¿½0ï¿½lAï¿½3ï¿½lPï¿½rï¿½8Buy - Itoomel");
 
 			for (int i = 0; i < 54; i++) {
 				if ((10 <= i && i <= 16) || (19 <= i && i <= 25) || (28 <= i && i <= 34) || (37 <= i && i <= 43)) {
 					continue;
 				}
-				MainInv.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
+				MainInv.setItem(i, new AIS("ï¿½a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
 			}
 			for (int i1 = 0; i1 < 4; i1++) {
 				for (int i2 = 0; i2 < 7; i2++) {
-					MainInv.setItem(10 + i1 * 9 + i2, new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+					MainInv.setItem(10 + i1 * 9 + i2, new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 				}
 			}
-			MainInv.setItem(31, new AIS("§4Loading.. dont touch something.", 1, Material.PAPER).toIS());
+			MainInv.setItem(31, new AIS("ï¿½4Loading.. dont touch something.", 1, Material.PAPER).toIS());
 			p.openInventory(MainInv);
 			ItoomelPrime.onItoomel.remove(p);
 			ItoomelPrime.onItoomel.put(p, new Object[] { menu, type });
@@ -481,7 +474,7 @@ public class ItoomelPrime implements Listener {
 				public void run() {
 					try {
 						// - Back Button 49
-						MainInv.setItem(49, new AIS("§7<-- Back", 1, Material.BARRIER).toIS());
+						MainInv.setItem(49, new AIS("ï¿½7<-- Back", 1, Material.BARRIER).toIS());
 
 						// - Getting all Markets to display
 						MainInv.setItem(4, new ItemStack(type).clone());
@@ -491,7 +484,7 @@ public class ItoomelPrime implements Listener {
 							p.closeInventory();
 							openItoomel("search", p, type, page);
 							p.sendMessage(
-									"§cDieses Market hat keine zukaufende Items mehr... Suche dir einen anderen aus :/");
+									"ï¿½cDieses Market hat keine zukaufende Items mehr... Suche dir einen anderen aus :/");
 							return;
 						}
 						int size = allMarket.size();
@@ -505,9 +498,9 @@ public class ItoomelPrime implements Listener {
 									}
 									List<String> lore = new ArrayList<>();
 									lore.add("");
-									lore.add("§7Preis: " + allMarket.get(count).getPrice() + "$");
-									lore.add("§7Auf Lager: " + allMarket.get(count).getAmmount());
-									lore.add("§7Verkauft: " + allMarket.get(count).getSoldItems());
+									lore.add("ï¿½7Preis: " + allMarket.get(count).getPrice() + "$");
+									lore.add("ï¿½7Auf Lager: " + allMarket.get(count).getAmmount());
+									lore.add("ï¿½7Verkauft: " + allMarket.get(count).getSoldItems());
 									MainInv.setItem(10 + i1 * 9 + i2, APBuy.tagger.setNBTTag("ToBuy", count,
 											new AIS(allMarket.get(count).getIs().clone()).addToLore(lore).toIS()));
 									count++;
@@ -520,15 +513,15 @@ public class ItoomelPrime implements Listener {
 
 						if ((pages > 0) && (pages != page) && (size - 28 * (page + 1) != 0)) {
 							MainInv.setItem(53, APBuy.tagger.setNBTTag("ToPage", page + 1,
-									new AIS("§7Next page --> " + (page + 1), 1, Material.PAPER).toIS()));
+									new AIS("ï¿½7Next page --> " + (page + 1), 1, Material.PAPER).toIS()));
 						}
 						if (page > 0) {
 							MainInv.setItem(45, APBuy.tagger.setNBTTag("ToPage", page - 1,
-									new AIS("§7" + (page - 1) + " <-- Previous page", 1, Material.PAPER).toIS()));
+									new AIS("ï¿½7" + (page - 1) + " <-- Previous page", 1, Material.PAPER).toIS()));
 						}
 
 						if (MainInv.getItem(31).getType() == Material.PAPER) {
-							MainInv.setItem(31, new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+							MainInv.setItem(31, new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 						}
 						p.openInventory(MainInv);
 						ItoomelPrime.onItoomel.remove(p);
@@ -539,8 +532,8 @@ public class ItoomelPrime implements Listener {
 						System.out.println("Player: " + p.getName() + " (" + p.getUniqueId().toString() + ")");
 						System.out.println("Menu: " + menu);
 						APBuy.getMarketHandler().removeFromAll(p);
-						p.sendMessage("§cEin Fehler ist aufgetreten, bitte kontaktiere einen Dev.");
-						p.sendMessage("§c Das hier dem Dev sagen : " + Utils.addToFix(e1));
+						p.sendMessage("ï¿½cEin Fehler ist aufgetreten, bitte kontaktiere einen Dev.");
+						p.sendMessage("ï¿½c Das hier dem Dev sagen : " + Utils.addToFix(e1));
 					}
 				}
 
@@ -548,20 +541,20 @@ public class ItoomelPrime implements Listener {
 		} else if (menu.startsWith("SubMarket:")) {
 			ItoomelPrime.onItoomel.remove(p);
 			ItoomelPrime.onItoomel.put(p, new Object[] { menu, type });
-			Inventory MainInv = Bukkit.createInventory(null, 54, "§0§lA§3§lP§r§8Buy - Itoomel");
+			Inventory MainInv = Bukkit.createInventory(null, 54, "ï¿½0ï¿½lAï¿½3ï¿½lPï¿½rï¿½8Buy - Itoomel");
 
 			for (int i = 0; i < 54; i++) {
 				if ((10 <= i && i <= 16) || (19 <= i && i <= 25) || (28 <= i && i <= 34) || (37 <= i && i <= 43)) {
 					continue;
 				}
-				MainInv.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
+				MainInv.setItem(i, new AIS("ï¿½a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
 			}
 			for (int i1 = 0; i1 < 4; i1++) {
 				for (int i2 = 0; i2 < 7; i2++) {
-					MainInv.setItem(10 + i1 * 9 + i2, new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+					MainInv.setItem(10 + i1 * 9 + i2, new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 				}
 			}
-			MainInv.setItem(31, new AIS("§4Loading.. dont touch something.", 1, Material.PAPER).toIS());
+			MainInv.setItem(31, new AIS("ï¿½4Loading.. dont touch something.", 1, Material.PAPER).toIS());
 			p.openInventory(MainInv);
 			ItoomelPrime.onItoomel.remove(p);
 			ItoomelPrime.onItoomel.put(p, new Object[] { menu, type });
@@ -571,7 +564,7 @@ public class ItoomelPrime implements Listener {
 				public void run() {
 					try {
 						// - Back Button 49
-						MainInv.setItem(49, new AIS("§7<-- Back", 1, Material.BARRIER).toIS());
+						MainInv.setItem(49, new AIS("ï¿½7<-- Back", 1, Material.BARRIER).toIS());
 
 						// - Getting all Markets to display
 						MainInv.setItem(4, new AIS(new ItemStack(type).clone()).setDamage((short) mode).toIS());
@@ -582,7 +575,7 @@ public class ItoomelPrime implements Listener {
 							p.closeInventory();
 							openItoomel("search", p, type, page);
 							p.sendMessage(
-									"§cDieses Market hat keine zukaufende Items mehr... Suche dir einen anderen aus :/");
+									"ï¿½cDieses Market hat keine zukaufende Items mehr... Suche dir einen anderen aus :/");
 							return;
 						}
 						int size = allMarket.size();
@@ -596,9 +589,9 @@ public class ItoomelPrime implements Listener {
 									}
 									List<String> lore = new ArrayList<>();
 									lore.add("");
-									lore.add("§7Preis: " + allMarket.get(count).getPrice() + "$");
-									lore.add("§7Auf Lager: " + allMarket.get(count).getAmmount());
-									lore.add("§7Verkauft: " + allMarket.get(count).getSoldItems());
+									lore.add("ï¿½7Preis: " + allMarket.get(count).getPrice() + "$");
+									lore.add("ï¿½7Auf Lager: " + allMarket.get(count).getAmmount());
+									lore.add("ï¿½7Verkauft: " + allMarket.get(count).getSoldItems());
 									MainInv.setItem(10 + i1 * 9 + i2, APBuy.tagger.setNBTTag("ToBuy", count,
 											new AIS(allMarket.get(count).getIs().clone()).addToLore(lore).toIS()));
 									count++;
@@ -611,15 +604,15 @@ public class ItoomelPrime implements Listener {
 
 						if ((pages > 0) && (pages != page) && (size - 28 * (page + 1) != 0)) {
 							MainInv.setItem(53, APBuy.tagger.setNBTTag("ToPage", page + 1,
-									new AIS("§7Next page --> " + (page + 1), 1, Material.PAPER).toIS()));
+									new AIS("ï¿½7Next page --> " + (page + 1), 1, Material.PAPER).toIS()));
 						}
 						if (page > 0) {
 							MainInv.setItem(45, APBuy.tagger.setNBTTag("ToPage", page - 1,
-									new AIS("§7" + (page - 1) + " <-- Previous page", 1, Material.PAPER).toIS()));
+									new AIS("ï¿½7" + (page - 1) + " <-- Previous page", 1, Material.PAPER).toIS()));
 						}
 
 						if (MainInv.getItem(31).getType() == Material.PAPER) {
-							MainInv.setItem(31, new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+							MainInv.setItem(31, new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 						}
 						p.openInventory(MainInv);
 						ItoomelPrime.onItoomel.remove(p);
@@ -631,8 +624,8 @@ public class ItoomelPrime implements Listener {
 						System.out.println("Menu: " + menu);
 						p.closeInventory();
 						APBuy.getMarketHandler().removeFromAll(p);
-						p.sendMessage("§cEin Fehler ist aufgetreten, bitte kontaktiere einen Dev.");
-						p.sendMessage("§c Das hier dem Dev sagen : " + Utils.addToFix(e1));
+						p.sendMessage("ï¿½cEin Fehler ist aufgetreten, bitte kontaktiere einen Dev.");
+						p.sendMessage("ï¿½c Das hier dem Dev sagen : " + Utils.addToFix(e1));
 					}
 				}
 
@@ -640,27 +633,27 @@ public class ItoomelPrime implements Listener {
 		} else if (menu.equalsIgnoreCase("search")) {
 			if (!ItoomelPrime.itoomelStandard.containsKey(type)) {
 				p.sendMessage(
-						"§cItoomel hat keinen Item gefunden das deinen Type entspricht. (" + type.toString() + ")");
+						"ï¿½cItoomel hat keinen Item gefunden das deinen Type entspricht. (" + type.toString() + ")");
 				ItoomelPrime.onItoomel.remove(p);
 				APBuy.getMarketHandler().PMLocPage.remove(p);
 				return;
 			}
 			ItoomelPrime.onItoomel.remove(p);
 			ItoomelPrime.onItoomel.put(p, new Object[] { menu, type });
-			Inventory MainInv = Bukkit.createInventory(null, 54, "§0§lA§3§lP§r§8Buy - Itoomel");
+			Inventory MainInv = Bukkit.createInventory(null, 54, "ï¿½0ï¿½lAï¿½3ï¿½lPï¿½rï¿½8Buy - Itoomel");
 
 			for (int i = 0; i < 54; i++) {
 				if ((10 <= i && i <= 16) || (19 <= i && i <= 25) || (28 <= i && i <= 34) || (37 <= i && i <= 43)) {
 					continue;
 				}
-				MainInv.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
+				MainInv.setItem(i, new AIS("ï¿½a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
 			}
 			for (int i1 = 0; i1 < 4; i1++) {
 				for (int i2 = 0; i2 < 7; i2++) {
-					MainInv.setItem(10 + i1 * 9 + i2, new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+					MainInv.setItem(10 + i1 * 9 + i2, new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 				}
 			}
-			MainInv.setItem(31, new AIS("§4Loading.. dont touch something.", 1, Material.PAPER).toIS());
+			MainInv.setItem(31, new AIS("ï¿½4Loading.. dont touch something.", 1, Material.PAPER).toIS());
 			p.openInventory(MainInv);
 			ItoomelPrime.onItoomel.remove(p);
 			ItoomelPrime.onItoomel.put(p, new Object[] { menu, type });
@@ -670,7 +663,7 @@ public class ItoomelPrime implements Listener {
 				public void run() {
 					try {
 						// - Back Button 49
-						MainInv.setItem(49, new AIS("§7<-- Back", 1, Material.BARRIER).toIS());
+						MainInv.setItem(49, new AIS("ï¿½7<-- Back", 1, Material.BARRIER).toIS());
 
 						// - Getting all Markets to display
 						MainInv.setItem(4, new ItemStack(type).clone());
@@ -700,7 +693,7 @@ public class ItoomelPrime implements Listener {
 									MainInv.setItem(10 + i1 * 9 + i2,
 											APBuy.tagger.setNBTTag("Market", allMarket.get(count),
 													m.getMarkeAIS().addLineToLore("")
-															.addLineToLore("§7Items: " + m.getAmmountOfMaterial(type))
+															.addLineToLore("ï¿½7Items: " + m.getAmmountOfMaterial(type))
 															.toIS()));
 									count++;
 								}
@@ -712,17 +705,17 @@ public class ItoomelPrime implements Listener {
 
 						if ((pages > 0) && (pages != page) && (size - 28 * (page + 1) != 0)) {
 							MainInv.setItem(53, APBuy.tagger.setNBTTag("ToPage", page + 1,
-									new AIS("§7Next page --> " + (page + 1), 1, Material.PAPER).toIS()));
+									new AIS("ï¿½7Next page --> " + (page + 1), 1, Material.PAPER).toIS()));
 						}
 						if (page > 0) {
 							MainInv.setItem(45, APBuy.tagger.setNBTTag("ToPage", page - 1,
-									new AIS("§7" + (page - 1) + " <-- Previous page", 1, Material.PAPER).toIS()));
+									new AIS("ï¿½7" + (page - 1) + " <-- Previous page", 1, Material.PAPER).toIS()));
 						}
 
 						if (MainInv.getItem(31).getType() == Material.PAPER) {
 							if (MainInv.getItem(31).getItemMeta()
-									.getDisplayName() == "§4Loading.. dont touch something.") {
-								MainInv.setItem(31, new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+									.getDisplayName() == "ï¿½4Loading.. dont touch something.") {
+								MainInv.setItem(31, new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 							}
 						}
 						ItoomelPrime.onItoomel.remove(p);
@@ -735,27 +728,27 @@ public class ItoomelPrime implements Listener {
 						System.out.println("Menu: " + menu);
 						p.closeInventory();
 						APBuy.getMarketHandler().removeFromAll(p);
-						p.sendMessage("§cEin Fehler ist aufgetreten, bitte kontaktiere einen Dev.");
-						p.sendMessage("§c Das hier dem Dev sagen : " + Utils.addToFix(e1));
+						p.sendMessage("ï¿½cEin Fehler ist aufgetreten, bitte kontaktiere einen Dev.");
+						p.sendMessage("ï¿½c Das hier dem Dev sagen : " + Utils.addToFix(e1));
 					}
 				}
 			});
 		} else if (menu.equalsIgnoreCase("CatSelect") && (type != null) && (type != Material.AIR)) {
 			ItoomelPrime.onItoomel.put(p, new Object[] { "CatSelect", type });
-			Inventory MainInv = Bukkit.createInventory(null, 54, "§0§lA§3§lP§r§8Buy - Itoomel");
+			Inventory MainInv = Bukkit.createInventory(null, 54, "ï¿½0ï¿½lAï¿½3ï¿½lPï¿½rï¿½8Buy - Itoomel");
 
 			for (int i = 0; i < 54; i++) {
 				if ((10 <= i && i <= 16) || (19 <= i && i <= 25) || (28 <= i && i <= 34) || (37 <= i && i <= 43)) {
 					continue;
 				}
-				MainInv.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
+				MainInv.setItem(i, new AIS("ï¿½a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
 			}
 			for (int i1 = 0; i1 < 4; i1++) {
 				for (int i2 = 0; i2 < 7; i2++) {
-					MainInv.setItem(10 + i1 * 9 + i2, new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+					MainInv.setItem(10 + i1 * 9 + i2, new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 				}
 			}
-			MainInv.setItem(31, new AIS("§4Loading.. dont touch something.", 1, Material.PAPER).toIS());
+			MainInv.setItem(31, new AIS("ï¿½4Loading.. dont touch something.", 1, Material.PAPER).toIS());
 			p.openInventory(MainInv);
 			ItoomelPrime.onItoomel.put(p, new Object[] { "CatSelect", type });
 			Bukkit.getScheduler().runTask(APBuy.plugin, new Runnable() {
@@ -763,7 +756,7 @@ public class ItoomelPrime implements Listener {
 				public void run() {
 					try {
 						// - Back Button 49
-						MainInv.setItem(49, new AIS("§7<-- Back", 1, Material.BARRIER).toIS());
+						MainInv.setItem(49, new AIS("ï¿½7<-- Back", 1, Material.BARRIER).toIS());
 
 						// - Getting all Markets to display
 						MainInv.setItem(4, new ItemStack(type).clone());
@@ -793,21 +786,21 @@ public class ItoomelPrime implements Listener {
 														new AIS(new ItemStack(mats.get(count)).clone())
 																.addLineToLore("")
 																.addLineToLore(
-																		"§7Items: " + getTotalItems(mats.get(count)))
-																.addLineToLore("§7Verkaufte Items: "
+																		"ï¿½7Items: " + getTotalItems(mats.get(count)))
+																.addLineToLore("ï¿½7Verkaufte Items: "
 																		+ getTotalSoldItems(mats.get(count)))
-																.addLineToLore("§7Markets: "
+																.addLineToLore("ï¿½7Markets: "
 																		+ getTotalMarkets(mats.get(count)))
 																.setDamage(ss.get(count) == -1 ? 0 : ss.get(count))
 																.toIS())));
 									} else {
 										MainInv.setItem(10 + i1 * 9 + i2, APBuy.tagger.setNBTTag("ToSelect", count,
 												new AIS(new ItemStack(mats.get(count)).clone()).addLineToLore("")
-														.addLineToLore("§7Items: " + getTotalItemsSubID(icat,
+														.addLineToLore("ï¿½7Items: " + getTotalItemsSubID(icat,
 																mats.get(count), ss.get(count)))
-														.addLineToLore("§7Verkaufte Items: " + getTotalSoldItemsSubID(
+														.addLineToLore("ï¿½7Verkaufte Items: " + getTotalSoldItemsSubID(
 																icat, mats.get(count), ss.get(count)))
-														.addLineToLore("§7Markets: " + getTotalMarketsSubID(icat,
+														.addLineToLore("ï¿½7Markets: " + getTotalMarketsSubID(icat,
 																mats.get(count), ss.get(count)))
 														.setDamage(ss.get(count)).toIS()));
 									}
@@ -821,16 +814,16 @@ public class ItoomelPrime implements Listener {
 
 						if ((pages > 0) && (pages != page) && (size - 28 * (page + 1) != 0)) {
 							MainInv.setItem(53, APBuy.tagger.setNBTTag("ToPage", page + 1,
-									new AIS("§7Next page --> " + (page + 1), 1, Material.PAPER).toIS()));
+									new AIS("ï¿½7Next page --> " + (page + 1), 1, Material.PAPER).toIS()));
 						}
 
 						if (page > 0) {
 							MainInv.setItem(45, APBuy.tagger.setNBTTag("ToPage", page - 1,
-									new AIS("§7" + (page - 1) + " <-- Previous page", 1, Material.PAPER).toIS()));
+									new AIS("ï¿½7" + (page - 1) + " <-- Previous page", 1, Material.PAPER).toIS()));
 						}
 
 						if (MainInv.getItem(31).getType() == Material.PAPER) {
-							MainInv.setItem(31, new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+							MainInv.setItem(31, new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 						}
 						p.openInventory(MainInv);
 						ItoomelPrime.onItoomel.remove(p);
@@ -842,8 +835,8 @@ public class ItoomelPrime implements Listener {
 						System.out.println("Menu: " + menu);
 						p.closeInventory();
 						APBuy.getMarketHandler().removeFromAll(p);
-						p.sendMessage("§cEin Fehler ist aufgetreten, bitte kontaktiere einen Dev.");
-						p.sendMessage("§c Das hier dem Dev sagen : " + Utils.addToFix(e1));
+						p.sendMessage("ï¿½cEin Fehler ist aufgetreten, bitte kontaktiere einen Dev.");
+						p.sendMessage("ï¿½c Das hier dem Dev sagen : " + Utils.addToFix(e1));
 					}
 				}
 
@@ -876,31 +869,31 @@ public class ItoomelPrime implements Listener {
 		} else if (menu.contains("searchSubID:")) {
 			if (!ItoomelPrime.itoomelStandard.containsKey(type)) {
 				p.sendMessage(
-						"§cItoomel hat keinen Item gefunden das deinen Type entspricht. (" + type.toString() + ")");
+						"ï¿½cItoomel hat keinen Item gefunden das deinen Type entspricht. (" + type.toString() + ")");
 				ItoomelPrime.openItoomel("Main", p, type, 0);
 				return;
 			}
 			Short s = Short.valueOf(menu.replaceFirst("searchSubID:", ""));
 			if (!isSubIDInItoomel(type, s)) {
-				p.sendMessage("§cItoomel hat keinen Item gefunden das deinem SubID entspricht (" + s + ")");
+				p.sendMessage("ï¿½cItoomel hat keinen Item gefunden das deinem SubID entspricht (" + s + ")");
 				ItoomelPrime.openItoomel("CatSelect", p, type, 0);
 				return;
 			}
 			ItoomelPrime.onItoomel.put(p, new Object[] { menu, type });
-			Inventory MainInv = Bukkit.createInventory(null, 54, "§0§lA§3§lP§r§8Buy - Itoomel");
+			Inventory MainInv = Bukkit.createInventory(null, 54, "ï¿½0ï¿½lAï¿½3ï¿½lPï¿½rï¿½8Buy - Itoomel");
 
 			for (int i = 0; i < 54; i++) {
 				if ((10 <= i && i <= 16) || (19 <= i && i <= 25) || (28 <= i && i <= 34) || (37 <= i && i <= 43)) {
 					continue;
 				}
-				MainInv.setItem(i, new AIS("§a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
+				MainInv.setItem(i, new AIS("ï¿½a", 1, (short) 15, Material.STAINED_GLASS_PANE).toIS());
 			}
 			for (int i1 = 0; i1 < 4; i1++) {
 				for (int i2 = 0; i2 < 7; i2++) {
-					MainInv.setItem(10 + i1 * 9 + i2, new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+					MainInv.setItem(10 + i1 * 9 + i2, new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 				}
 			}
-			MainInv.setItem(31, new AIS("§4Loading.. dont touch something.", 1, Material.PAPER).toIS());
+			MainInv.setItem(31, new AIS("ï¿½4Loading.. dont touch something.", 1, Material.PAPER).toIS());
 			p.openInventory(MainInv);
 			ItoomelPrime.onItoomel.put(p, new Object[] { menu, type });
 			Bukkit.getScheduler().runTask(APBuy.plugin, new Runnable() {
@@ -909,7 +902,7 @@ public class ItoomelPrime implements Listener {
 				public void run() {
 					try {
 						// - Back Button 49
-						MainInv.setItem(49, new AIS("§7<-- Back", 1, Material.BARRIER).toIS());
+						MainInv.setItem(49, new AIS("ï¿½7<-- Back", 1, Material.BARRIER).toIS());
 
 						// - Getting all Markets to display
 						MainInv.setItem(4, new AIS(new ItemStack(type).clone()).setDamage(s).toIS());
@@ -939,7 +932,7 @@ public class ItoomelPrime implements Listener {
 											allMarket.get(count),
 											new AIS(new ItemStack(APBuy.getDatamaster().getDatabase()
 													.getMarketInfos(allMarket.get(count)).getMarketAIS().toIS())
-															.clone()).addLineToLore("").addLineToLore("§7Items: "
+															.clone()).addLineToLore("").addLineToLore("ï¿½7Items: "
 																	+ (new Market(allMarket.get(count), false)
 																			.getAmmountOfMaterialSubID(type, s)))
 																	.toIS()));
@@ -953,15 +946,15 @@ public class ItoomelPrime implements Listener {
 
 						if ((pages > 0) && (pages != page) && (size - 28 * (page + 1) != 0)) {
 							MainInv.setItem(53, APBuy.tagger.setNBTTag("ToPage", page + 1,
-									new AIS("§7Next page --> " + (page + 1), 1, Material.PAPER).toIS()));
+									new AIS("ï¿½7Next page --> " + (page + 1), 1, Material.PAPER).toIS()));
 						}
 						if (page > 0) {
 							MainInv.setItem(45, APBuy.tagger.setNBTTag("ToPage", page - 1,
-									new AIS("§7" + (page - 1) + " <-- Previous page", 1, Material.PAPER).toIS()));
+									new AIS("ï¿½7" + (page - 1) + " <-- Previous page", 1, Material.PAPER).toIS()));
 						}
 
 						if (MainInv.getItem(31).getType() == Material.PAPER) {
-							MainInv.setItem(31, new AIS("§a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
+							MainInv.setItem(31, new AIS("ï¿½a", 1, (short) 7, Material.STAINED_GLASS_PANE).toIS());
 						}
 						p.openInventory(MainInv);
 						ItoomelPrime.onItoomel.put(p, new Object[] { menu, type });
@@ -971,8 +964,8 @@ public class ItoomelPrime implements Listener {
 						System.out.println("Player: " + p.getName() + " (" + p.getUniqueId().toString() + ")");
 						System.out.println("Menu: " + menu);
 						APBuy.getMarketHandler().removeFromAll(p);
-						p.sendMessage("§cEin Fehler ist aufgetreten, bitte kontaktiere einen Dev.");
-						p.sendMessage("§c Das hier dem Dev sagen : " + Utils.addToFix(e1));
+						p.sendMessage("ï¿½cEin Fehler ist aufgetreten, bitte kontaktiere einen Dev.");
+						p.sendMessage("ï¿½c Das hier dem Dev sagen : " + Utils.addToFix(e1));
 					}
 				}
 			});
@@ -1062,7 +1055,7 @@ public class ItoomelPrime implements Listener {
 					ItoomelPrime.openItoomel(String.valueOf(ItoomelPrime.onItoomel.get(p)[0]), p,
 							(Material) ItoomelPrime.onItoomel.get(p)[1], 0);
 				} else {
-					p.sendMessage("§cSorry, es gab einfach ein reload... :/");
+					p.sendMessage("ï¿½cSorry, es gab einfach ein reload... :/");
 					ItoomelPrime.openItoomel("Main", p, Material.AIR, 0);
 				}
 			} else {
@@ -1072,7 +1065,7 @@ public class ItoomelPrime implements Listener {
 				} else {
 					APBuy.getMarketHandler().PMLocPage.put(p, 0);
 					ItoomelPrime.openItoomel("Main", p, Material.AIR, 0);
-					p.sendMessage("§cDieses Material ist nicht mehr verfügbar.");
+					p.sendMessage("ï¿½cDieses Material ist nicht mehr verfï¿½gbar.");
 				}
 			}
 		}

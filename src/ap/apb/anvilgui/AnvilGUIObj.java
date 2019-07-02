@@ -1,7 +1,6 @@
 package ap.apb.anvilgui;
 
-import java.util.HashMap;
-
+import ap.apb.APBuy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,7 +12,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import ap.apb.APBuy;
+import java.util.HashMap;
 
 public class AnvilGUIObj implements AnvilGUI {
 	

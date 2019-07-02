@@ -1,5 +1,16 @@
 package ap.apb.datamaster;
 
+import ap.apb.APBuy;
+import ap.apb.APBuyException;
+import ap.apb.APBuyException.ErrorCause;
+import ap.apb.Utils;
+import ap.apb.apbuy.markets.CategoryInfos;
+import ap.apb.apbuy.markets.Market;
+import ap.apb.apbuy.markets.MarketInfos;
+import ap.apb.apbuy.markets.MarketItem;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -7,18 +18,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
-
-import ap.apb.APBuy;
-import ap.apb.APBuyException;
-import ap.apb.Utils;
-import ap.apb.APBuyException.ErrorCause;
-import ap.apb.apbuy.markets.CategoryInfos;
-import ap.apb.apbuy.markets.Market;
-import ap.apb.apbuy.markets.MarketInfos;
-import ap.apb.apbuy.markets.MarketItem;
 
 public abstract class SQLDatabase implements Database {
 
