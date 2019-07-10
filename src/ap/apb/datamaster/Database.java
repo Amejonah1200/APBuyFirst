@@ -12,7 +12,7 @@ import ap.apb.apbuy.markets.CategoryInfos;
 import ap.apb.apbuy.markets.MarketInfos;
 import ap.apb.apbuy.markets.MarketItem;
 
-public abstract interface Database {
+public interface Database {
 
 	public String getName();
 
@@ -25,15 +25,15 @@ public abstract interface Database {
 	public void saveItemInfos(UUID id, String owner, String category, ItemStack itemstack, int price, long amount,
 			int sellamount, long solditems) throws APBuyException;
 
-	public MarketItem getMarketItemByIS(String owner, ItemStack is) throws APBuyException;;
+	public MarketItem getMarketItemByIS(String owner, ItemStack is) throws APBuyException;
 
-	public MarketInfos getMarketInfos(String owner) throws APBuyException;;
+	public MarketInfos getMarketInfos(String owner) throws APBuyException;
 
-	public CategoryInfos getCategoryInfos(String owner, String catname) throws APBuyException;;
+	public CategoryInfos getCategoryInfos(String owner, String catname) throws APBuyException;
 
-	public List<MarketItem> getMarketItemsFromMarket(String owner) throws APBuyException;;
+	public List<MarketItem> getMarketItemsFromMarket(String owner) throws APBuyException;
 
-	public List<CategoryInfos> getAllCategoryInfosFromMarket(String owner) throws APBuyException;;
+	public List<CategoryInfos> getAllCategoryInfosFromMarket(String owner) throws APBuyException;
 
 	public void deleteMarket(UUID uuid) throws APBuyException;
 
@@ -49,20 +49,20 @@ public abstract interface Database {
 
 	public List<MarketItem> getAllMarketItems() throws APBuyException;
 
-	public boolean hasPlayerMarketByUUID(String uuid) throws APBuyException;;
+	public boolean hasPlayerMarketByUUID(String uuid) throws APBuyException;
 
-	public boolean hasCategoryInfos(String owner, String catname) throws APBuyException;;
+	public boolean hasCategoryInfos(String owner, String catname) throws APBuyException;
 
-	public boolean hasMarketItem(String owner, ItemStack is) throws APBuyException;;
+	public boolean hasMarketItem(String owner, ItemStack is) throws APBuyException;
 
 	public List<UUID> loadAllMarkets() throws APBuyException;
 
-	public HashMap<ItemStack, String[]> getItemsFromItemDepot(String owner) throws APBuyException;;
+	public HashMap<ItemStack, String[]> getItemsFromItemDepot(String owner) throws APBuyException;
 
-	public void saveMisToItemDepot(String uuid, String owner, ItemStack itemStack, long amount) throws APBuyException;;
+	public void saveMisToItemDepot(String uuid, String owner, ItemStack itemStack, long amount) throws APBuyException;
 
 	public void removeItemFromItemDepot(String owner, ItemStack itemStack) throws APBuyException;;
 
-	public String[] getItemDataFromDepot(String uuid, ItemStack itemstack) throws APBuyException;;
+	public String[] getItemDataFromDepot(String uuid, ItemStack itemstack) throws APBuyException;
 
 }

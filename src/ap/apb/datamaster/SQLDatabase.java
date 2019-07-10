@@ -36,7 +36,16 @@ public abstract class SQLDatabase implements Database {
 
 	public abstract boolean connect(String... args);
 
-	public abstract void disconnect();
+	public void disconnect() {
+		if (connection != null) {
+			try {
+				connection.close();
+				connection = null;
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 	public Connection getConnection() {
 		return this.connection;

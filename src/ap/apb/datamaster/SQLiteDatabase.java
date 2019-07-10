@@ -2,7 +2,6 @@ package ap.apb.datamaster;
 
 import java.io.File;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 
 import ap.apb.APBuy;
 
@@ -27,17 +26,6 @@ public class SQLiteDatabase extends SQLDatabase {
 			return false;
 		}
 		return true;
-	}
-
-	public void disconnect() {
-		if (connection != null) {
-			try {
-				connection.close();
-				connection = null;
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 	@Override

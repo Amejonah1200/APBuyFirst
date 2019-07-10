@@ -22,17 +22,6 @@ public class MySQLDatabase extends SQLDatabase {
 		return true;
 	}
 
-	public void disconnect() {
-		if (connection != null) {
-			try {
-				connection.close();
-				connection = null;
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
 	@Override
 	public String getName() {
 		return "sqlite";
