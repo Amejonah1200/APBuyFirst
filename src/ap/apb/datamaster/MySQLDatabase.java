@@ -1,7 +1,6 @@
 package ap.apb.datamaster;
 
 import java.sql.DriverManager;
-import java.sql.SQLException;
 
 public class MySQLDatabase extends SQLDatabase {
 

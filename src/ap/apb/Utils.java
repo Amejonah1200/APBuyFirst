@@ -434,7 +434,7 @@ public class Utils {
 		return l;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked", "restriction" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static String serializeItemStack(ItemStack paramItemStack) {
 		if (paramItemStack == null) {
 			return "null";
@@ -459,7 +459,7 @@ public class Utils {
 		return com.sun.org.apache.xml.internal.security.utils.Base64.encode(localByteArrayOutputStream.toByteArray());
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked", "restriction" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static ItemStack deserializeItemStack(String paramString) {
 		if (paramString.equals("null")) {
 			return null;
